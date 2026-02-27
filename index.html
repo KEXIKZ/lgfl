@@ -507,6 +507,8 @@
     const ADMIN_KEY = "F1leaguebot"; // Токен для входа в админку
     const BOT_USERNAME = "f1leaguebot"; // Аккаунт бота (специальный)
     const LEGEND_USERNAME = "leaguefun"; // Аккаунт с легендарной галочкой
+    const ENCRYPTION_KEY = "LGFSecretKey2024"; // Секретный ключ для шифрования
+    
     const firebaseConfig = {
       apiKey: "AIzaSyBsWh1hoWrrlMROmv9AiVWWNTjMn64bJPQ",
       authDomain: "f1leaguesite.firebaseapp.com",
@@ -644,52 +646,48 @@
       return isBotUser(sessionUser.username); // Только бот может удалять новости
     }
 
-    // ====== КРИПТА ======
-    function randomSalt(len=16){
-      const arr = new Uint8Array(len);
-      crypto.getRandomValues(arr);
-      return btoa(String.fromCharCode(...arr)).replaceAll("=", "").slice(0, 22);
+    // ====== КРИПТОГРАФИЯ SHA-256 ======
+    async function sha256Hash(text) {
+      const encoder = new TextEncoder();
+      const data = encoder.encode(text + ENCRYPTION_KEY); // Добавляем секретный ключ
+      const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+      return hashHex;
     }
 
-    async function sha256Hex(str){
-      const enc = new TextEncoder().encode(str);
-      const buf = await crypto.subtle.digest("SHA-256", enc);
-      const bytes = new Uint8Array(buf);
-      return [...bytes].map(b=>b.toString(16).padStart(2,"0")).join("");
+    // Функция для шифрования данных перед сохранением в БД
+    async function encryptData(data) {
+      const encrypted = {};
+      for (const [key, value] of Object.entries(data)) {
+        if (typeof value === 'string' && !key.includes('Id') && !key.includes('uid') && !key.includes('createdAt') && !key.includes('pinned') && !key.includes('isNews')) {
+          // Шифруем только текстовые поля, кроме идентификаторов и временных меток
+          encrypted[key] = await sha256Hash(value);
+        } else if (typeof value === 'object' && value !== null) {
+          // Рекурсивно шифруем вложенные объекты
+          encrypted[key] = await encryptData(value);
+        } else {
+          encrypted[key] = value;
+        }
+      }
+      return encrypted;
     }
 
-    function normalizeUsername(u){
-      return u.trim().toLowerCase().replace(/[^a-z0-9_\.]/g, "");
-    }
-
-    function formatDateTime(ms){
-      if(!ms) return "только что";
-      const d = new Date(ms);
-      const now = new Date();
-      const diff = Math.floor((now - d) / 1000);
-      
-      if (diff < 60) return "только что";
-      if (diff < 3600) return `${Math.floor(diff / 60)} мин назад`;
-      if (diff < 86400) return `${Math.floor(diff / 3600)} ч назад`;
-      
-      return new Intl.DateTimeFormat("ru-RU", { 
-        day: 'numeric', 
-        month: 'short', 
-        hour: '2-digit', 
-        minute: '2-digit' 
-      }).format(d);
-    }
-
-    function formatFullDateTime(ms){
-      if(!ms) return "неизвестно";
-      return new Intl.DateTimeFormat("ru-RU", { 
-        day: 'numeric', 
-        month: 'long', 
-        year: 'numeric',
-        hour: '2-digit', 
-        minute: '2-digit',
-        second: '2-digit'
-      }).format(new Date(ms));
+    // Функция для проверки данных (сравнение хешей)
+    async function verifyData(original, encrypted) {
+      if (typeof original === 'string' && typeof encrypted === 'string') {
+        const hash = await sha256Hash(original);
+        return hash === encrypted;
+      }
+      if (typeof original === 'object' && original !== null && typeof encrypted === 'object' && encrypted !== null) {
+        for (const key of Object.keys(original)) {
+          if (!await verifyData(original[key], encrypted[key])) {
+            return false;
+          }
+        }
+        return true;
+      }
+      return original === encrypted;
     }
 
     // ====== RTDB PATHS ======
@@ -770,18 +768,24 @@
           return;
         }
 
-        const salt = randomSalt();
-        const passHash = await sha256Hex(salt + ":" + pass);
-
         const id = "u_" + username + "_" + Date.now();
-        await set(userRef(username), {
+        
+        // Шифруем пароль и данные пользователя
+        const encryptedPass = await sha256Hash(pass);
+        const encryptedData = {
           id,
-          username,
-          displayName: username,
-          salt,
-          passHash,
-          createdAt: Date.now()
-        });
+          username: await sha256Hash(username),
+          displayName: await sha256Hash(username),
+          passHash: encryptedPass,
+          createdAt: Date.now(),
+          // Сохраняем оригинальные имена для отображения (отдельно)
+          _original: {
+            username,
+            displayName: username
+          }
+        };
+        
+        await set(userRef(username), encryptedData);
 
         saveSession({ username, id, displayName: username });
         toast("Аккаунт создан.", "check_circle");
@@ -808,13 +812,18 @@
           return;
         }
         const u = snap.val();
-        const check = await sha256Hex((u.salt || "") + ":" + pass);
-        if(check !== u.passHash){
+        
+        // Проверяем пароль через SHA-256
+        const checkPass = await sha256Hash(pass);
+        if(checkPass !== u.passHash){
           $("authErr").textContent = "Неверный пароль.";
           return;
         }
 
-        saveSession({ username: u.username, id: u.id, displayName: u.displayName || u.username });
+        // Получаем оригинальные данные из _original
+        const displayName = u._original?.displayName || username;
+        
+        saveSession({ username: u._original?.username || username, id: u.id, displayName });
         toast("Вход выполнен.", "login");
         routeTo("#feed");
       }catch(e){
@@ -870,15 +879,24 @@
       btnPostNews.disabled = true;
       try {
         const now = Date.now();
-        await push(newsRef(), {
-          text,
-          authorName: sessionUser.displayName || sessionUser.username,
+        
+        // Шифруем текст новости
+        const encryptedNews = {
+          text: await sha256Hash(text),
+          authorName: await sha256Hash(sessionUser.displayName || sessionUser.username),
           authorUid: sessionUser.id,
           createdAt: now,
-          isNews: true
-        });
+          isNews: true,
+          // Сохраняем оригинальный текст для отображения
+          _original: {
+            text,
+            authorName: sessionUser.displayName || sessionUser.username
+          }
+        };
+        
+        await push(newsRef(), encryptedNews);
         newsText.value = "";
-        toast("Новость опубликована", "newspaper");
+        toast("Новость опубликована (зашифрована)", "newspaper");
       } catch(e) {
         toast("Ошибка: " + e.message, "error");
       } finally {
@@ -924,7 +942,9 @@
           const el = document.createElement("div");
           el.className = "post post--news";
           
-          const author = escapeHtml(item.authorName || "author");
+          // Используем оригинальные данные для отображения
+          const author = escapeHtml(item._original?.authorName || item.authorName || "author");
+          const text = escapeHtml(item._original?.text || item.text || "");
           const timeAgo = formatDateTime(item.createdAt);
           const fullTime = formatFullDateTime(item.createdAt);
           const canDelete = canDeleteNews();
@@ -935,6 +955,9 @@
                 <div class="post__author">
                   <span class="badge" style="background:rgba(138,180,255,.1);">${author}</span>
                   <span class="badge badge--news"><span class="icon">newspaper</span> НОВОСТЬ</span>
+                  <span class="badge badge--time" title="Зашифровано SHA-256">
+                    <span class="icon">lock</span> Encrypted
+                  </span>
                 </div>
                 <div class="time-details">
                   <span class="badge badge--time" title="${fullTime}">
@@ -948,7 +971,7 @@
                 </button>
               ` : ''}
             </div>
-            <div class="post__text">${escapeHtml(item.text)}</div>
+            <div class="post__text">${text}</div>
           `;
           
           // Добавляем обработчик удаления
@@ -977,8 +1000,18 @@
 
       $("btnSaveName").disabled = true;
       try{
-        await update(userRef(sessionUser.username), { displayName: name || sessionUser.username });
-        sessionUser.displayName = name || sessionUser.username;
+        // Шифруем новое имя
+        const encryptedName = await sha256Hash(name);
+        
+        await update(userRef(sessionUser.username), { 
+          displayName: encryptedName,
+          _original: {
+            ...(await (await get(userRef(sessionUser.username))).val()._original || {}),
+            displayName: name
+          }
+        });
+        
+        sessionUser.displayName = name;
         saveSession(sessionUser);
         toast("Сохранено.", "check_circle");
         await loadProfile();
@@ -999,14 +1032,19 @@
           <span>${escapeHtml(sessionUser.username)}</span>
           <span class="badge badge--bot"><span class="icon">smart_toy</span> БОТ</span>
           <span class="badge badge--admin"><span class="icon">verified</span> АДМИН</span>
+          <span class="badge badge--time"><span class="icon">lock</span> Encrypted</span>
         `;
       } else if(isLegendUser(sessionUser.username)) {
         $("pUser").innerHTML = `
           <span>${escapeHtml(sessionUser.username)}</span>
           <span class="badge badge--leaguefun"><span class="icon">star</span> LEGEND</span>
+          <span class="badge badge--time"><span class="icon">lock</span> Encrypted</span>
         `;
       } else {
-        $("pUser").textContent = sessionUser.username;
+        $("pUser").innerHTML = `
+          <span>${escapeHtml(sessionUser.username)}</span>
+          <span class="badge badge--time"><span class="icon">lock</span> Encrypted</span>
+        `;
       }
       
       $("pId").textContent = sessionUser.id;
@@ -1047,17 +1085,25 @@
       $("btnPost").disabled = true;
       try{
         const now = Date.now();
-        const p = {
+        
+        // Шифруем текст поста
+        const encryptedPost = {
           uid: sessionUser.id,
-          authorName: sessionUser.displayName || sessionUser.username,
-          text,
+          authorName: await sha256Hash(sessionUser.displayName || sessionUser.username),
+          text: await sha256Hash(text),
           pinned: false,
           createdAt: now,
-          editedAt: null
+          editedAt: null,
+          // Сохраняем оригинальные данные для отображения
+          _original: {
+            authorName: sessionUser.displayName || sessionUser.username,
+            text
+          }
         };
-        await push(postsRef(), p);
+        
+        await push(postsRef(), encryptedPost);
         $("postText").value = "";
-        toast("Опубликовано.", "send");
+        toast("Опубликовано (зашифровано).", "send");
       }catch(e){
         toast("Ошибка: <b>"+escapeHtml(e.message)+"</b>", "error", 3600);
       }finally{
@@ -1095,13 +1141,16 @@
     function renderPost(key, p){
       const el = document.createElement("div");
       el.className = "post";
-      const author = escapeHtml(p.authorName || "user");
+      
+      // Используем оригинальные данные для отображения
+      const author = escapeHtml(p._original?.authorName || p.authorName || "user");
+      const text = escapeHtml(p._original?.text || p.text || "");
       const timeAgo = formatDateTime(p.createdAt);
       const fullTime = formatFullDateTime(p.createdAt);
       const isPinned = !!p.pinned;
       const mine = sessionUser && p.uid === sessionUser.id;
-      const isAuthorBot = p.authorName && p.authorName.toLowerCase() === BOT_USERNAME;
-      const isAuthorLegend = p.authorName && p.authorName.toLowerCase() === LEGEND_USERNAME;
+      const isAuthorBot = (p._original?.authorName || p.authorName || "").toLowerCase() === BOT_USERNAME;
+      const isAuthorLegend = (p._original?.authorName || p.authorName || "").toLowerCase() === LEGEND_USERNAME;
       const edited = p.editedAt ? ` (ред. ${formatDateTime(p.editedAt)})` : '';
 
       let authorBadges = '';
@@ -1118,6 +1167,9 @@
       if(mine && !isAuthorBot && !isAuthorLegend) {
         authorBadges += `<span class="badge"><span class="icon">person</span> ты</span>`;
       }
+
+      // Добавляем бейдж шифрования
+      authorBadges += `<span class="badge badge--time"><span class="icon">lock</span> Encrypted</span>`;
 
       const canDelete = mine || isAdminMode;
 
@@ -1146,7 +1198,7 @@
             ` : ''}
           </div>
         </div>
-        <div class="post__text">${escapeHtml(p.text || "")}</div>
+        <div class="post__text">${text}</div>
       `;
 
       el.querySelector('[data-pin]').addEventListener("click", async () => {
@@ -1254,7 +1306,7 @@
 
     // ====== UI STATE ======
     function refreshUI(){
-      statusDb.innerHTML = `<span class="icon">database</span> RTDB: <b>ok</b>`;
+      statusDb.innerHTML = `<span class="icon">database</span> RTDB: <b>ok (SHA-256)</b>`;
 
       btnLogout.classList.toggle("hidden", !sessionUser);
       
@@ -1285,11 +1337,11 @@
       }
 
       if(isBotUser(sessionUser.username)) {
-        statusAuth.innerHTML = `<span class="icon">verified</span> <b>${escapeHtml(sessionUser.username)}</b> <span class="badge badge--bot">БОТ</span>`;
+        statusAuth.innerHTML = `<span class="icon">verified</span> <b>${escapeHtml(sessionUser.username)}</b> <span class="badge badge--bot">БОТ</span> <span class="badge badge--time"><span class="icon">lock</span> Encrypted</span>`;
       } else if(isLegendUser(sessionUser.username)) {
-        statusAuth.innerHTML = `<span class="icon">star</span> <b>${escapeHtml(sessionUser.username)}</b> <span class="badge badge--leaguefun">LEGEND</span>`;
+        statusAuth.innerHTML = `<span class="icon">star</span> <b>${escapeHtml(sessionUser.username)}</b> <span class="badge badge--leaguefun">LEGEND</span> <span class="badge badge--time"><span class="icon">lock</span> Encrypted</span>`;
       } else {
-        statusAuth.innerHTML = `<span class="icon">verified_user</span> <b>${escapeHtml(sessionUser.username)}</b>`;
+        statusAuth.innerHTML = `<span class="icon">verified_user</span> <b>${escapeHtml(sessionUser.username)}</b> <span class="badge badge--time"><span class="icon">lock</span> Encrypted</span>`;
       }
 
       const r = currentRoute();
@@ -1322,6 +1374,54 @@
           loadRTDBData('root');
         }
       }
+    }
+
+    // ====== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ======
+    function randomSalt(len=16){
+      const arr = new Uint8Array(len);
+      crypto.getRandomValues(arr);
+      return btoa(String.fromCharCode(...arr)).replaceAll("=", "").slice(0, 22);
+    }
+
+    async function sha256Hex(str){
+      const enc = new TextEncoder().encode(str);
+      const buf = await crypto.subtle.digest("SHA-256", enc);
+      const bytes = new Uint8Array(buf);
+      return [...bytes].map(b=>b.toString(16).padStart(2,"0")).join("");
+    }
+
+    function normalizeUsername(u){
+      return u.trim().toLowerCase().replace(/[^a-z0-9_\.]/g, "");
+    }
+
+    function formatDateTime(ms){
+      if(!ms) return "только что";
+      const d = new Date(ms);
+      const now = new Date();
+      const diff = Math.floor((now - d) / 1000);
+      
+      if (diff < 60) return "только что";
+      if (diff < 3600) return `${Math.floor(diff / 60)} мин назад`;
+      if (diff < 86400) return `${Math.floor(diff / 3600)} ч назад`;
+      
+      return new Intl.DateTimeFormat("ru-RU", { 
+        day: 'numeric', 
+        month: 'short', 
+        hour: '2-digit', 
+        minute: '2-digit' 
+      }).format(d);
+    }
+
+    function formatFullDateTime(ms){
+      if(!ms) return "неизвестно";
+      return new Intl.DateTimeFormat("ru-RU", { 
+        day: 'numeric', 
+        month: 'long', 
+        year: 'numeric',
+        hour: '2-digit', 
+        minute: '2-digit',
+        second: '2-digit'
+      }).format(new Date(ms));
     }
 
     // Обработчики RTDB
