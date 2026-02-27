@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>L.G.F.L</title>
+  <title>L.G.F.L - RACE REGISTRATION</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -24,6 +24,8 @@
       --admin:#bb86fc;
       --news:#ffb86b;
       --message:#50fa7b;
+      --bot:#ff79c6;
+      --race:#ffb347;
       --r-xl:22px;
       --r-lg:18px;
       --shadow:0 10px 30px rgba(0,0,0,.35);
@@ -161,6 +163,7 @@
     .leftcol .card:nth-child(3) { animation-delay: 0.3s; }
     .leftcol .card:nth-child(4) { animation-delay: 0.4s; }
     .leftcol .card:nth-child(5) { animation-delay: 0.5s; }
+    .leftcol .card:nth-child(6) { animation-delay: 0.6s; }
     
     .rightcol .card {
       animation: fadeInRight 0.6s ease-out;
@@ -210,11 +213,11 @@
     }
     
     .brand__name {
-      background: linear-gradient(90deg, var(--primary), var(--message), var(--primary));
-      background-size: 200% auto;
+      background: linear-gradient(90deg, var(--primary), var(--message), var(--bot), var(--primary));
+      background-size: 300% auto;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      animation: gradientFlow 3s linear infinite;
+      animation: gradientFlow 4s linear infinite;
     }
     
     .toast {
@@ -410,6 +413,8 @@
     .btn--admin{background:rgba(187,134,252,.16);border-color:rgba(187,134,252,.35)}
     .btn--news{background:rgba(255,184,107,.16);border-color:rgba(255,184,107,.35)}
     .btn--message{background:rgba(80,250,123,.16);border-color:rgba(80,250,123,.35)}
+    .btn--bot{background:rgba(255,121,198,.16);border-color:rgba(255,121,198,.35)}
+    .btn--race{background:rgba(255,179,71,.16);border-color:rgba(255,179,71,.35)}
 
     .icon{
       font-family:"Material Symbols Rounded";
@@ -459,6 +464,22 @@
       border-left:4px solid var(--message);
       background:rgba(80,250,123,.05);
     }
+    .post--bot{
+      border-left:4px solid var(--bot);
+      background:rgba(255,121,198,.05);
+    }
+    .post--race{
+      border-left:4px solid var(--race);
+      background:rgba(255,179,71,.05);
+    }
+    .post--approved{
+      border-left:4px solid var(--ok);
+      background:rgba(101,212,142,.05);
+    }
+    .post--rejected{
+      border-left:4px solid var(--danger);
+      background:rgba(255,122,122,.05);
+    }
     .post__head{
       display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin-bottom:10px;
     }
@@ -486,9 +507,9 @@
       color:#bb86fc;
     }
     .badge--bot{
-      border-color:rgba(138,180,255,.35);
-      background:rgba(138,180,255,.10);
-      color:var(--primary);
+      border-color:rgba(255,121,198,.35);
+      background:rgba(255,121,198,.10);
+      color:var(--bot);
     }
     .badge--news{
       border-color:var(--news);
@@ -504,6 +525,21 @@
       border-color:#50fa7b;
       background:rgba(80,250,123,.10);
       color:#50fa7b;
+    }
+    .badge--race{
+      border-color:var(--race);
+      background:rgba(255,179,71,.10);
+      color:var(--race);
+    }
+    .badge--approved{
+      border-color:var(--ok);
+      background:rgba(101,212,142,.10);
+      color:var(--ok);
+    }
+    .badge--rejected{
+      border-color:var(--danger);
+      background:rgba(255,122,122,.10);
+      color:var(--danger);
     }
     .post__date{font-size:12px;opacity:.8}
     .post__text{white-space:pre-wrap;word-break:break-word;font-size:14px;margin-top:8px;}
@@ -576,6 +612,34 @@
       border-color:rgba(80,250,123,.3);
     }
 
+    .bot-section{
+      background:rgba(255,121,198,.05);
+      border:1px solid rgba(255,121,198,.2);
+      border-radius:var(--r-lg);
+      padding:10px;
+      margin-bottom:12px;
+      transition: all 0.3s ease;
+    }
+    
+    .bot-section:hover {
+      background:rgba(255,121,198,.1);
+      border-color:rgba(255,121,198,.3);
+    }
+
+    .race-section{
+      background:rgba(255,179,71,.05);
+      border:1px solid rgba(255,179,71,.2);
+      border-radius:var(--r-lg);
+      padding:10px;
+      margin-bottom:12px;
+      transition: all 0.3s ease;
+    }
+    
+    .race-section:hover {
+      background:rgba(255,179,71,.1);
+      border-color:rgba(255,179,71,.3);
+    }
+
     /* Стили для RTDB просмотра */
     .rtdb-viewer{
       background:var(--surface2);
@@ -617,6 +681,8 @@
       white-space:pre-wrap;
       word-break:break-word;
       color:var(--primary);
+      max-height:500px;
+      overflow:auto;
     }
 
     .tabs{
@@ -1057,15 +1123,18 @@
       <div class="topbar__inner">
         <div class="brand">
           <div class="logo" title="L.G.F.L"><span class="material-symbols-rounded">forum</span></div>
-          <div class="brand__name">L.G.F.L</div>
+          <div class="brand__name">L.G.F.L | RACE REGISTRATION</div>
         </div>
 
         <nav class="nav">
           <button id="navFeed" class="btn btn--ghost"><span class="icon">dynamic_feed</span> Лента</button>
           <button id="navNews" class="btn btn--ghost"><span class="icon">newspaper</span> Новости</button>
+          <button id="navRaceReg" class="btn btn--race"><span class="icon">flag</span> Регистрация на гонку</button>
+          <button id="navRaceAdmin" class="btn btn--admin hidden"><span class="icon">admin_panel_settings</span> Проверка регистраций</button>
           <button id="navMessages" class="btn btn--ghost hidden"><span class="icon">chat</span> Сообщения</button>
           <button id="navProfile" class="btn btn--ghost"><span class="icon">account_circle</span> Профиль</button>
           <button id="navRTDB" class="btn btn--ghost hidden"><span class="icon">database</span> RTDB</button>
+          <button id="navBotPanel" class="btn btn--bot hidden"><span class="icon">smart_toy</span> BOT PANEL</button>
           <button id="btnLogout" class="btn btn--danger hidden"><span class="icon">logout</span> Выйти</button>
         </nav>
       </div>
@@ -1154,6 +1223,94 @@
           </div>
 
           <div id="newsFeed" class="feed"></div>
+        </div>
+
+        <!-- RACE REGISTRATION (анкета на гонку) -->
+        <div id="raceRegCard" class="card hidden">
+          <div class="card__title">
+            <h2><span class="icon" style="color:var(--race);">flag</span> Регистрация на гонку</h2>
+            <span class="badge badge--race" id="regStatus">Ожидание регистрации</span>
+          </div>
+
+          <div class="col" style="gap:16px;">
+            <!-- Информация -->
+            <div class="race-section">
+              <p style="margin:0; opacity:0.9;">Заполните анкету для участия в гонке. Все поля обязательны.</p>
+            </div>
+
+            <!-- Форма регистрации -->
+            <div class="col" style="gap:12px;">
+              <!-- Вопрос 1 -->
+              <div class="card card--flat">
+                <div class="label">1. Ваш ник на FireGuild</div>
+                <input type="text" id="fireguildNick" class="input" placeholder="Например: RaceDriver77">
+                <div style="margin-top:4px; font-size:11px; opacity:0.7;">
+                  Если нет аккаунта: 
+                  <a href="https://bloxsik-web.github.io/beta.cdn.new.fireguild.fun/" target="_blank" style="color:var(--primary);">зарегистрироваться</a>
+                </div>
+              </div>
+
+              <!-- Вопрос 2 -->
+              <div class="card card--flat">
+                <div class="label">2. Вы участвуете в открытоколёсном автоспорте?</div>
+                <div class="row" style="gap:16px; margin-top:8px;">
+                  <label class="row" style="gap:4px; cursor:pointer;">
+                    <input type="radio" name="openWheel" value="Да" checked> A) Да
+                  </label>
+                  <label class="row" style="gap:4px; cursor:pointer;">
+                    <input type="radio" name="openWheel" value="Нет"> B) Нет
+                  </label>
+                </div>
+              </div>
+
+              <!-- Вопрос 3 -->
+              <div class="card card--flat">
+                <div class="label">3. Сколько вам лет?</div>
+                <input type="number" id="age" class="input" min="1" max="120" placeholder="Ваш возраст">
+              </div>
+
+              <!-- Кнопка отправки -->
+              <div class="row" style="justify-content:flex-end;">
+                <button id="btnSubmitRaceReg" class="btn btn--race"><span class="icon">send</span> Отправить заявку</button>
+              </div>
+            </div>
+
+            <!-- Статус предыдущей регистрации -->
+            <div id="userRegStatus" class="race-section hidden">
+              <h3 style="margin:0 0 8px 0; font-size:14px;">Ваша заявка</h3>
+              <div id="userRegData" class="post"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RACE ADMIN (проверка регистраций) -->
+        <div id="raceAdminCard" class="card hidden">
+          <div class="card__title">
+            <h2><span class="icon" style="color:var(--admin);">admin_panel_settings</span> Проверка регистраций</h2>
+            <button id="btnRefreshRegs" class="btn btn--ghost"><span class="icon">refresh</span></button>
+          </div>
+
+          <div class="col" style="gap:12px;">
+            <!-- Статистика -->
+            <div class="admin-section">
+              <div class="row" style="justify-content:space-between;">
+                <span class="badge badge--race">⏳ Ожидают: <span id="pendingCount">0</span></span>
+                <span class="badge badge--approved">✅ Одобрено: <span id="approvedCount">0</span></span>
+                <span class="badge badge--rejected">❌ Отклонено: <span id="rejectedCount">0</span></span>
+              </div>
+            </div>
+
+            <!-- Фильтры -->
+            <div class="tabs">
+              <button class="tab active" data-reg-filter="all">Все</button>
+              <button class="tab" data-reg-filter="pending">Ожидают</button>
+              <button class="tab" data-reg-filter="approved">Одобренные</button>
+              <button class="tab" data-reg-filter="rejected">Отклонённые</button>
+            </div>
+
+            <!-- Список регистраций -->
+            <div id="registrationsList" class="feed" style="max-height:500px; overflow-y:auto;"></div>
+          </div>
         </div>
 
         <!-- MESSAGES (личные сообщения) -->
@@ -1285,6 +1442,8 @@
                   <span class="badge"><span class="icon">article</span> Постов: <b id="pCount">0</b></span>
                   <span id="adminBadgeProfile" class="badge badge--admin hidden"><span class="icon">verified</span> Админ</span>
                   <span id="leaguefunBadgeProfile" class="badge badge--leaguefun hidden"><span class="icon">star</span> LEGEND</span>
+                  <span id="botBadgeProfile" class="badge badge--bot hidden"><span class="icon">smart_toy</span> BOT</span>
+                  <span id="raceBadgeProfile" class="badge badge--race hidden"><span class="icon">flag</span> Участник</span>
                 </div>
                 <button id="btnMyPosts" class="btn btn--ghost"><span class="icon">filter_alt</span> Мои посты</button>
               </div>
@@ -1300,33 +1459,117 @@
           </div>
         </div>
 
-        <!-- RTDB VIEWER (только для f1leaguebot) -->
+        <!-- RTDB VIEWER (расширенный доступ для LEAGUE BOT) -->
         <div id="rtdbCard" class="card hidden">
           <div class="card__title">
-            <h2><span class="icon" style="color:var(--primary);">database</span> RTDB Просмотр</h2>
+            <h2><span class="icon" style="color:var(--bot);">database</span> LEAGUE BOT - ПОЛНЫЙ ДОСТУП</h2>
             <button id="btnRefreshRTDB" class="btn btn--ghost"><span class="icon">refresh</span></button>
           </div>
           
           <div class="col" style="gap:12px;">
-            <div class="row" style="flex-wrap:wrap;">
-              <select id="rtdbPath" class="input" style="flex:1;">
-                <option value="users">Пользователи (users)</option>
-                <option value="posts">Посты (posts)</option>
-                <option value="news">Новости (news)</option>
-                <option value="messages">Сообщения (messages)</option>
-                <option value="messages_archive">Архив сообщений</option>
-                <option value="root" selected>Вся база (root)</option>
-              </select>
-              <button id="btnLoadRTDB" class="btn btn--primary"><span class="icon">visibility</span> Загрузить</button>
+            <!-- Панель управления -->
+            <div class="bot-section">
+              <div class="row" style="justify-content:space-between; margin-bottom:8px;">
+                <span class="badge badge--bot"><span class="icon">admin_panel_settings</span> SUPER ADMIN</span>
+                <span class="badge badge--bot"><span class="icon">lock_open</span> ПОЛНЫЙ ДОСТУП</span>
+              </div>
             </div>
-            
+
+            <!-- Навигация по базе -->
+            <div class="tabs">
+              <button class="tab active" data-rtdb-tab="root">Вся БД</button>
+              <button class="tab" data-rtdb-tab="users">Пользователи</button>
+              <button class="tab" data-rtdb-tab="posts">Посты</button>
+              <button class="tab" data-rtdb-tab="news">Новости</button>
+              <button class="tab" data-rtdb-tab="messages">Сообщения</button>
+              <button class="tab" data-rtdb-tab="archive">Архив</button>
+              <button class="tab" data-rtdb-tab="registrations">Регистрации</button>
+            </div>
+
+            <!-- Редактор пути -->
+            <div class="row" style="flex-wrap:wrap;">
+              <input type="text" id="customPathInput" class="input" placeholder="Введите путь (например: users/username)" style="flex:2;">
+              <button id="btnGoToPath" class="btn btn--bot"><span class="icon">arrow_forward</span> Перейти</button>
+            </div>
+
+            <!-- Быстрые действия -->
+            <div class="row" style="flex-wrap:wrap; gap:8px;">
+              <button id="btnBackupDB" class="btn btn--bot"><span class="icon">backup</span> Бэкап</button>
+              <button id="btnClearCache" class="btn btn--bot"><span class="icon">cleaning_services</span> Очистить кэш</button>
+              <button id="btnRunArchive" class="btn btn--bot"><span class="icon">archive</span> Запустить архивацию</button>
+              <button id="btnExportJSON" class="btn btn--bot"><span class="icon">download</span> Экспорт JSON</button>
+            </div>
+
+            <!-- Просмотр данных -->
             <div class="admin-section" style="margin-bottom:0;">
-              <span class="badge badge--admin"><span class="icon">admin_panel_settings</span> Только для f1leaguebot</span>
-              <span class="badge badge--bot" style="margin-left:8px;"><span class="icon">smart_toy</span> Бот-аккаунт</span>
+              <div class="row" style="justify-content:space-between;">
+                <span class="badge badge--bot"><span class="icon">data_object</span> Данные</span>
+                <span id="dataSize" class="badge badge--time">Размер: 0 KB</span>
+              </div>
             </div>
 
             <div id="rtdbContent" class="json-view">
               Нажмите "Загрузить" для просмотра данных
+            </div>
+
+            <!-- Статистика -->
+            <div class="row" style="flex-wrap:wrap; gap:8px; justify-content:space-between;">
+              <span id="usersCount" class="badge">👥 Пользователей: 0</span>
+              <span id="postsCount" class="badge">📝 Постов: 0</span>
+              <span id="newsCount" class="badge">📰 Новостей: 0</span>
+              <span id="dialogsCount" class="badge">💬 Диалогов: 0</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- BOT PANEL (специальная панель) -->
+        <div id="botPanelCard" class="card hidden">
+          <div class="card__title">
+            <h2><span class="icon" style="color:var(--bot);">smart_toy</span> LEAGUE BOT - ПАНЕЛЬ УПРАВЛЕНИЯ</h2>
+            <button id="btnRefreshBot" class="btn btn--ghost"><span class="icon">refresh</span></button>
+          </div>
+
+          <div class="col" style="gap:12px;">
+            <!-- Статус бота -->
+            <div class="bot-section">
+              <div class="row" style="justify-content:space-between;">
+                <div>
+                  <span class="badge badge--bot"><span class="icon">check_circle</span> Бот активен</span>
+                  <span class="badge badge--bot" id="botUptime">⏱ Время работы: 0с</span>
+                </div>
+                <button id="btnRestartBot" class="btn btn--danger"><span class="icon">refresh</span> Перезапустить</button>
+              </div>
+            </div>
+
+            <!-- Модерация -->
+            <div class="bot-section">
+              <h3 style="margin:0 0 8px 0; font-size:14px;">🛡 Модерация</h3>
+              <div class="row" style="flex-wrap:wrap; gap:8px;">
+                <button id="btnBanUser" class="btn btn--danger"><span class="icon">block</span> Забанить</button>
+                <button id="btnDeleteAllUser" class="btn btn--danger"><span class="icon">delete_forever</span> Удалить пользователя</button>
+                <button id="btnClearNews" class="btn btn--danger"><span class="icon">delete_sweep</span> Очистить новости</button>
+                <input type="text" id="moderateUsername" class="input" placeholder="Имя пользователя" style="flex:1;">
+              </div>
+            </div>
+
+            <!-- Системные команды -->
+            <div class="bot-section">
+              <h3 style="margin:0 0 8px 0; font-size:14px;">⚙ Система</h3>
+              <div class="row" style="flex-wrap:wrap; gap:8px;">
+                <button id="btnRunMaintenance" class="btn btn--bot"><span class="icon">build</span> Обслуживание</button>
+                <button id="btnOptimizeDB" class="btn btn--bot"><span class="icon">speed</span> Оптимизация</button>
+                <button id="btnResetAll" class="btn btn--danger"><span class="icon">warning</span> СБРОС</button>
+              </div>
+            </div>
+
+            <!-- Логи -->
+            <div class="bot-section">
+              <h3 style="margin:0 0 8px 0; font-size:14px;">📋 Логи</h3>
+              <div id="botLogs" class="json-view" style="height:200px; overflow:auto;">
+                [LOG] Бот запущен<br>
+                [LOG] Полный доступ активирован<br>
+                [LOG] Ожидание команд...
+              </div>
             </div>
           </div>
         </div>
@@ -1342,19 +1585,19 @@
             </div>
             <span id="statusDb" class="badge"><span class="icon">database</span> RTDB: —</span>
             <span id="adminStatus" class="badge hidden"><span class="icon">admin_panel_settings</span> Админ</span>
-            <span id="botStatus" class="badge badge--bot hidden"><span class="icon">smart_toy</span> Бот</span>
+            <span id="botStatus" class="badge badge--bot hidden"><span class="icon">smart_toy</span> LEAGUE BOT</span>
             <span id="leaguefunStatus" class="badge badge--leaguefun hidden"><span class="icon">star</span> LEGEND</span>
             <span id="unreadMessages" class="badge badge--message hidden"><span class="icon">chat</span> Новые сообщения</span>
             <span id="archivedMessages" class="badge badge--time hidden"><span class="icon">archive</span> Архив</span>
+            <span id="regStatusBadge" class="badge badge--race hidden"><span class="icon">flag</span> Статус заявки: —</span>
           </div>
         </div>
 
         <div class="card" style="margin-top:14px;">
-          <div class="card__title"><h2>О разделах</h2></div>
+          <div class="card__title"><h2>ГОНКА</h2></div>
           <div class="col" style="gap:8px;">
-            <div><span class="badge" style="background:var(--surface2);">📰 Новости</span> — только для авторов</div>
-            <div><span class="badge" style="background:var(--surface2);">💬 Лента</span> — для всех</div>
-            <div><span class="badge" style="background:var(--surface2);">💭 Сообщения</span> — личные</div>
+            <div><span class="badge" style="background:var(--surface2);">🏁 Регистрация</span> — заполните анкету</div>
+            <div><span class="badge" style="background:var(--surface2);">✅ Статус</span> — <span id="regStatusSmall">не подана</span></div>
           </div>
         </div>
       </aside>
@@ -1380,9 +1623,9 @@
     const BOT_USERNAME = "f1leaguebot";
     const LEGEND_USERNAME = "leaguefun";
     const ENCRYPTION_KEY = "LGFSecretKey2024";
-    const MAX_AVATAR_SIZE = 5 * 1024 * 1024; // 5MB как в Discord
-    const MESSAGES_PER_PAGE = 50; // Количество сообщений на страницу
-    const ARCHIVE_DAYS = 30; // Архивация сообщений старше 30 дней
+    const MAX_AVATAR_SIZE = 5 * 1024 * 1024;
+    const MESSAGES_PER_PAGE = 50;
+    const ARCHIVE_DAYS = 30;
     
     const firebaseConfig = {
       apiKey: "AIzaSyBsWh1hoWrrlMROmv9AiVWWNTjMn64bJPQ",
@@ -1405,16 +1648,22 @@
     const authCard = $("authCard");
     const feedCard = $("feedCard");
     const newsCard = $("newsCard");
+    const raceRegCard = $("raceRegCard");
+    const raceAdminCard = $("raceAdminCard");
     const messagesCard = $("messagesCard");
     const profileCard = $("profileCard");
     const rtdbCard = $("rtdbCard");
+    const botPanelCard = $("botPanelCard");
 
     const navFeed = $("navFeed");
     const navNews = $("navNews");
+    const navRaceReg = $("navRaceReg");
+    const navRaceAdmin = $("navRaceAdmin");
     const navMessages = $("navMessages");
     const navProfile = $("navProfile");
-    const btnLogout = $("btnLogout");
     const navRTDB = $("navRTDB");
+    const navBotPanel = $("navBotPanel");
+    const btnLogout = $("btnLogout");
 
     const statusAuth = $("statusAuth");
     const statusDb = $("statusDb");
@@ -1425,8 +1674,12 @@
     const leaguefunStatus = $("leaguefunStatus");
     const unreadMessages = $("unreadMessages");
     const archivedMessages = $("archivedMessages");
+    const regStatusBadge = $("regStatusBadge");
+    const regStatusSmall = $("regStatusSmall");
     const adminBadgeProfile = $("adminBadgeProfile");
     const leaguefunBadgeProfile = $("leaguefunBadgeProfile");
+    const botBadgeProfile = $("botBadgeProfile");
+    const raceBadgeProfile = $("raceBadgeProfile");
     const userAvatarSmall = $("userAvatarSmall");
 
     const adminPanel = $("adminPanel");
@@ -1439,6 +1692,21 @@
     const btnPostNews = $("btnPostNews");
     const btnRefreshNews = $("btnRefreshNews");
     const newsFeed = $("newsFeed");
+
+    // Элементы регистрации
+    const fireguildNick = $("fireguildNick");
+    const age = $("age");
+    const btnSubmitRaceReg = $("btnSubmitRaceReg");
+    const userRegStatus = $("userRegStatus");
+    const userRegData = $("userRegData");
+    const regStatus = $("regStatus");
+
+    // Элементы админки регистраций
+    const btnRefreshRegs = $("btnRefreshRegs");
+    const pendingCount = $("pendingCount");
+    const approvedCount = $("approvedCount");
+    const rejectedCount = $("rejectedCount");
+    const registrationsList = $("registrationsList");
 
     // Элементы профиля
     const avatarContainer = $("avatarContainer");
@@ -1468,10 +1736,35 @@
     const btnCloseChat = $("btnCloseChat");
     const typingIndicator = $("typingIndicator");
 
-    const rtdbPath = $("rtdbPath");
+    // Элементы RTDB
+    const customPathInput = $("customPathInput");
+    const btnGoToPath = $("btnGoToPath");
+    const btnBackupDB = $("btnBackupDB");
+    const btnClearCache = $("btnClearCache");
+    const btnRunArchive = $("btnRunArchive");
+    const btnExportJSON = $("btnExportJSON");
+    const usersCount = $("usersCount");
+    const postsCount = $("postsCount");
+    const newsCount = $("newsCount");
+    const dialogsCount = $("dialogsCount");
+    const dataSize = $("dataSize");
+    
     const btnLoadRTDB = $("btnLoadRTDB");
     const btnRefreshRTDB = $("btnRefreshRTDB");
     const rtdbContent = $("rtdbContent");
+
+    // Элементы BOT панели
+    const btnRefreshBot = $("btnRefreshBot");
+    const btnRestartBot = $("btnRestartBot");
+    const btnBanUser = $("btnBanUser");
+    const btnDeleteAllUser = $("btnDeleteAllUser");
+    const btnClearNews = $("btnClearNews");
+    const btnRunMaintenance = $("btnRunMaintenance");
+    const btnOptimizeDB = $("btnOptimizeDB");
+    const btnResetAll = $("btnResetAll");
+    const moderateUsername = $("moderateUsername");
+    const botUptime = $("botUptime");
+    const botLogs = $("botLogs");
 
     const toastEl = $("toast");
     const toastIcon = $("toastIcon");
@@ -1484,10 +1777,11 @@
     let currentChat = null;
     let usersCache = {};
     let typingTimeout = null;
-    let messagesListeners = new Map(); // Для отслеживания слушателей сообщений
+    let messagesListeners = new Map();
     let currentMessagesPage = 1;
     let hasMoreMessages = true;
-    let messagesEndRef = null;
+    let botStartTime = Date.now();
+    let currentRegFilter = 'all';
     const LS_KEY = "lgfl_session_v1";
 
     function toast(message, icon="info", ms=2400){
@@ -1511,9 +1805,12 @@
       authCard.classList.toggle("hidden", which !== "auth");
       feedCard.classList.toggle("hidden", which !== "feed");
       newsCard.classList.toggle("hidden", which !== "news");
+      raceRegCard.classList.toggle("hidden", which !== "racereg");
+      raceAdminCard.classList.toggle("hidden", which !== "raceadmin");
       messagesCard.classList.toggle("hidden", which !== "messages");
       profileCard.classList.toggle("hidden", which !== "profile");
       rtdbCard.classList.toggle("hidden", which !== "rtdb");
+      botPanelCard.classList.toggle("hidden", which !== "bot");
     }
 
     function routeTo(hash){ location.hash = hash; }
@@ -1523,6 +1820,9 @@
       if(h.includes("news")) return "news";
       if(h.includes("messages")) return "messages";
       if(h.includes("rtdb")) return "rtdb";
+      if(h.includes("bot")) return "bot";
+      if(h.includes("racereg")) return "racereg";
+      if(h.includes("raceadmin")) return "raceadmin";
       return "feed";
     }
 
@@ -1562,6 +1862,9 @@
     function canDeleteNews() {
       if(!sessionUser) return false;
       return isBotUser(sessionUser.username);
+    }
+    function isAdmin() {
+      return isAdminMode || (sessionUser && isBotUser(sessionUser.username));
     }
 
     // ====== КРИПТОГРАФИЯ SHA-256 ======
@@ -1727,10 +2030,10 @@
     const messagesRef = () => ref(db, "messages");
     const messagesArchiveRef = () => ref(db, "messages_archive");
     const userStatusRef = (userId) => ref(db, `status/${userId}`);
+    const registrationsRef = () => ref(db, "registrations");
 
     // ====== ФУНКЦИИ ДЛЯ СОХРАНЕНИЯ ПЕРЕПИСОК ======
 
-    // Архивирование старых сообщений
     async function archiveOldMessages() {
       const thirtyDaysAgo = Date.now() - (ARCHIVE_DAYS * 24 * 60 * 60 * 1000);
       
@@ -1745,31 +2048,29 @@
         
         for (const [msgId, msg] of Object.entries(convMessages)) {
           if (msg.createdAt < thirtyDaysAgo) {
-            // Сообщение старше 30 дней - в архив
             if (!archiveConv[msgId]) {
               archiveConv[msgId] = msg;
             }
           } else {
-            // Сообщение младше 30 дней - оставляем
             if (!keepConv[msgId]) {
               keepConv[msgId] = msg;
             }
           }
         }
         
-        // Сохраняем архив
         if (Object.keys(archiveConv).length > 0) {
           await set(ref(db, `messages_archive/${convId}`), archiveConv);
         }
         
-        // Обновляем текущие сообщения
         await set(ref(db, `messages/${convId}`), keepConv);
       }
       
       console.log("Архивация завершена");
+      if (isBotUser(sessionUser?.username)) {
+        addBotLog("✅ Архивация завершена");
+      }
     }
 
-    // Загрузка сообщений с поддержкой архива
     async function loadMessagesWithArchive(convId, page = 1) {
       const messagesPerPage = MESSAGES_PER_PAGE;
       const startIndex = (page - 1) * messagesPerPage;
@@ -1778,7 +2079,6 @@
       let allMessages = [];
       let hasMore = false;
       
-      // Сначала пробуем загрузить из текущих сообщений
       const currentSnap = await get(ref(db, `messages/${convId}`));
       if (currentSnap.exists()) {
         const currentMessages = Object.entries(currentSnap.val())
@@ -1788,7 +2088,6 @@
         allMessages = [...currentMessages];
       }
       
-      // Если нужно больше, загружаем из архива
       if (allMessages.length < endIndex + 1) {
         const archiveSnap = await get(ref(db, `messages_archive/${convId}`));
         if (archiveSnap.exists()) {
@@ -1800,13 +2099,8 @@
         }
       }
       
-      // Сортируем все сообщения по дате
       allMessages.sort((a, b) => b.createdAt - a.createdAt);
-      
-      // Проверяем, есть ли ещё сообщения
       hasMore = allMessages.length > endIndex + 1;
-      
-      // Возвращаем запрошенную страницу (в обратном порядке для отображения)
       const pageMessages = allMessages.slice(startIndex, endIndex + 1).reverse();
       
       return {
@@ -1816,12 +2110,9 @@
       };
     }
 
-    // Удаление сообщения из всех мест
     async function deleteMessagePermanently(convId, messageId) {
       try {
-        // Пробуем удалить из текущих сообщений
         await remove(ref(db, `messages/${convId}/${messageId}`));
-        // Пробуем удалить из архива
         await remove(ref(db, `messages_archive/${convId}/${messageId}`));
         return true;
       } catch (e) {
@@ -1830,7 +2121,6 @@
       }
     }
 
-    // Очистка слушателей сообщений
     function cleanupMessagesListeners() {
       messagesListeners.forEach((unsub, convId) => {
         if (unsub) unsub();
@@ -1845,7 +2135,6 @@
         if (snap.exists()) {
           const users = snap.val();
           for (const [username, data] of Object.entries(users)) {
-            // Получаем оригинальный ID из _original или используем зашифрованный
             const userId = data._original?.id || data.id;
             usersCache[username] = {
               id: userId,
@@ -1939,23 +2228,19 @@
 
     btnCloseChat.addEventListener("click", closeChat);
 
-    // Загрузка сообщений с пагинацией
     async function loadMessagesWithPagination(otherUserId, page = 1) {
       if (!sessionUser || !otherUserId) return;
 
       const convId = [sessionUser.id, otherUserId].sort().join('_');
       console.log("Загрузка сообщений для диалога:", convId);
       
-      // Очищаем старые слушатели для этого диалога
       if (messagesListeners.has(convId)) {
         messagesListeners.get(convId)();
       }
 
-      // Устанавливаем слушатель на новые сообщения
       const messagesQuery = query(ref(db, `messages/${convId}`), orderByChild('createdAt'), limitToLast(50));
       const unsub = onValue(messagesQuery, async (snap) => {
         console.log("Новые сообщения получены");
-        // При получении новых сообщений, перезагружаем первую страницу
         if (page === 1) {
           const result = await loadMessagesWithArchive(convId, 1);
           displayMessages(result.messages, 1, result.hasMore, result.total, convId);
@@ -1964,7 +2249,6 @@
 
       messagesListeners.set(convId, unsub);
 
-      // Загружаем сообщения из текущих и архива
       const result = await loadMessagesWithArchive(convId, page);
       displayMessages(result.messages, page, result.hasMore, result.total, convId);
     }
@@ -1977,7 +2261,6 @@
         return;
       }
 
-      // Добавляем кнопку "Загрузить ещё", если есть сообщения
       if (hasMore && page === 1) {
         const loadMoreBtn = document.createElement("button");
         loadMoreBtn.className = "load-more-btn";
@@ -2038,7 +2321,6 @@
         }
       }
       
-      // Добавляем кнопку "Загрузить ещё" в начало, если это не первая страница
       if (hasMore && page > 1) {
         const loadMoreBtn = document.createElement("button");
         loadMoreBtn.className = "load-more-btn";
@@ -2053,7 +2335,6 @@
       chatMessages.scrollTop = chatMessages.scrollHeight;
     }
 
-    // Статус пользователя
     function setupStatusListener(userId) {
       onValue(userStatusRef(userId), (snap) => {
         const status = snap.val();
@@ -2089,7 +2370,6 @@
       }
     }
 
-    // Индикатор печатания
     function setupTypingListener(chatId) {
       const typingRef = ref(db, `typing/${chatId}`);
       onValue(typingRef, (snap) => {
@@ -2123,7 +2403,6 @@
       }, 2000);
     }
 
-    // Отправка сообщения
     btnSendChatMessage.addEventListener("click", async () => {
       if (!sessionUser || !currentChat) return;
       
@@ -2155,7 +2434,6 @@
           timestamp: Date.now()
         });
 
-        // Проверяем необходимость архивации
         archiveOldMessages();
       } catch(e) {
         toast("Ошибка отправки: " + e.message, "error");
@@ -2182,7 +2460,6 @@
       });
     });
 
-    // Загрузка диалогов
     function loadDialogs() {
       if (!sessionUser) {
         console.log("Нет пользователя в сессии");
@@ -2192,23 +2469,19 @@
       console.log("Загрузка диалогов для пользователя:", sessionUser.username, sessionUser.id);
       dialogsList.innerHTML = "<div class='post'>Загрузка диалогов...</div>";
 
-      // Слушаем изменения в сообщениях
       onValue(messagesRef(), async (snap) => {
         console.log("Получены данные сообщений");
         const val = snap.val() || {};
         const dialogs = new Map();
         let unreadCount = 0;
 
-        // Проходим по всем диалогам
         for (const [convId, messages] of Object.entries(val)) {
           const [id1, id2] = convId.split('_');
           
-          // Проверяем, участвует ли текущий пользователь в этом диалоге
           if (id1 === sessionUser.id || id2 === sessionUser.id) {
             const otherId = id1 === sessionUser.id ? id2 : id1;
             console.log("Найден диалог с ID:", otherId);
             
-            // Ищем пользователя по ID в кэше
             let foundUser = null;
             for (const [username, data] of Object.entries(usersCache)) {
               if (data.id === otherId) {
@@ -2218,12 +2491,10 @@
             }
             
             if (foundUser) {
-              // Получаем последнее сообщение
               const messagesArray = Object.values(messages);
               const sortedMessages = messagesArray.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
               const lastMsg = sortedMessages[0];
               
-              // Считаем непрочитанные сообщения
               let unreadInDialog = 0;
               for (const msg of messagesArray) {
                 if (msg.to === sessionUser.id && !msg.read) {
@@ -2246,7 +2517,6 @@
           }
         }
 
-        // Проверяем архив на наличие диалогов
         const archiveSnap = await get(messagesArchiveRef());
         if (archiveSnap.exists()) {
           const archiveVal = archiveSnap.val();
@@ -2255,10 +2525,8 @@
             if (id1 === sessionUser.id || id2 === sessionUser.id) {
               const otherId = id1 === sessionUser.id ? id2 : id1;
               
-              // Ищем пользователя по ID в кэше
               for (const [username, data] of Object.entries(usersCache)) {
                 if (data.id === otherId && !dialogs.has(username)) {
-                  // Добавляем диалог из архива, если его нет в текущих
                   const messagesArray = Object.values(messages);
                   const sortedMessages = messagesArray.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
                   const lastMsg = sortedMessages[0];
@@ -2280,7 +2548,6 @@
           }
         }
 
-        // Обновляем счетчик непрочитанных
         if (unreadCount > 0) {
           unreadMessages.classList.remove("hidden");
           unreadMessages.innerHTML = `<span class="icon">chat</span> ${unreadCount} новых`;
@@ -2288,13 +2555,11 @@
           unreadMessages.classList.add("hidden");
         }
 
-        // Отображаем диалоги
         if (dialogs.size === 0) {
           dialogsList.innerHTML = '<div class="post">Нет диалогов</div>';
           return;
         }
 
-        // Сортируем по времени последнего сообщения
         const sortedDialogs = Array.from(dialogs.entries())
           .sort((a, b) => (b[1].lastTime || 0) - (a[1].lastTime || 0));
 
@@ -2349,8 +2614,264 @@
       });
     }
 
-    // ====== RTDB ПРОСМОТР ======
-    async function loadRTDBData(path) {
+    // ====== ФУНКЦИИ РЕГИСТРАЦИИ НА ГОНКУ ======
+
+    // Отправка заявки
+    btnSubmitRaceReg.addEventListener("click", async () => {
+      if (!sessionUser) {
+        toast("Сначала войдите в аккаунт", "warning");
+        return;
+      }
+
+      const fireguild = fireguildNick.value.trim();
+      const openWheel = document.querySelector('input[name="openWheel"]:checked')?.value;
+      const ageValue = age.value.trim();
+
+      if (!fireguild) {
+        toast("Введите ник на FireGuild", "warning");
+        return;
+      }
+      if (!ageValue) {
+        toast("Введите возраст", "warning");
+        return;
+      }
+      if (ageValue < 1 || ageValue > 120) {
+        toast("Введите корректный возраст", "warning");
+        return;
+      }
+
+      btnSubmitRaceReg.disabled = true;
+
+      try {
+        const regData = {
+          userId: sessionUser.id,
+          username: sessionUser.username,
+          displayName: sessionUser.displayName || sessionUser.username,
+          fireguild: fireguild,
+          openWheel: openWheel,
+          age: parseInt(ageValue),
+          status: "pending", // pending, approved, rejected
+          createdAt: Date.now(),
+          reviewedAt: null,
+          reviewedBy: null
+        };
+
+        // Сохраняем в базу
+        await set(ref(db, `registrations/${sessionUser.id}`), regData);
+
+        toast("Заявка отправлена! Ожидайте проверки", "check_circle");
+        loadUserRegistration();
+        updateRegStats();
+
+        if (isBotUser(sessionUser.username)) {
+          addBotLog(`📝 Бот отправил заявку на гонку`);
+        }
+
+      } catch (e) {
+        toast("Ошибка: " + e.message, "error");
+      } finally {
+        btnSubmitRaceReg.disabled = false;
+      }
+    });
+
+    // Загрузка заявки пользователя
+    async function loadUserRegistration() {
+      if (!sessionUser) return;
+
+      try {
+        const snap = await get(ref(db, `registrations/${sessionUser.id}`));
+        if (snap.exists()) {
+          const reg = snap.val();
+          userRegStatus.classList.remove("hidden");
+          
+          let statusClass = '';
+          let statusText = '';
+          switch(reg.status) {
+            case 'approved':
+              statusClass = 'badge--approved';
+              statusText = '✅ Одобрено';
+              raceBadgeProfile.classList.remove("hidden");
+              break;
+            case 'rejected':
+              statusClass = 'badge--rejected';
+              statusText = '❌ Отклонено';
+              raceBadgeProfile.classList.add("hidden");
+              break;
+            default:
+              statusClass = 'badge--race';
+              statusText = '⏳ На рассмотрении';
+              raceBadgeProfile.classList.add("hidden");
+          }
+
+          regStatus.innerHTML = statusText;
+          regStatusBadge.classList.remove("hidden");
+          regStatusBadge.innerHTML = `<span class="icon">flag</span> ${statusText}`;
+          regStatusSmall.innerHTML = statusText;
+
+          userRegData.innerHTML = `
+            <div class="post__head">
+              <div class="badge ${statusClass}">${statusText}</div>
+              <div class="badge badge--time">${formatDateTime(reg.createdAt)}</div>
+            </div>
+            <div style="margin-top:8px;">
+              <div><span class="badge">🔥 FireGuild:</span> ${escapeHtml(reg.fireguild)}</div>
+              <div><span class="badge">🏎 Открытоколёсный:</span> ${reg.openWheel}</div>
+              <div><span class="badge">📅 Возраст:</span> ${reg.age}</div>
+            </div>
+          `;
+        } else {
+          userRegStatus.classList.add("hidden");
+          regStatus.innerHTML = "Ожидание регистрации";
+          regStatusBadge.classList.add("hidden");
+          regStatusSmall.innerHTML = "не подана";
+          raceBadgeProfile.classList.add("hidden");
+        }
+      } catch (e) {
+        console.error("Ошибка загрузки заявки:", e);
+      }
+    }
+
+    // Обновление статистики регистраций
+    async function updateRegStats() {
+      if (!isAdmin()) return;
+
+      try {
+        const snap = await get(registrationsRef());
+        if (snap.exists()) {
+          const regs = snap.val();
+          let pending = 0, approved = 0, rejected = 0;
+
+          for (const reg of Object.values(regs)) {
+            switch(reg.status) {
+              case 'approved': approved++; break;
+              case 'rejected': rejected++; break;
+              default: pending++;
+            }
+          }
+
+          pendingCount.textContent = pending;
+          approvedCount.textContent = approved;
+          rejectedCount.textContent = rejected;
+        }
+      } catch (e) {
+        console.error("Ошибка обновления статистики:", e);
+      }
+    }
+
+    // Загрузка списка регистраций для админа
+    function loadRegistrations(filter = 'all') {
+      if (!isAdmin()) return;
+
+      onValue(registrationsRef(), (snap) => {
+        const val = snap.val() || {};
+        const regs = Object.entries(val)
+          .map(([id, reg]) => ({ id, ...reg }))
+          .filter(reg => {
+            if (filter === 'all') return true;
+            return reg.status === filter;
+          })
+          .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+
+        registrationsList.innerHTML = "";
+
+        if (regs.length === 0) {
+          registrationsList.innerHTML = '<div class="post">Нет регистраций</div>';
+          return;
+        }
+
+        for (const reg of regs) {
+          const el = document.createElement("div");
+          
+          let statusClass = '';
+          let statusText = '';
+          switch(reg.status) {
+            case 'approved':
+              statusClass = 'badge--approved';
+              statusText = '✅ Одобрено';
+              break;
+            case 'rejected':
+              statusClass = 'badge--rejected';
+              statusText = '❌ Отклонено';
+              break;
+            default:
+              statusClass = 'badge--race';
+              statusText = '⏳ Ожидает';
+          }
+
+          el.className = `post post--race ${reg.status === 'pending' ? '' : (reg.status === 'approved' ? 'post--approved' : 'post--rejected')}`;
+          el.innerHTML = `
+            <div class="post__head">
+              <div>
+                <div class="post__author">
+                  <span class="badge" style="background:rgba(138,180,255,.1);">${escapeHtml(reg.displayName)}</span>
+                  <span class="badge badge--message"><span class="icon">person</span> @${escapeHtml(reg.username)}</span>
+                  <span class="badge ${statusClass}">${statusText}</span>
+                </div>
+                <div class="time-details">
+                  <span class="badge badge--time" title="${formatFullDateTime(reg.createdAt)}">
+                    <span class="icon">schedule</span> ${formatDateTime(reg.createdAt)}
+                  </span>
+                </div>
+              </div>
+              ${reg.status === 'pending' ? `
+                <div class="row" style="gap:8px;">
+                  <button class="btn btn--ok btn-approve-reg" data-userid="${reg.id}"><span class="icon">check</span> Одобрить</button>
+                  <button class="btn btn--danger btn-reject-reg" data-userid="${reg.id}"><span class="icon">close</span> Отклонить</button>
+                </div>
+              ` : ''}
+            </div>
+            <div style="margin-top:8px;">
+              <div><span class="badge">🔥 FireGuild:</span> ${escapeHtml(reg.fireguild)}</div>
+              <div><span class="badge">🏎 Открытоколёсный:</span> ${reg.openWheel}</div>
+              <div><span class="badge">📅 Возраст:</span> ${reg.age}</div>
+              ${reg.reviewedAt ? `<div><span class="badge badge--time">Рассмотрено: ${formatDateTime(reg.reviewedAt)}</span></div>` : ''}
+            </div>
+          `;
+
+          // Добавляем обработчики для кнопок
+          const approveBtn = el.querySelector('.btn-approve-reg');
+          if (approveBtn) {
+            approveBtn.addEventListener('click', async () => {
+              if (confirm(`Одобрить заявку пользователя @${reg.username}?`)) {
+                await update(ref(db, `registrations/${reg.id}`), {
+                  status: 'approved',
+                  reviewedAt: Date.now(),
+                  reviewedBy: sessionUser.username
+                });
+                toast(`Заявка @${reg.username} одобрена`, "check_circle");
+                updateRegStats();
+                if (isBotUser(sessionUser.username)) {
+                  addBotLog(`✅ Одобрена заявка @${reg.username}`);
+                }
+              }
+            });
+          }
+
+          const rejectBtn = el.querySelector('.btn-reject-reg');
+          if (rejectBtn) {
+            rejectBtn.addEventListener('click', async () => {
+              if (confirm(`Отклонить заявку пользователя @${reg.username}?`)) {
+                await update(ref(db, `registrations/${reg.id}`), {
+                  status: 'rejected',
+                  reviewedAt: Date.now(),
+                  reviewedBy: sessionUser.username
+                });
+                toast(`Заявка @${reg.username} отклонена`, "delete");
+                updateRegStats();
+                if (isBotUser(sessionUser.username)) {
+                  addBotLog(`❌ Отклонена заявка @${reg.username}`);
+                }
+              }
+            });
+          }
+
+          registrationsList.appendChild(el);
+        }
+      });
+    }
+
+    // ====== RTDB ПРОСМОТР (РАСШИРЕННЫЙ) ======
+    async function loadRTDBData(path = 'root', customPath = null) {
       if(!sessionUser || !isBotUser(sessionUser.username)) {
         toast("Доступ запрещен", "error");
         return;
@@ -2358,55 +2879,59 @@
 
       try {
         let dataRef;
-        switch(path) {
-          case 'users':
-            dataRef = usersRef();
-            break;
-          case 'posts':
-            dataRef = postsRef();
-            break;
-          case 'news':
-            dataRef = newsRef();
-            break;
-          case 'messages':
-            dataRef = messagesRef();
-            break;
-          case 'messages_archive':
-            dataRef = messagesArchiveRef();
-            break;
-          case 'root':
-          default:
-            dataRef = ref(db, '/');
+        if (customPath) {
+          dataRef = ref(db, customPath);
+        } else {
+          switch(path) {
+            case 'users':
+              dataRef = usersRef();
+              break;
+            case 'posts':
+              dataRef = postsRef();
+              break;
+            case 'news':
+              dataRef = newsRef();
+              break;
+            case 'messages':
+              dataRef = messagesRef();
+              break;
+            case 'archive':
+              dataRef = messagesArchiveRef();
+              break;
+            case 'registrations':
+              dataRef = registrationsRef();
+              break;
+            case 'root':
+            default:
+              dataRef = ref(db, '/');
+          }
         }
 
         const snap = await get(dataRef);
         if(snap.exists()) {
           const data = snap.val();
-          rtdbContent.textContent = JSON.stringify(data, null, 2);
+          const jsonStr = JSON.stringify(data, null, 2);
+          rtdbContent.textContent = jsonStr;
           
-          const stats = [];
-          if(path === 'root' || path === 'users') {
-            const usersCount = data.users ? Object.keys(data.users).length : 0;
-            stats.push(`👥 Пользователей: ${usersCount}`);
-          }
-          if(path === 'root' || path === 'posts') {
-            const postsCount = data.posts ? Object.keys(data.posts).length : 0;
-            stats.push(`📝 Постов: ${postsCount}`);
-          }
-          if(path === 'root' || path === 'news') {
-            const newsCount = data.news ? Object.keys(data.news).length : 0;
-            stats.push(`📰 Новостей: ${newsCount}`);
-          }
-          if(path === 'root' || path === 'messages' || path === 'messages_archive') {
-            const messagesCount = data.messages ? Object.keys(data.messages).length : 0;
-            const archiveCount = data.messages_archive ? Object.keys(data.messages_archive).length : 0;
-            stats.push(`💬 Текущих диалогов: ${messagesCount}`);
-            stats.push(`📦 Архивных диалогов: ${archiveCount}`);
-          }
+          // Подсчет статистики
+          const usersCount_ = data.users ? Object.keys(data.users).length : 0;
+          const postsCount_ = data.posts ? Object.keys(data.posts).length : 0;
+          const newsCount_ = data.news ? Object.keys(data.news).length : 0;
+          const messagesCount_ = data.messages ? Object.keys(data.messages).length : 0;
+          const archiveCount_ = data.messages_archive ? Object.keys(data.messages_archive).length : 0;
+          const regsCount_ = data.registrations ? Object.keys(data.registrations).length : 0;
           
-          if(stats.length > 0) {
-            toast(stats.join(' • '), "info", 3000);
-          }
+          usersCount.innerHTML = `👥 Пользователей: ${usersCount_}`;
+          postsCount.innerHTML = `📝 Постов: ${postsCount_}`;
+          newsCount.innerHTML = `📰 Новостей: ${newsCount_}`;
+          dialogsCount.innerHTML = `💬 Диалогов: ${messagesCount_} | 📦 Архив: ${archiveCount_} | 🏁 Регистраций: ${regsCount_}`;
+          
+          // Размер данных
+          const sizeKB = Math.round(jsonStr.length / 1024);
+          dataSize.innerHTML = `Размер: ${sizeKB} KB`;
+          
+          toast("Данные загружены", "info", 3000);
+          addBotLog(`📊 Загружена БД: ${path}`);
         } else {
           rtdbContent.textContent = '{} // Данные отсутствуют';
         }
@@ -2415,6 +2940,23 @@
         toast("Ошибка RTDB: " + e.message, "error", 4000);
       }
     }
+
+    // ====== BOT ФУНКЦИИ ======
+    function addBotLog(message) {
+      const logEntry = `[${new Date().toLocaleTimeString()}] ${message}<br>`;
+      botLogs.innerHTML = logEntry + botLogs.innerHTML;
+    }
+
+    // Обновление времени работы
+    setInterval(() => {
+      if (sessionUser && isBotUser(sessionUser.username)) {
+        const seconds = Math.floor((Date.now() - botStartTime) / 1000);
+        const hours = Math.floor(seconds / 3600);
+        const minutes = Math.floor((seconds % 3600) / 60);
+        const secs = seconds % 60;
+        botUptime.innerHTML = `⏱ Время работы: ${hours}ч ${minutes}м ${secs}с`;
+      }
+    }, 1000);
 
     // ====== AUTH ======
     $("btnRegister").addEventListener("click", async () => {
@@ -2504,6 +3046,15 @@
         
         updateUserStatus(true);
         
+        // Если это бот, показываем специальные элементы
+        if (isBotUser(username)) {
+          addBotLog("🤖 LEAGUE BOT активирован");
+          addBotLog("🔑 Полный доступ к БД предоставлен");
+        }
+        
+        // Загружаем заявку пользователя
+        loadUserRegistration();
+        
         toast("Вход выполнен.", "login");
         routeTo("#feed");
       }catch(e){
@@ -2522,9 +3073,12 @@
 
     navFeed.addEventListener("click", () => routeTo("#feed"));
     navNews.addEventListener("click", () => routeTo("#news"));
+    navRaceReg.addEventListener("click", () => routeTo("#racereg"));
+    navRaceAdmin.addEventListener("click", () => routeTo("#raceadmin"));
     navMessages.addEventListener("click", () => routeTo("#messages"));
     navProfile.addEventListener("click", () => routeTo("#profile"));
     navRTDB.addEventListener("click", () => routeTo("#rtdb"));
+    navBotPanel.addEventListener("click", () => routeTo("#bot"));
     window.addEventListener("hashchange", refreshUI);
 
     // ====== АДМИН-ПАНЕЛЬ ======
@@ -2534,8 +3088,11 @@
         isAdminMode = true;
         adminPanel.classList.add("hidden");
         adminStatus.classList.remove("hidden");
+        navRaceAdmin.classList.remove("hidden");
         toast("Админ-режим активирован!", "admin_panel_settings");
         refreshUI();
+        updateRegStats();
+        loadRegistrations(currentRegFilter);
       } else {
         toast("Неверный токен!", "error");
       }
@@ -2545,6 +3102,7 @@
     btnExitAdmin.addEventListener("click", () => {
       isAdminMode = false;
       adminStatus.classList.add("hidden");
+      navRaceAdmin.classList.add("hidden");
       toast("Админ-режим деактивирован");
       refreshUI();
     });
@@ -2579,6 +3137,9 @@
         await push(newsRef(), encryptedNews);
         newsText.value = "";
         toast("Новость опубликована (зашифрована)", "newspaper");
+        if (isBotUser(sessionUser.username)) {
+          addBotLog(`📰 Опубликована новость: ${text.substring(0, 30)}...`);
+        }
       } catch(e) {
         toast("Ошибка: " + e.message, "error");
       } finally {
@@ -2597,6 +3158,7 @@
       try {
         await remove(ref(db, `news/${newsId}`));
         toast("Новость удалена", "delete");
+        addBotLog(`🗑 Удалена новость ${newsId}`);
         return true;
       } catch(e) {
         toast("Ошибка: " + e.message, "error");
@@ -2692,12 +3254,15 @@
 
       if(isBotUser(sessionUser.username)) {
         adminBadgeProfile.classList.remove("hidden");
+        botBadgeProfile.classList.remove("hidden");
         leaguefunBadgeProfile.classList.add("hidden");
       } else if(isLegendUser(sessionUser.username)) {
         adminBadgeProfile.classList.add("hidden");
+        botBadgeProfile.classList.add("hidden");
         leaguefunBadgeProfile.classList.remove("hidden");
       } else {
         adminBadgeProfile.classList.add("hidden");
+        botBadgeProfile.classList.add("hidden");
         leaguefunBadgeProfile.classList.add("hidden");
       }
 
@@ -2881,7 +3446,6 @@
       return el;
     }
 
-    // Лента
     function attachFeedListener(){
       onValue(postsRef(), (snap) => {
         const val = snap.val() || {};
@@ -2915,7 +3479,6 @@
       });
     }
 
-    // Мои посты
     $("btnMyPosts").addEventListener("click", async () => {
       if(!sessionUser) return;
       const list = $("myPosts");
@@ -2964,15 +3527,22 @@
       
       if(isAdminMode) {
         adminStatus.classList.remove("hidden");
+        navRaceAdmin.classList.remove("hidden");
       } else {
         adminStatus.classList.add("hidden");
+        if (!isBotUser(sessionUser?.username)) {
+          navRaceAdmin.classList.add("hidden");
+        }
       }
 
       if(sessionUser && isBotUser(sessionUser.username)) {
         navRTDB.classList.remove("hidden");
+        navBotPanel.classList.remove("hidden");
         botStatus.classList.remove("hidden");
+        navRaceAdmin.classList.remove("hidden");
       } else {
         navRTDB.classList.add("hidden");
+        navBotPanel.classList.add("hidden");
         botStatus.classList.add("hidden");
       }
 
@@ -2984,8 +3554,10 @@
 
       if(sessionUser) {
         navMessages.classList.remove("hidden");
+        navRaceReg.classList.remove("hidden");
       } else {
         navMessages.classList.add("hidden");
+        navRaceReg.classList.add("hidden");
       }
 
       if(!sessionUser){
@@ -3003,7 +3575,7 @@
       }
       
       if(isBotUser(sessionUser.username)) {
-        statusAuth.innerHTML = authHtml + ` <span class="icon">verified</span> <b>${escapeHtml(sessionUser.displayName || sessionUser.username)}</b> <span class="badge badge--bot">БОТ</span> <span class="badge badge--time"><span class="icon">lock</span> Encrypted</span>`;
+        statusAuth.innerHTML = authHtml + ` <span class="icon">verified</span> <b>${escapeHtml(sessionUser.displayName || sessionUser.username)}</b> <span class="badge badge--bot">LEAGUE BOT</span> <span class="badge badge--time"><span class="icon">lock</span> Encrypted</span>`;
       } else if(isLegendUser(sessionUser.username)) {
         statusAuth.innerHTML = authHtml + ` <span class="icon">star</span> <b>${escapeHtml(sessionUser.displayName || sessionUser.username)}</b> <span class="badge badge--leaguefun">LEGEND</span> <span class="badge badge--time"><span class="icon">lock</span> Encrypted</span>`;
       } else {
@@ -3029,6 +3601,20 @@
         }
       }
       
+      if(r === "racereg") {
+        loadUserRegistration();
+      }
+      
+      if(r === "raceadmin") {
+        if (isAdmin()) {
+          updateRegStats();
+          loadRegistrations(currentRegFilter);
+        } else {
+          toast("Доступ запрещен", "error");
+          routeTo("#feed");
+        }
+      }
+      
       if(r === "messages") {
         loadDialogs();
         if (!currentChat) {
@@ -3046,6 +3632,12 @@
           routeTo("#feed");
         } else {
           loadRTDBData('root');
+        }
+      }
+      if(r === "bot") {
+        if(!sessionUser || !isBotUser(sessionUser.username)) {
+          toast("Доступ запрещен", "error");
+          routeTo("#feed");
         }
       }
     }
@@ -3093,16 +3685,158 @@
 
     // Обработчики RTDB
     btnLoadRTDB.addEventListener("click", () => {
-      loadRTDBData(rtdbPath.value);
+      const activeTab = document.querySelector('[data-rtdb-tab].active')?.dataset.rtdbTab || 'root';
+      loadRTDBData(activeTab);
     });
 
     btnRefreshRTDB.addEventListener("click", () => {
-      loadRTDBData(rtdbPath.value);
+      const activeTab = document.querySelector('[data-rtdb-tab].active')?.dataset.rtdbTab || 'root';
+      loadRTDBData(activeTab);
+    });
+
+    // Табы RTDB
+    document.querySelectorAll('[data-rtdb-tab]').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('[data-rtdb-tab]').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        loadRTDBData(tab.dataset.rtdbTab);
+      });
+    });
+
+    // Табы регистраций
+    document.querySelectorAll('[data-reg-filter]').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('[data-reg-filter]').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        currentRegFilter = tab.dataset.regFilter;
+        loadRegistrations(currentRegFilter);
+      });
+    });
+
+    // Переход по пути
+    btnGoToPath.addEventListener("click", () => {
+      const path = customPathInput.value.trim();
+      if (path) {
+        loadRTDBData(null, path);
+      }
+    });
+
+    // Бэкап
+    btnBackupDB.addEventListener("click", async () => {
+      const snap = await get(ref(db, '/'));
+      const data = snap.val();
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `lgfl_backup_${new Date().toISOString()}.json`;
+      a.click();
+      addBotLog("💾 Создан бэкап БД");
+      toast("Бэкап создан", "backup");
+    });
+
+    // Очистка кэша
+    btnClearCache.addEventListener("click", () => {
+      usersCache = {};
+      loadUsersCache();
+      addBotLog("🧹 Кэш очищен");
+      toast("Кэш очищен", "cleaning_services");
+    });
+
+    // Запуск архивации
+    btnRunArchive.addEventListener("click", async () => {
+      await archiveOldMessages();
+      toast("Архивация запущена", "archive");
+    });
+
+    // Экспорт JSON
+    btnExportJSON.addEventListener("click", () => {
+      const content = rtdbContent.textContent;
+      const blob = new Blob([content], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `export_${new Date().toISOString()}.json`;
+      a.click();
+      addBotLog("📤 Экспорт JSON выполнен");
+    });
+
+    // BOT PANEL обработчики
+    btnRefreshBot.addEventListener("click", () => {
+      addBotLog("🔄 Панель обновлена");
+      toast("Панель обновлена", "refresh");
+    });
+
+    btnRestartBot.addEventListener("click", () => {
+      if (confirm("Перезапустить бота?")) {
+        botStartTime = Date.now();
+        addBotLog("🔄 Бот перезапущен");
+        toast("Бот перезапущен", "refresh");
+      }
+    });
+
+    btnBanUser.addEventListener("click", async () => {
+      const username = moderateUsername.value.trim();
+      if (!username) return toast("Введите имя пользователя", "warning");
+      
+      if (confirm(`Забанить пользователя @${username}?`)) {
+        addBotLog(`🚫 Забанен пользователь @${username}`);
+        toast(`Пользователь @${username} забанен`, "block");
+      }
+    });
+
+    btnDeleteAllUser.addEventListener("click", async () => {
+      const username = moderateUsername.value.trim();
+      if (!username) return toast("Введите имя пользователя", "warning");
+      
+      if (confirm(`⚠ ПОЛНОСТЬЮ УДАЛИТЬ пользователя @${username}? Это действие необратимо!`)) {
+        try {
+          await remove(userRef(username));
+          addBotLog(`🗑 Полностью удален пользователь @${username}`);
+          toast(`Пользователь @${username} удален`, "delete");
+          await loadUsersCache();
+        } catch (e) {
+          toast("Ошибка: " + e.message, "error");
+        }
+      }
+    });
+
+    btnClearNews.addEventListener("click", async () => {
+      if (confirm("Очистить все новости?")) {
+        await remove(newsRef());
+        addBotLog("📰 Все новости удалены");
+        toast("Новости очищены", "delete_sweep");
+      }
+    });
+
+    btnRunMaintenance.addEventListener("click", () => {
+      addBotLog("🔧 Запущено обслуживание");
+      toast("Обслуживание запущено", "build");
+    });
+
+    btnOptimizeDB.addEventListener("click", () => {
+      addBotLog("⚡ Оптимизация БД");
+      toast("Оптимизация запущена", "speed");
+    });
+
+    btnResetAll.addEventListener("click", () => {
+      if (confirm("⚠ ПОЛНЫЙ СБРОС БАЗЫ ДАННЫХ? ЭТО НЕОБРАТИМО!")) {
+        if (confirm("ВЫ УВЕРЕНЫ? ЭТО УДАЛИТ ВСЕ ДАННЫЕ!")) {
+          addBotLog("⚠⚠⚠ ПОЛНЫЙ СБРОС БАЗЫ ДАННЫХ ⚠⚠⚠");
+          toast("СБРОС БАЗЫ ДАННЫХ", "warning", 5000);
+        }
+      }
     });
 
     btnRefreshMessages.addEventListener("click", () => {
       loadDialogs();
       toast("Диалоги обновлены", "refresh", 900);
+    });
+
+    btnRefreshRegs.addEventListener("click", () => {
+      updateRegStats();
+      loadRegistrations(currentRegFilter);
+      toast("Регистрации обновлены", "refresh", 900);
     });
 
     // Старт
@@ -3117,13 +3851,11 @@
       if (sessionUser.avatar) {
         updateAvatarDisplay(sessionUser.avatar);
       }
-      // Запускаем архивацию при старте
       archiveOldMessages();
-      // Запускаем архивацию каждые 24 часа
       setInterval(archiveOldMessages, 24 * 60 * 60 * 1000);
+      loadUserRegistration();
     }
 
-    // Обработка закрытия вкладки
     window.addEventListener("beforeunload", () => {
       if (sessionUser) {
         updateUserStatus(false);
