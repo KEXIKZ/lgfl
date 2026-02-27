@@ -936,7 +936,6 @@
                 <option value="news">Новости (news)</option>
                 <option value="messages">Сообщения (messages)</option>
                 <option value="messages_archive">Архив сообщений</option>
-                <option value="avatars">Аватарки (avatars)</option>
                 <option value="root" selected>Вся база (root)</option>
               </select>
               <button id="btnLoadRTDB" class="btn btn--primary"><span class="icon">visibility</span> Загрузить</button>
@@ -1467,13 +1466,17 @@
         if (snap.exists()) {
           const users = snap.val();
           for (const [username, data] of Object.entries(users)) {
+            // Получаем оригинальный ID из _original или используем зашифрованный
+            const userId = data._original?.id || data.id;
             usersCache[username] = {
-              id: data._original?.id || data.id,
+              id: userId,
               displayName: data._original?.displayName || username,
               avatar: data.avatar || null
             };
+            console.log(`Загружен пользователь: ${username} с ID: ${userId}`);
           }
         }
+        console.log("Всего пользователей в кэше:", Object.keys(usersCache).length);
       } catch(e) {
         console.error("Ошибка загрузки пользователей:", e);
       }
@@ -1514,7 +1517,10 @@
         `;
         
         el.querySelector('.btn-start-chat').addEventListener('click', () => {
-          openChat(user.username, usersCache[user.username].id, user.displayName, user.avatar);
+          const userData = usersCache[user.username];
+          if (userData) {
+            openChat(user.username, userData.id, userData.displayName, userData.avatar);
+          }
         });
         
         searchResults.appendChild(el);
@@ -1525,6 +1531,7 @@
     function openChat(username, userId, displayName, avatar) {
       if (!sessionUser) return;
       
+      console.log("Открытие чата с:", username, userId);
       currentChat = { userId, username, displayName, avatar };
       chatUserName.innerHTML = `${escapeHtml(displayName)} <span style="opacity:0.7;">(@${escapeHtml(username)})</span>`;
       currentMessagesPage = 1;
@@ -1558,6 +1565,7 @@
       if (!sessionUser || !otherUserId) return;
 
       const convId = [sessionUser.id, otherUserId].sort().join('_');
+      console.log("Загрузка сообщений для диалога:", convId);
       
       // Очищаем старые слушатели для этого диалога
       if (messagesListeners.has(convId)) {
@@ -1567,10 +1575,11 @@
       // Устанавливаем слушатель на новые сообщения
       const messagesQuery = query(ref(db, `messages/${convId}`), orderByChild('createdAt'), limitToLast(50));
       const unsub = onValue(messagesQuery, async (snap) => {
+        console.log("Новые сообщения получены");
         // При получении новых сообщений, перезагружаем первую страницу
         if (page === 1) {
           const result = await loadMessagesWithArchive(convId, 1);
-          displayMessages(result.messages, 1, result.hasMore, result.total);
+          displayMessages(result.messages, 1, result.hasMore, result.total, convId);
         }
       });
 
@@ -1578,10 +1587,10 @@
 
       // Загружаем сообщения из текущих и архива
       const result = await loadMessagesWithArchive(convId, page);
-      displayMessages(result.messages, page, result.hasMore, result.total);
+      displayMessages(result.messages, page, result.hasMore, result.total, convId);
     }
 
-    function displayMessages(messages, page, hasMore, total) {
+    function displayMessages(messages, page, hasMore, total, convId) {
       chatMessages.innerHTML = "";
       
       if (messages.length === 0) {
@@ -1743,6 +1752,7 @@
       if (!text) return;
 
       const convId = [sessionUser.id, currentChat.userId].sort().join('_');
+      console.log("Отправка сообщения в диалог:", convId);
       
       try {
         const message = {
@@ -1795,41 +1805,64 @@
 
     // Загрузка диалогов
     function loadDialogs() {
-      if (!sessionUser) return;
+      if (!sessionUser) {
+        console.log("Нет пользователя в сессии");
+        return;
+      }
 
-      dialogsList.innerHTML = "";
+      console.log("Загрузка диалогов для пользователя:", sessionUser.username, sessionUser.id);
+      dialogsList.innerHTML = "<div class='post'>Загрузка диалогов...</div>";
 
+      // Слушаем изменения в сообщениях
       onValue(messagesRef(), async (snap) => {
+        console.log("Получены данные сообщений");
         const val = snap.val() || {};
         const dialogs = new Map();
         let unreadCount = 0;
 
+        // Проходим по всем диалогам
         for (const [convId, messages] of Object.entries(val)) {
           const [id1, id2] = convId.split('_');
+          
+          // Проверяем, участвует ли текущий пользователь в этом диалоге
           if (id1 === sessionUser.id || id2 === sessionUser.id) {
             const otherId = id1 === sessionUser.id ? id2 : id1;
+            console.log("Найден диалог с ID:", otherId);
             
+            // Ищем пользователя по ID в кэше
+            let foundUser = null;
             for (const [username, data] of Object.entries(usersCache)) {
               if (data.id === otherId) {
-                const lastMsg = Object.values(messages)
-                  .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0))[0];
-                
-                let unreadInDialog = 0;
-                for (const msg of Object.values(messages)) {
-                  if (msg.to === sessionUser.id && !msg.read) {
-                    unreadInDialog++;
-                    unreadCount++;
-                  }
-                }
-                
-                dialogs.set(username, {
-                  ...data,
-                  lastMsg: lastMsg?._original?.text || '...',
-                  lastTime: lastMsg?.createdAt,
-                  unread: unreadInDialog
-                });
+                foundUser = { username, ...data };
                 break;
               }
+            }
+            
+            if (foundUser) {
+              // Получаем последнее сообщение
+              const messagesArray = Object.values(messages);
+              const sortedMessages = messagesArray.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+              const lastMsg = sortedMessages[0];
+              
+              // Считаем непрочитанные сообщения
+              let unreadInDialog = 0;
+              for (const msg of messagesArray) {
+                if (msg.to === sessionUser.id && !msg.read) {
+                  unreadInDialog++;
+                  unreadCount++;
+                }
+              }
+              
+              dialogs.set(foundUser.username, {
+                id: foundUser.id,
+                displayName: foundUser.displayName,
+                avatar: foundUser.avatar,
+                lastMsg: lastMsg?._original?.text || '...',
+                lastTime: lastMsg?.createdAt,
+                unread: unreadInDialog
+              });
+              
+              console.log("Добавлен диалог с:", foundUser.username);
             }
           }
         }
@@ -1843,19 +1876,24 @@
             if (id1 === sessionUser.id || id2 === sessionUser.id) {
               const otherId = id1 === sessionUser.id ? id2 : id1;
               
+              // Ищем пользователя по ID в кэше
               for (const [username, data] of Object.entries(usersCache)) {
                 if (data.id === otherId && !dialogs.has(username)) {
                   // Добавляем диалог из архива, если его нет в текущих
-                  const lastMsg = Object.values(messages)
-                    .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0))[0];
+                  const messagesArray = Object.values(messages);
+                  const sortedMessages = messagesArray.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+                  const lastMsg = sortedMessages[0];
                   
                   dialogs.set(username, {
-                    ...data,
+                    id: data.id,
+                    displayName: data.displayName,
+                    avatar: data.avatar,
                     lastMsg: lastMsg?._original?.text || '...',
                     lastTime: lastMsg?.createdAt,
                     unread: 0,
                     archived: true
                   });
+                  console.log("Добавлен архивный диалог с:", username);
                   break;
                 }
               }
@@ -1863,6 +1901,7 @@
           }
         }
 
+        // Обновляем счетчик непрочитанных
         if (unreadCount > 0) {
           unreadMessages.classList.remove("hidden");
           unreadMessages.innerHTML = `<span class="icon">chat</span> ${unreadCount} новых`;
@@ -1870,14 +1909,17 @@
           unreadMessages.classList.add("hidden");
         }
 
+        // Отображаем диалоги
         if (dialogs.size === 0) {
           dialogsList.innerHTML = '<div class="post">Нет диалогов</div>';
           return;
         }
 
+        // Сортируем по времени последнего сообщения
         const sortedDialogs = Array.from(dialogs.entries())
           .sort((a, b) => (b[1].lastTime || 0) - (a[1].lastTime || 0));
 
+        dialogsList.innerHTML = "";
         let hasArchived = false;
         
         for (const [username, data] of sortedDialogs) {
@@ -1923,6 +1965,8 @@
         } else {
           archivedMessages.classList.add("hidden");
         }
+        
+        console.log("Всего диалогов:", dialogs.size);
       });
     }
 
@@ -2064,6 +2108,8 @@
 
         const displayName = u._original?.displayName || username;
         const id = u._original?.id || u.id;
+        
+        console.log("Вход пользователя:", username, "ID:", id);
         
         saveSession({ username: u._original?.username || username, id, displayName, avatar: u.avatar || null });
         await loadUsersCache();
@@ -2683,21 +2729,20 @@
     // Старт
     const s = loadSession();
     if(s) sessionUser = s;
-    loadUsersCache().then(() => {
-      attachFeedListener();
-      loadNews();
-      refreshUI();
-      if (sessionUser) {
-        updateUserStatus(true);
-        if (sessionUser.avatar) {
-          updateAvatarDisplay(sessionUser.avatar);
-        }
-        // Запускаем архивацию при старте
-        archiveOldMessages();
-        // Запускаем архивацию каждые 24 часа
-        setInterval(archiveOldMessages, 24 * 60 * 60 * 1000);
+    await loadUsersCache();
+    attachFeedListener();
+    loadNews();
+    refreshUI();
+    if (sessionUser) {
+      updateUserStatus(true);
+      if (sessionUser.avatar) {
+        updateAvatarDisplay(sessionUser.avatar);
       }
-    });
+      // Запускаем архивацию при старте
+      archiveOldMessages();
+      // Запускаем архивацию каждые 24 часа
+      setInterval(archiveOldMessages, 24 * 60 * 60 * 1000);
+    }
 
     // Обработка закрытия вкладки
     window.addEventListener("beforeunload", () => {
