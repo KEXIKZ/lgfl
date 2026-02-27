@@ -1,0 +1,1307 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>L.G.F.L</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:wght@400&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg:#0c0f14;
+      --surface:#121622;
+      --surface2:#171c2b;
+      --surface3:#1c2233;
+      --text:#e7e9f1;
+      --outline:rgba(231,233,241,.10);
+      --outline2:rgba(231,233,241,.18);
+      --primary:#8ab4ff;
+      --danger:#ff7a7a;
+      --ok:#65d48e;
+      --admin:#bb86fc;
+      --news:#ffb86b;
+      --r-xl:22px;
+      --r-lg:18px;
+      --shadow:0 10px 30px rgba(0,0,0,.35);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      background:var(--bg);
+      color:var(--text);
+      font:14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      letter-spacing:.2px;
+    }
+
+    .app{min-height:100%;display:flex;flex-direction:column}
+
+    .topbar{
+      position:sticky;top:0;z-index:10;
+      background:rgba(12,15,20,.86);
+      backdrop-filter:blur(10px);
+      border-bottom:1px solid var(--outline);
+    }
+    .topbar__inner{
+      max-width:980px;margin:0 auto;padding:14px 16px;
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+    }
+    .brand{display:flex;align-items:center;gap:10px;min-width:160px}
+    .logo{
+      width:36px;height:36px;border-radius:12px;
+      background:var(--surface2);
+      border:1px solid var(--outline2);
+      display:grid;place-items:center;
+      box-shadow:var(--shadow);
+    }
+    .logo .material-symbols-rounded{
+      font-variation-settings:"FILL" 1,"wght" 500,"GRAD" 0,"opsz" 24;
+      color:var(--primary);font-size:20px;line-height:1;
+    }
+    .brand__name{font-weight:800;letter-spacing:1px}
+
+    .nav{display:flex;align-items:center;gap:8px}
+
+    .content{
+      max-width:980px;margin:0 auto;padding:16px;width:100%;
+      display:grid;grid-template-columns:1fr 320px;gap:14px;
+    }
+    @media (max-width:880px){ .content{grid-template-columns:1fr} .rightcol{order:-1} }
+
+    .card{
+      background:var(--surface);
+      border:1px solid var(--outline);
+      border-radius:var(--r-xl);
+      padding:14px;
+      box-shadow:var(--shadow);
+    }
+    .card--flat{box-shadow:none;background:var(--surface2)}
+    .card__title{
+      display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px;
+    }
+    .card__title h2{font-size:14px;margin:0;font-weight:800;letter-spacing:.4px}
+
+    .row{display:flex;gap:10px;align-items:center}
+    .col{display:flex;flex-direction:column;gap:10px}
+
+    .btn{
+      appearance:none;
+      border:1px solid var(--outline2);
+      background:var(--surface3);
+      color:var(--text);
+      border-radius:999px;
+      padding:10px 14px;
+      cursor:pointer;
+      font-weight:750;
+      transition:transform .05s ease,border-color .12s ease,background .12s ease,opacity .12s ease;
+      display:inline-flex;align-items:center;gap:8px;
+      user-select:none;white-space:nowrap;
+    }
+    .btn:hover{border-color:rgba(138,180,255,.35)}
+    .btn:active{transform:translateY(1px)}
+    .btn:disabled{opacity:.55;cursor:not-allowed}
+
+    .btn--primary{background:rgba(138,180,255,.16);border-color:rgba(138,180,255,.35)}
+    .btn--ghost{background:transparent;border-color:var(--outline)}
+    .btn--danger{background:rgba(255,122,122,.12);border-color:rgba(255,122,122,.26)}
+    .btn--admin{background:rgba(187,134,252,.16);border-color:rgba(187,134,252,.35)}
+    .btn--news{background:rgba(255,184,107,.16);border-color:rgba(255,184,107,.35)}
+
+    .icon{
+      font-family:"Material Symbols Rounded";
+      font-weight:normal;font-style:normal;font-size:18px;line-height:1;
+      letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;
+      -webkit-font-feature-settings:'liga';-webkit-font-smoothing:antialiased;
+    }
+
+    .input,.textarea{
+      width:100%;
+      background:var(--surface3);
+      border:1px solid var(--outline);
+      color:var(--text);
+      border-radius:var(--r-lg);
+      padding:10px 12px;
+      outline:none;
+      transition:border-color .12s ease, box-shadow .12s ease;
+    }
+    .textarea{min-height:110px;resize:vertical}
+    .input:focus,.textarea:focus{
+      border-color:rgba(138,180,255,.35);
+      box-shadow:0 0 0 3px rgba(138,180,255,.12);
+    }
+    .label{font-size:12px;opacity:.9;margin-bottom:6px}
+
+    .feed{display:flex;flex-direction:column;gap:12px}
+    .post{
+      background:var(--surface2);
+      border:1px solid var(--outline);
+      border-radius:var(--r-xl);
+      padding:14px;
+    }
+    .post--news{
+      border-left:4px solid var(--news);
+      background:rgba(255,184,107,.05);
+    }
+    .post__head{
+      display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin-bottom:10px;
+    }
+    .post__author{font-weight:900;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+    .badge{
+      display:inline-flex;align-items:center;gap:6px;
+      padding:4px 9px;border-radius:999px;
+      font-size:12px;border:1px solid var(--outline2);
+      background:rgba(255,255,255,.04);
+      opacity:.95;
+    }
+    .badge--pin{
+      border-color:rgba(138,180,255,.35);
+      background:rgba(138,180,255,.10);
+      color:var(--primary);
+    }
+    .badge--time{
+      border-color:rgba(255,255,255,.08);
+      background:rgba(255,255,255,.02);
+      font-size:11px;
+    }
+    .badge--admin{
+      border-color:rgba(187,134,252,.35);
+      background:rgba(187,134,252,.10);
+      color:#bb86fc;
+    }
+    .badge--bot{
+      border-color:rgba(138,180,255,.35);
+      background:rgba(138,180,255,.10);
+      color:var(--primary);
+    }
+    .badge--news{
+      border-color:var(--news);
+      background:rgba(255,184,107,.10);
+      color:var(--news);
+    }
+    .badge--leaguefun{
+      border-color:#50fa7b;
+      background:rgba(80,250,123,.10);
+      color:#50fa7b;
+    }
+    .post__date{font-size:12px;opacity:.8}
+    .post__text{white-space:pre-wrap;word-break:break-word;font-size:14px;margin-top:8px;}
+
+    .hr{height:1px;background:var(--outline);margin:12px 0}
+    .hidden{display:none !important}
+    .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+
+    .toast{
+      position:fixed;left:50%;bottom:18px;transform:translateX(-50%);
+      background:rgba(18,22,34,.92);
+      border:1px solid var(--outline2);
+      border-radius:999px;
+      padding:10px 14px;
+      display:none;align-items:center;gap:10px;
+      box-shadow:var(--shadow);
+      max-width:min(92vw,760px);
+      z-index:50;
+    }
+    .toast.show{display:flex}
+
+    .time-details{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      margin-top:6px;
+      font-size:11px;
+      color:#9aa1b3;
+    }
+
+    .admin-section{
+      background:rgba(187,134,252,.05);
+      border:1px solid rgba(187,134,252,.2);
+      border-radius:var(--r-lg);
+      padding:10px;
+      margin-bottom:12px;
+    }
+
+    .news-section{
+      background:rgba(255,184,107,.05);
+      border:1px solid rgba(255,184,107,.2);
+      border-radius:var(--r-lg);
+      padding:10px;
+      margin-bottom:12px;
+    }
+
+    /* Стили для RTDB просмотра */
+    .rtdb-viewer{
+      background:var(--surface2);
+      border:1px solid var(--outline);
+      border-radius:var(--r-lg);
+      padding:12px;
+      margin-top:16px;
+      max-height:400px;
+      overflow:auto;
+    }
+    .rtdb-item{
+      border-bottom:1px solid var(--outline);
+      padding:8px 0;
+      font-family:monospace;
+      font-size:12px;
+    }
+    .rtdb-key{
+      color:var(--primary);
+      font-weight:bold;
+    }
+    .rtdb-value{
+      color:var(--ok);
+      margin-left:16px;
+      word-break:break-all;
+    }
+    .json-view{
+      background:var(--surface3);
+      border-radius:var(--r-lg);
+      padding:12px;
+      font-family:monospace;
+      font-size:12px;
+      white-space:pre-wrap;
+      word-break:break-word;
+      color:var(--primary);
+    }
+
+    .tabs{
+      display:flex;
+      gap:8px;
+      margin-bottom:16px;
+      border-bottom:1px solid var(--outline);
+      padding-bottom:8px;
+    }
+    .tab{
+      padding:8px 16px;
+      border-radius:999px;
+      cursor:pointer;
+      background:var(--surface2);
+      border:1px solid var(--outline);
+    }
+    .tab.active{
+      background:var(--primary);
+      color:var(--bg);
+      border-color:var(--primary);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="topbar__inner">
+        <div class="brand">
+          <div class="logo" title="L.G.F.L"><span class="material-symbols-rounded">forum</span></div>
+          <div class="brand__name">L.G.F.L</div>
+        </div>
+
+        <nav class="nav">
+          <button id="navFeed" class="btn btn--ghost"><span class="icon">dynamic_feed</span> Лента</button>
+          <button id="navNews" class="btn btn--ghost"><span class="icon">newspaper</span> Новости</button>
+          <button id="navProfile" class="btn btn--ghost"><span class="icon">account_circle</span> Профиль</button>
+          <button id="navRTDB" class="btn btn--ghost hidden"><span class="icon">database</span> RTDB</button>
+          <button id="btnLogout" class="btn btn--danger hidden"><span class="icon">logout</span> Выйти</button>
+        </nav>
+      </div>
+    </header>
+
+    <main class="content">
+      <section class="leftcol">
+        <!-- AUTH -->
+        <div id="authCard" class="card">
+          <div class="card__title"><h2>Вход / Регистрация</h2></div>
+
+          <div class="col" style="gap:12px;">
+            <div class="row" style="gap:12px; flex-wrap:wrap;">
+              <div style="flex:1; min-width:220px;">
+                <div class="label">Логин</div>
+                <input id="authUser" class="input" autocomplete="username" placeholder="например: leaguefan">
+              </div>
+              <div style="flex:1; min-width:220px;">
+                <div class="label">Пароль</div>
+                <input id="authPass" class="input" type="password" autocomplete="current-password" placeholder="••••••••">
+              </div>
+            </div>
+
+            <div class="row" style="justify-content:space-between; flex-wrap:wrap;">
+              <div class="row" style="flex-wrap:wrap;">
+                <button id="btnLogin" class="btn btn--primary"><span class="icon">login</span> Войти</button>
+                <button id="btnRegister" class="btn"><span class="icon">person_add</span> Регистрация</button>
+              </div>
+              <div id="authErr" style="opacity:.92;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- FEED (обычная лента) -->
+        <div id="feedCard" class="card hidden">
+          <div class="card__title">
+            <h2>Лента</h2>
+            <div class="row" style="gap:8px; flex-wrap:wrap;">
+              <button id="btnRefresh" class="btn btn--ghost" title="Обновить"><span class="icon">refresh</span></button>
+              <div id="feedStatus" style="opacity:.85;font-size:12px;"></div>
+            </div>
+          </div>
+
+          <!-- Админская панель (появляется после ввода токена) -->
+          <div id="adminPanel" class="admin-section hidden">
+            <div class="row" style="justify-content:space-between;">
+              <span><span class="icon" style="color:#bb86fc;">admin_panel_settings</span> Админ-режим</span>
+              <button id="btnExitAdmin" class="btn btn--ghost" style="padding:4px 10px;">×</button>
+            </div>
+            <div class="row" style="margin-top:8px;">
+              <input type="password" id="adminTokenInput" class="input" placeholder="Введите админ токен" style="flex:1;">
+              <button id="btnActivateAdmin" class="btn btn--admin"><span class="icon">verified</span> Активировать</button>
+            </div>
+          </div>
+
+          <div class="card card--flat" style="margin-bottom:12px;">
+            <div class="label">Новый пост</div>
+            <textarea id="postText" class="textarea" maxlength="1600" placeholder="Пиши текст..."></textarea>
+            <div class="row" style="justify-content:flex-end; margin-top:10px; flex-wrap:wrap;">
+              <button id="btnPost" class="btn btn--primary"><span class="icon">send</span> Опубликовать</button>
+            </div>
+          </div>
+
+          <div id="feed" class="feed"></div>
+        </div>
+
+        <!-- NEWS (новости) -->
+        <div id="newsCard" class="card hidden">
+          <div class="card__title">
+            <h2><span class="icon" style="color:var(--news);">newspaper</span> Новости</h2>
+            <div class="row" style="gap:8px;">
+              <button id="btnRefreshNews" class="btn btn--ghost"><span class="icon">refresh</span></button>
+              <span id="newsStatus" style="opacity:.85;font-size:12px;"></span>
+            </div>
+          </div>
+
+          <!-- Форма для новостей (только для авторов) -->
+          <div id="newsFormContainer" class="hidden">
+            <div class="news-section">
+              <div class="label">Новость</div>
+              <textarea id="newsText" class="textarea" maxlength="1600" placeholder="Текст новости..."></textarea>
+              <div class="row" style="justify-content:flex-end; margin-top:10px;">
+                <button id="btnPostNews" class="btn btn--news"><span class="icon">send</span> Опубликовать новость</button>
+              </div>
+            </div>
+          </div>
+
+          <div id="newsFeed" class="feed"></div>
+        </div>
+
+        <!-- PROFILE -->
+        <div id="profileCard" class="card hidden">
+          <div class="card__title"><h2>Профиль</h2></div>
+
+          <div class="col" style="gap:12px;">
+            <div class="card card--flat">
+              <div class="row" style="justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap;">
+                <div class="col" style="gap:6px; min-width:260px;">
+                  <div class="label">Логин</div>
+                  <div id="pUser" style="font-weight:900; display:flex; align-items:center; gap:8px;"></div>
+
+                  <div class="label" style="margin-top:10px;">ID</div>
+                  <div id="pId" class="mono" style="opacity:.92;"></div>
+                </div>
+
+                <div class="col" style="gap:6px; min-width:220px;">
+                  <div class="label">Имя</div>
+                  <input id="displayName" class="input" placeholder="как показывать в постах">
+                  <div class="row" style="justify-content:flex-end; margin-top:6px;">
+                    <button id="btnSaveName" class="btn btn--primary"><span class="icon">save</span> Сохранить</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="hr"></div>
+
+              <div class="row" style="justify-content:space-between; flex-wrap:wrap;">
+                <div class="row" style="gap:14px; flex-wrap:wrap;">
+                  <span class="badge"><span class="icon">article</span> Постов: <b id="pCount">0</b></span>
+                  <span id="adminBadgeProfile" class="badge badge--admin hidden"><span class="icon">verified</span> Админ</span>
+                  <span id="leaguefunBadgeProfile" class="badge badge--leaguefun hidden"><span class="icon">star</span> LEGEND</span>
+                </div>
+                <button id="btnMyPosts" class="btn btn--ghost"><span class="icon">filter_alt</span> Мои посты</button>
+              </div>
+            </div>
+
+            <div>
+              <div class="row" style="justify-content:space-between; margin-bottom:10px;">
+                <div style="font-size:12px;opacity:.85;">Мои посты</div>
+                <button id="btnMyPostsClear" class="btn btn--ghost hidden"><span class="icon">close</span> Скрыть</button>
+              </div>
+              <div id="myPosts" class="feed hidden"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RTDB VIEWER (только для f1leaguebot) -->
+        <div id="rtdbCard" class="card hidden">
+          <div class="card__title">
+            <h2><span class="icon" style="color:var(--primary);">database</span> RTDB Просмотр</h2>
+            <button id="btnRefreshRTDB" class="btn btn--ghost"><span class="icon">refresh</span></button>
+          </div>
+          
+          <div class="col" style="gap:12px;">
+            <div class="row" style="flex-wrap:wrap;">
+              <select id="rtdbPath" class="input" style="flex:1;">
+                <option value="users">Пользователи (users)</option>
+                <option value="posts">Посты (posts)</option>
+                <option value="news">Новости (news)</option>
+                <option value="root" selected>Вся база (root)</option>
+              </select>
+              <button id="btnLoadRTDB" class="btn btn--primary"><span class="icon">visibility</span> Загрузить</button>
+            </div>
+            
+            <div class="admin-section" style="margin-bottom:0;">
+              <span class="badge badge--admin"><span class="icon">admin_panel_settings</span> Только для f1leaguebot</span>
+              <span class="badge badge--bot" style="margin-left:8px;"><span class="icon">smart_toy</span> Бот-аккаунт</span>
+            </div>
+
+            <div id="rtdbContent" class="json-view">
+              Нажмите "Загрузить" для просмотра данных
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="rightcol">
+        <div class="card">
+          <div class="card__title"><h2>Статус</h2></div>
+          <div class="col" style="gap:10px;">
+            <span id="statusAuth" class="badge"><span class="icon">key</span> Гость</span>
+            <span id="statusDb" class="badge"><span class="icon">database</span> RTDB: —</span>
+            <span id="adminStatus" class="badge hidden"><span class="icon">admin_panel_settings</span> Админ</span>
+            <span id="botStatus" class="badge badge--bot hidden"><span class="icon">smart_toy</span> Бот</span>
+            <span id="leaguefunStatus" class="badge badge--leaguefun hidden"><span class="icon">star</span> LEGEND</span>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:14px;">
+          <div class="card__title"><h2>О разделах</h2></div>
+          <div class="col" style="gap:8px;">
+            <div><span class="badge" style="background:var(--surface2);">📰 Новости</span> — только для авторов</div>
+            <div><span class="badge" style="background:var(--surface2);">💬 Лента</span> — для всех</div>
+          </div>
+        </div>
+      </aside>
+    </main>
+
+    <div id="toast" class="toast" role="status" aria-live="polite">
+      <span class="icon" id="toastIcon">info</span>
+      <div id="toastMsg"></div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+    import {
+      getDatabase, ref, get, set, update, push, onValue, remove, query, orderByChild, equalTo
+    } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-database.js";
+
+    // ====== НАСТРОЙКИ ======
+    const ADMIN_KEY = "F1leaguebot"; // Токен для входа в админку
+    const BOT_USERNAME = "f1leaguebot"; // Аккаунт бота (специальный)
+    const LEGEND_USERNAME = "leaguefun"; // Аккаунт с легендарной галочкой
+    const firebaseConfig = {
+      apiKey: "AIzaSyBsWh1hoWrrlMROmv9AiVWWNTjMn64bJPQ",
+      authDomain: "f1leaguesite.firebaseapp.com",
+      projectId: "f1leaguesite",
+      storageBucket: "f1leaguesite.firebasestorage.app",
+      messagingSenderId: "600195548760",
+      appId: "1:600195548760:web:8c193f3add9a46c2192c2d",
+      measurementId: "G-60N6QR300J",
+      databaseURL: "https://f1leaguesite-default-rtdb.firebaseio.com"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    // ====== DOM ======
+    const $ = (id) => document.getElementById(id);
+
+    const authCard = $("authCard");
+    const feedCard = $("feedCard");
+    const newsCard = $("newsCard");
+    const profileCard = $("profileCard");
+    const rtdbCard = $("rtdbCard");
+
+    const navFeed = $("navFeed");
+    const navNews = $("navNews");
+    const navProfile = $("navProfile");
+    const btnLogout = $("btnLogout");
+    const navRTDB = $("navRTDB");
+
+    const statusAuth = $("statusAuth");
+    const statusDb = $("statusDb");
+    const feedStatus = $("feedStatus");
+    const newsStatus = $("newsStatus");
+    const adminStatus = $("adminStatus");
+    const botStatus = $("botStatus");
+    const leaguefunStatus = $("leaguefunStatus");
+    const adminBadgeProfile = $("adminBadgeProfile");
+    const leaguefunBadgeProfile = $("leaguefunBadgeProfile");
+
+    const adminPanel = $("adminPanel");
+    const adminTokenInput = $("adminTokenInput");
+    const btnActivateAdmin = $("btnActivateAdmin");
+    const btnExitAdmin = $("btnExitAdmin");
+
+    const newsFormContainer = $("newsFormContainer");
+    const newsText = $("newsText");
+    const btnPostNews = $("btnPostNews");
+    const btnRefreshNews = $("btnRefreshNews");
+    const newsFeed = $("newsFeed");
+
+    const rtdbPath = $("rtdbPath");
+    const btnLoadRTDB = $("btnLoadRTDB");
+    const btnRefreshRTDB = $("btnRefreshRTDB");
+    const rtdbContent = $("rtdbContent");
+
+    const toastEl = $("toast");
+    const toastIcon = $("toastIcon");
+    const toastMsg = $("toastMsg");
+    let toastTimer = null;
+
+    // ====== СОСТОЯНИЕ ======
+    let sessionUser = null;
+    let isAdminMode = false;
+    const LS_KEY = "lgfl_session_v1";
+
+    function toast(message, icon="info", ms=2400){
+      toastIcon.textContent = icon;
+      toastMsg.innerHTML = message;
+      toastEl.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(()=>toastEl.classList.remove("show"), ms);
+    }
+
+    function escapeHtml(s){
+      return String(s)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function showOnly(which){
+      authCard.classList.toggle("hidden", which !== "auth");
+      feedCard.classList.toggle("hidden", which !== "feed");
+      newsCard.classList.toggle("hidden", which !== "news");
+      profileCard.classList.toggle("hidden", which !== "profile");
+      rtdbCard.classList.toggle("hidden", which !== "rtdb");
+    }
+
+    function routeTo(hash){ location.hash = hash; }
+    function currentRoute(){
+      const h = (location.hash || "#feed").toLowerCase();
+      if(h.includes("profile")) return "profile";
+      if(h.includes("news")) return "news";
+      if(h.includes("rtdb")) return "rtdb";
+      return "feed";
+    }
+
+    // ====== СЕССИЯ ======
+    function saveSession(u){
+      localStorage.setItem(LS_KEY, JSON.stringify(u));
+      sessionUser = u;
+      refreshUI();
+    }
+    function clearSession(){
+      localStorage.removeItem(LS_KEY);
+      sessionUser = null;
+      isAdminMode = false;
+      refreshUI();
+    }
+    function loadSession(){
+      try{
+        const raw = localStorage.getItem(LS_KEY);
+        if(!raw) return null;
+        const u = JSON.parse(raw);
+        if(u && u.username && u.id) return u;
+      }catch(_){}
+      return null;
+    }
+
+    // Проверки
+    function isBotUser(username) {
+      return username && username.toLowerCase() === BOT_USERNAME;
+    }
+    function isLegendUser(username) {
+      return username && username.toLowerCase() === LEGEND_USERNAME;
+    }
+    function canWriteNews() {
+      if(!sessionUser) return false;
+      return isBotUser(sessionUser.username) || isAdminMode;
+    }
+
+    // ====== КРИПТА ======
+    function randomSalt(len=16){
+      const arr = new Uint8Array(len);
+      crypto.getRandomValues(arr);
+      return btoa(String.fromCharCode(...arr)).replaceAll("=", "").slice(0, 22);
+    }
+
+    async function sha256Hex(str){
+      const enc = new TextEncoder().encode(str);
+      const buf = await crypto.subtle.digest("SHA-256", enc);
+      const bytes = new Uint8Array(buf);
+      return [...bytes].map(b=>b.toString(16).padStart(2,"0")).join("");
+    }
+
+    function normalizeUsername(u){
+      return u.trim().toLowerCase().replace(/[^a-z0-9_\.]/g, "");
+    }
+
+    function formatDateTime(ms){
+      if(!ms) return "только что";
+      const d = new Date(ms);
+      const now = new Date();
+      const diff = Math.floor((now - d) / 1000);
+      
+      if (diff < 60) return "только что";
+      if (diff < 3600) return `${Math.floor(diff / 60)} мин назад`;
+      if (diff < 86400) return `${Math.floor(diff / 3600)} ч назад`;
+      
+      return new Intl.DateTimeFormat("ru-RU", { 
+        day: 'numeric', 
+        month: 'short', 
+        hour: '2-digit', 
+        minute: '2-digit' 
+      }).format(d);
+    }
+
+    function formatFullDateTime(ms){
+      if(!ms) return "неизвестно";
+      return new Intl.DateTimeFormat("ru-RU", { 
+        day: 'numeric', 
+        month: 'long', 
+        year: 'numeric',
+        hour: '2-digit', 
+        minute: '2-digit',
+        second: '2-digit'
+      }).format(new Date(ms));
+    }
+
+    // ====== RTDB PATHS ======
+    const usersRef = () => ref(db, "users");
+    const userRef = (username) => ref(db, `users/${username}`);
+    const postsRef = () => ref(db, "posts");
+    const newsRef = () => ref(db, "news");
+
+    // ====== RTDB ПРОСМОТР ======
+    async function loadRTDBData(path) {
+      if(!sessionUser || !isBotUser(sessionUser.username)) {
+        toast("Доступ запрещен", "error");
+        return;
+      }
+
+      try {
+        let dataRef;
+        switch(path) {
+          case 'users':
+            dataRef = usersRef();
+            break;
+          case 'posts':
+            dataRef = postsRef();
+            break;
+          case 'news':
+            dataRef = newsRef();
+            break;
+          case 'root':
+          default:
+            dataRef = ref(db, '/');
+        }
+
+        const snap = await get(dataRef);
+        if(snap.exists()) {
+          const data = snap.val();
+          rtdbContent.textContent = JSON.stringify(data, null, 2);
+          
+          const stats = [];
+          if(path === 'root' || path === 'users') {
+            const usersCount = data.users ? Object.keys(data.users).length : 0;
+            stats.push(`👥 Пользователей: ${usersCount}`);
+          }
+          if(path === 'root' || path === 'posts') {
+            const postsCount = data.posts ? Object.keys(data.posts).length : 0;
+            stats.push(`📝 Постов: ${postsCount}`);
+          }
+          if(path === 'root' || path === 'news') {
+            const newsCount = data.news ? Object.keys(data.news).length : 0;
+            stats.push(`📰 Новостей: ${newsCount}`);
+          }
+          
+          if(stats.length > 0) {
+            toast(stats.join(' • '), "info", 3000);
+          }
+        } else {
+          rtdbContent.textContent = '{} // Данные отсутствуют';
+        }
+      } catch(e) {
+        rtdbContent.textContent = `Ошибка загрузки: ${e.message}`;
+        toast("Ошибка RTDB: " + e.message, "error", 4000);
+      }
+    }
+
+    // ====== AUTH ======
+    $("btnRegister").addEventListener("click", async () => {
+      $("authErr").textContent = "";
+      const rawU = $("authUser").value;
+      const pass = $("authPass").value;
+
+      const username = normalizeUsername(rawU);
+      if(!username) return $("authErr").textContent = "Нормальный логин.";
+      if(pass.length < 4) return $("authErr").textContent = "Пароль минимум 4 символа.";
+
+      try{
+        const snap = await get(userRef(username));
+        if(snap.exists()){
+          $("authErr").textContent = "Логин занят.";
+          return;
+        }
+
+        const salt = randomSalt();
+        const passHash = await sha256Hex(salt + ":" + pass);
+
+        const id = "u_" + username + "_" + Date.now();
+        await set(userRef(username), {
+          id,
+          username,
+          displayName: username,
+          salt,
+          passHash,
+          createdAt: Date.now()
+        });
+
+        saveSession({ username, id, displayName: username });
+        toast("Аккаунт создан.", "check_circle");
+        routeTo("#feed");
+      }catch(e){
+        $("authErr").textContent = "Ошибка регистрации.";
+        toast("Ошибка: <b>"+escapeHtml(e.message)+"</b>", "error", 3600);
+      }
+    });
+
+    $("btnLogin").addEventListener("click", async () => {
+      $("authErr").textContent = "";
+      const rawU = $("authUser").value;
+      const pass = $("authPass").value;
+
+      const username = normalizeUsername(rawU);
+      if(!username) return $("authErr").textContent = "Нормальный логин.";
+      if(!pass) return $("authErr").textContent = "Пароль введи.";
+
+      try{
+        const snap = await get(userRef(username));
+        if(!snap.exists()){
+          $("authErr").textContent = "Нет такого логина.";
+          return;
+        }
+        const u = snap.val();
+        const check = await sha256Hex((u.salt || "") + ":" + pass);
+        if(check !== u.passHash){
+          $("authErr").textContent = "Неверный пароль.";
+          return;
+        }
+
+        saveSession({ username: u.username, id: u.id, displayName: u.displayName || u.username });
+        toast("Вход выполнен.", "login");
+        routeTo("#feed");
+      }catch(e){
+        $("authErr").textContent = "Ошибка входа.";
+        toast("Ошибка: <b>"+escapeHtml(e.message)+"</b>", "error", 3600);
+      }
+    });
+
+    btnLogout.addEventListener("click", () => {
+      clearSession();
+      toast("Выход.", "logout");
+      routeTo("#feed");
+    });
+
+    navFeed.addEventListener("click", () => routeTo("#feed"));
+    navNews.addEventListener("click", () => routeTo("#news"));
+    navProfile.addEventListener("click", () => routeTo("#profile"));
+    navRTDB.addEventListener("click", () => routeTo("#rtdb"));
+    window.addEventListener("hashchange", refreshUI);
+
+    // ====== АДМИН-ПАНЕЛЬ ======
+    btnActivateAdmin.addEventListener("click", () => {
+      const token = adminTokenInput.value.trim();
+      if(token === ADMIN_KEY) {
+        isAdminMode = true;
+        adminPanel.classList.add("hidden");
+        adminStatus.classList.remove("hidden");
+        toast("Админ-режим активирован!", "admin_panel_settings");
+        refreshUI();
+      } else {
+        toast("Неверный токен!", "error");
+      }
+      adminTokenInput.value = "";
+    });
+
+    btnExitAdmin.addEventListener("click", () => {
+      isAdminMode = false;
+      adminStatus.classList.add("hidden");
+      toast("Админ-режим деактивирован");
+      refreshUI();
+    });
+
+    // ====== NEWS ======
+    btnPostNews.addEventListener("click", async () => {
+      if(!canWriteNews()) {
+        toast("Только бот или админ могут писать новости", "error");
+        return;
+      }
+      
+      const text = newsText.value.trim();
+      if(!text) return toast("Пустая новость", "warning");
+      
+      btnPostNews.disabled = true;
+      try {
+        const now = Date.now();
+        await push(newsRef(), {
+          text,
+          authorName: sessionUser.displayName || sessionUser.username,
+          authorUid: sessionUser.id,
+          createdAt: now,
+          isNews: true
+        });
+        newsText.value = "";
+        toast("Новость опубликована", "newspaper");
+      } catch(e) {
+        toast("Ошибка: " + e.message, "error");
+      } finally {
+        btnPostNews.disabled = false;
+      }
+    });
+
+    // Загрузка новостей
+    function loadNews() {
+      onValue(newsRef(), (snap) => {
+        const val = snap.val() || {};
+        const arr = Object.entries(val)
+          .map(([key, n]) => ({ key, ...n }))
+          .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+
+        newsFeed.innerHTML = "";
+        if(arr.length === 0) {
+          newsFeed.innerHTML = '<div class="post">Новостей пока нет</div>';
+          newsStatus.textContent = "0";
+          return;
+        }
+
+        for(const item of arr) {
+          const el = document.createElement("div");
+          el.className = "post post--news";
+          
+          const author = escapeHtml(item.authorName || "author");
+          const timeAgo = formatDateTime(item.createdAt);
+          const fullTime = formatFullDateTime(item.createdAt);
+          
+          el.innerHTML = `
+            <div class="post__head">
+              <div>
+                <div class="post__author">
+                  <span class="badge" style="background:rgba(138,180,255,.1);">${author}</span>
+                  <span class="badge badge--news"><span class="icon">newspaper</span> НОВОСТЬ</span>
+                </div>
+                <div class="time-details">
+                  <span class="badge badge--time" title="${fullTime}">
+                    <span class="icon">schedule</span> ${timeAgo}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div class="post__text">${escapeHtml(item.text)}</div>
+          `;
+          
+          newsFeed.appendChild(el);
+        }
+        newsStatus.textContent = String(arr.length);
+      });
+    }
+
+    btnRefreshNews.addEventListener("click", () => {
+      toast("Новости обновлены", "refresh", 900);
+    });
+
+    // ====== PROFILE ======
+    $("btnSaveName").addEventListener("click", async () => {
+      if(!sessionUser) return;
+      const name = $("displayName").value.trim();
+      if(name.length > 24) return toast("Имя до 24 символов.", "warning");
+
+      $("btnSaveName").disabled = true;
+      try{
+        await update(userRef(sessionUser.username), { displayName: name || sessionUser.username });
+        sessionUser.displayName = name || sessionUser.username;
+        saveSession(sessionUser);
+        toast("Сохранено.", "check_circle");
+        await loadProfile();
+      }catch(e){
+        toast("Ошибка: <b>"+escapeHtml(e.message)+"</b>", "error", 3600);
+      }finally{
+        $("btnSaveName").disabled = false;
+      }
+    });
+
+    async function loadProfile(){
+      if(!sessionUser) return;
+      
+      $("pUser").innerHTML = '';
+      
+      if(isBotUser(sessionUser.username)) {
+        $("pUser").innerHTML = `
+          <span>${escapeHtml(sessionUser.username)}</span>
+          <span class="badge badge--bot"><span class="icon">smart_toy</span> БОТ</span>
+          <span class="badge badge--admin"><span class="icon">verified</span> АДМИН</span>
+        `;
+      } else if(isLegendUser(sessionUser.username)) {
+        $("pUser").innerHTML = `
+          <span>${escapeHtml(sessionUser.username)}</span>
+          <span class="badge badge--leaguefun"><span class="icon">star</span> LEGEND</span>
+        `;
+      } else {
+        $("pUser").textContent = sessionUser.username;
+      }
+      
+      $("pId").textContent = sessionUser.id;
+      $("displayName").value = sessionUser.displayName || sessionUser.username;
+
+      if(isBotUser(sessionUser.username)) {
+        adminBadgeProfile.classList.remove("hidden");
+      } else {
+        adminBadgeProfile.classList.add("hidden");
+      }
+      
+      if(isLegendUser(sessionUser.username)) {
+        leaguefunBadgeProfile.classList.remove("hidden");
+      } else {
+        leaguefunBadgeProfile.classList.add("hidden");
+      }
+
+      try{
+        const snap = await get(postsRef());
+        const val = snap.val() || {};
+        let cnt = 0;
+        for(const k of Object.keys(val)){
+          if(val[k]?.uid === sessionUser.id) cnt++;
+        }
+        $("pCount").textContent = String(cnt);
+      }catch(_){
+        $("pCount").textContent = "0";
+      }
+    }
+
+    // ====== POSTS ======
+    $("btnPost").addEventListener("click", async () => {
+      if(!sessionUser) return toast("Сначала войди.", "warning");
+      const text = $("postText").value.trim();
+      if(!text) return toast("Пустой пост нельзя.", "warning");
+      if(text.length > 1600) return toast("До 1600 символов.", "warning");
+
+      $("btnPost").disabled = true;
+      try{
+        const now = Date.now();
+        const p = {
+          uid: sessionUser.id,
+          authorName: sessionUser.displayName || sessionUser.username,
+          text,
+          pinned: false,
+          createdAt: now,
+          editedAt: null
+        };
+        await push(postsRef(), p);
+        $("postText").value = "";
+        toast("Опубликовано.", "send");
+      }catch(e){
+        toast("Ошибка: <b>"+escapeHtml(e.message)+"</b>", "error", 3600);
+      }finally{
+        $("btnPost").disabled = false;
+      }
+    });
+
+    async function deletePost(postId, postUid) {
+      if(!sessionUser) {
+        toast("Нужно войти.", "warning");
+        return false;
+      }
+      
+      if(postUid !== sessionUser.id && !isAdminMode) {
+        toast("Нет прав на удаление этого поста.", "block");
+        return false;
+      }
+
+      if(!confirm("Точно удалить пост?")) return false;
+
+      try {
+        await remove(ref(db, `posts/${postId}`));
+        toast("Пост удалён.", "delete");
+        return true;
+      } catch(e) {
+        toast("Ошибка: <b>"+escapeHtml(e.message)+"</b>", "error", 3600);
+        return false;
+      }
+    }
+
+    $("btnRefresh").addEventListener("click", () => {
+      toast("Обновлено.", "refresh", 900);
+    });
+
+    function renderPost(key, p){
+      const el = document.createElement("div");
+      el.className = "post";
+      const author = escapeHtml(p.authorName || "user");
+      const timeAgo = formatDateTime(p.createdAt);
+      const fullTime = formatFullDateTime(p.createdAt);
+      const isPinned = !!p.pinned;
+      const mine = sessionUser && p.uid === sessionUser.id;
+      const isAuthorBot = p.authorName && p.authorName.toLowerCase() === BOT_USERNAME;
+      const isAuthorLegend = p.authorName && p.authorName.toLowerCase() === LEGEND_USERNAME;
+      const edited = p.editedAt ? ` (ред. ${formatDateTime(p.editedAt)})` : '';
+
+      let authorBadges = '';
+      if(isAuthorBot) {
+        authorBadges = `
+          <span class="badge badge--bot"><span class="icon">smart_toy</span> БОТ</span>
+          <span class="badge badge--admin"><span class="icon">verified</span> АДМИН</span>
+        `;
+      } else if(isAuthorLegend) {
+        authorBadges = `
+          <span class="badge badge--leaguefun"><span class="icon">star</span> LEGEND</span>
+        `;
+      }
+      if(mine && !isAuthorBot && !isAuthorLegend) {
+        authorBadges += `<span class="badge"><span class="icon">person</span> ты</span>`;
+      }
+
+      const canDelete = mine || isAdminMode;
+
+      el.innerHTML = `
+        <div class="post__head">
+          <div>
+            <div class="post__author">
+              <span class="badge" style="background:rgba(138,180,255,.1);">${author}</span>
+              ${authorBadges}
+              ${isPinned ? `<span class="badge badge--pin"><span class="icon">push_pin</span> Закреп</span>` : ``}
+            </div>
+            <div class="time-details">
+              <span class="badge badge--time" title="Точное время: ${fullTime}">
+                <span class="icon">schedule</span> ${timeAgo}${edited}
+              </span>
+            </div>
+          </div>
+          <div class="row" style="gap:8px; flex-wrap:wrap;">
+            <button class="btn btn--ghost pin-btn" data-pin>
+              <span class="icon">push_pin</span> ${isPinned ? "Открепить" : "Закрепить"}
+            </button>
+            ${canDelete ? `
+              <button class="btn btn--danger delete-btn" data-delete>
+                <span class="icon">delete</span> Удалить
+              </button>
+            ` : ''}
+          </div>
+        </div>
+        <div class="post__text">${escapeHtml(p.text || "")}</div>
+      `;
+
+      el.querySelector('[data-pin]').addEventListener("click", async () => {
+        const k = prompt("Админ-ключ:");
+        if(k === null) return;
+        if(k !== ADMIN_KEY) return toast("Неверно.", "lock");
+
+        try{
+          await update(ref(db, `posts/${key}`), { 
+            pinned: !isPinned, 
+            pinnedAt: Date.now() 
+          });
+          toast(isPinned ? "Откреплено." : "Закреплено.", "push_pin");
+        }catch(e){
+          toast("Ошибка: <b>"+escapeHtml(e.message)+"</b>", "error", 3600);
+        }
+      });
+
+      const deleteBtn = el.querySelector('[data-delete]');
+      if(deleteBtn) {
+        deleteBtn.addEventListener("click", async () => {
+          await deletePost(key, p.uid);
+        });
+      }
+
+      return el;
+    }
+
+    // Лента
+    let unsubPosts = null;
+    function attachFeedListener(){
+      const feed = $("feed");
+      feed.innerHTML = "";
+      feedStatus.textContent = "";
+
+      onValue(postsRef(), (snap) => {
+        const val = snap.val() || {};
+        const arr = Object.entries(val).map(([key, p]) => ({ key, p }));
+
+        arr.sort((a, b) => {
+          const ap = !!a.p.pinned, bp = !!b.p.pinned;
+          if(ap !== bp) return bp - ap;
+          const at = a.p.createdAt || 0;
+          const bt = b.p.createdAt || 0;
+          return bt - at;
+        });
+
+        feed.innerHTML = "";
+        if(arr.length === 0){
+          const empty = document.createElement("div");
+          empty.className = "post";
+          empty.textContent = "Постов нет.";
+          feed.appendChild(empty);
+          feedStatus.textContent = "0";
+          return;
+        }
+
+        for(const item of arr){
+          feed.appendChild(renderPost(item.key, item.p));
+        }
+        feedStatus.textContent = String(arr.length);
+      }, (err) => {
+        toast("RTDB ошибка: <b>"+escapeHtml(err?.message || "unknown")+"</b>", "error", 3600);
+      });
+    }
+
+    // Мои посты
+    $("btnMyPosts").addEventListener("click", async () => {
+      if(!sessionUser) return;
+      const list = $("myPosts");
+      const btnClear = $("btnMyPostsClear");
+      list.classList.remove("hidden");
+      btnClear.classList.remove("hidden");
+      list.innerHTML = "";
+
+      try{
+        const snap = await get(postsRef());
+        const val = snap.val() || {};
+        const mine = Object.entries(val)
+          .map(([key, p]) => ({ key, p }))
+          .filter(x => x.p?.uid === sessionUser.id)
+          .sort((a,b) => (b.p.createdAt||0) - (a.p.createdAt||0));
+
+        if(mine.length === 0){
+          const empty = document.createElement("div");
+          empty.className = "post";
+          empty.textContent = "Нет постов.";
+          list.appendChild(empty);
+          return;
+        }
+
+        for(const it of mine){
+          list.appendChild(renderPost(it.key, it.p));
+        }
+      }catch(e){
+        toast("Ошибка: <b>"+escapeHtml(e.message)+"</b>", "error", 3600);
+      }
+    });
+
+    $("btnMyPostsClear").addEventListener("click", () => {
+      $("myPosts").classList.add("hidden");
+      $("btnMyPostsClear").classList.add("hidden");
+      $("myPosts").innerHTML = "";
+    });
+
+    // ====== UI STATE ======
+    function refreshUI(){
+      statusDb.innerHTML = `<span class="icon">database</span> RTDB: <b>ok</b>`;
+
+      btnLogout.classList.toggle("hidden", !sessionUser);
+      
+      if(isAdminMode) {
+        adminStatus.classList.remove("hidden");
+      } else {
+        adminStatus.classList.add("hidden");
+      }
+
+      if(sessionUser && isBotUser(sessionUser.username)) {
+        navRTDB.classList.remove("hidden");
+        botStatus.classList.remove("hidden");
+      } else {
+        navRTDB.classList.add("hidden");
+        botStatus.classList.add("hidden");
+      }
+
+      if(sessionUser && isLegendUser(sessionUser.username)) {
+        leaguefunStatus.classList.remove("hidden");
+      } else {
+        leaguefunStatus.classList.add("hidden");
+      }
+
+      if(!sessionUser){
+        statusAuth.innerHTML = `<span class="icon">key</span> Гость`;
+        showOnly("auth");
+        return;
+      }
+
+      if(isBotUser(sessionUser.username)) {
+        statusAuth.innerHTML = `<span class="icon">verified</span> <b>${escapeHtml(sessionUser.username)}</b> <span class="badge badge--bot">БОТ</span>`;
+      } else if(isLegendUser(sessionUser.username)) {
+        statusAuth.innerHTML = `<span class="icon">star</span> <b>${escapeHtml(sessionUser.username)}</b> <span class="badge badge--leaguefun">LEGEND</span>`;
+      } else {
+        statusAuth.innerHTML = `<span class="icon">verified_user</span> <b>${escapeHtml(sessionUser.username)}</b>`;
+      }
+
+      const r = currentRoute();
+      showOnly(r);
+
+      if(r === "feed") {
+        if(!isAdminMode) {
+          adminPanel.classList.remove("hidden");
+        } else {
+          adminPanel.classList.add("hidden");
+        }
+      }
+      
+      if(r === "news") {
+        if(canWriteNews()) {
+          newsFormContainer.classList.remove("hidden");
+        } else {
+          newsFormContainer.classList.add("hidden");
+        }
+      }
+      
+      if(r === "profile") {
+        loadProfile();
+      }
+      if(r === "rtdb") {
+        if(!sessionUser || !isBotUser(sessionUser.username)) {
+          toast("Доступ запрещен", "error");
+          routeTo("#feed");
+        } else {
+          loadRTDBData('root');
+        }
+      }
+    }
+
+    // Обработчики RTDB
+    btnLoadRTDB.addEventListener("click", () => {
+      loadRTDBData(rtdbPath.value);
+    });
+
+    btnRefreshRTDB.addEventListener("click", () => {
+      loadRTDBData(rtdbPath.value);
+    });
+
+    // старт
+    const s = loadSession();
+    if(s) sessionUser = s;
+    attachFeedListener();
+    loadNews();
+    refreshUI();
+  </script>
+</body>
+</html>
