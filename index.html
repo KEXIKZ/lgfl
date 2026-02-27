@@ -532,6 +532,143 @@
     .chat-search{
       margin-bottom:16px;
     }
+
+    /* Стили для аватарок как в Discord */
+    .avatar-container {
+      position: relative;
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      overflow: hidden;
+      cursor: pointer;
+      border: 3px solid var(--primary);
+      transition: 0.2s;
+    }
+    
+    .avatar-container:hover {
+      border-color: var(--message);
+      transform: scale(1.05);
+    }
+    
+    .avatar-container:hover .avatar-overlay {
+      opacity: 1;
+    }
+    
+    .avatar-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    
+    .avatar-placeholder {
+      width: 100%;
+      height: 100%;
+      background: var(--surface3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      font-weight: bold;
+      color: var(--primary);
+      text-transform: uppercase;
+    }
+    
+    .avatar-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: 0.2s;
+      color: white;
+      font-size: 24px;
+    }
+    
+    .avatar-upload {
+      display: none;
+    }
+    
+    .avatar-preview {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      overflow: hidden;
+      margin-right: 8px;
+      border: 2px solid var(--primary);
+    }
+    
+    .avatar-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .avatar-small {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 2px solid var(--primary);
+    }
+    
+    .avatar-small img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .avatar-small .placeholder {
+      width: 100%;
+      height: 100%;
+      background: var(--surface3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: bold;
+      color: var(--primary);
+    }
+    
+    .profile-header {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    /* Стили для архивации сообщений */
+    .archive-badge {
+      background: var(--surface3);
+      color: var(--text);
+      border: 1px solid var(--outline2);
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 10px;
+      margin-left: 8px;
+    }
+    
+    .load-more-btn {
+      width: 100%;
+      padding: 8px;
+      background: var(--surface3);
+      border: 1px solid var(--outline);
+      border-radius: 20px;
+      color: var(--text);
+      cursor: pointer;
+      margin: 8px 0;
+      font-size: 12px;
+    }
+    
+    .load-more-btn:hover {
+      background: var(--surface2);
+      border-color: var(--primary);
+    }
   </style>
 </head>
 
@@ -662,7 +799,7 @@
           <!-- Список диалогов и чат -->
           <div class="row" style="gap:12px; align-items:stretch;">
             <!-- Список диалогов -->
-            <div style="width:200px; flex-shrink:0;">
+            <div style="width:220px; flex-shrink:0;">
               <h3 style="margin:0 0 8px 0; font-size:14px;">Диалоги</h3>
               <div id="dialogsList" class="feed" style="max-height:500px; overflow-y:auto;"></div>
             </div>
@@ -672,6 +809,7 @@
               <div id="chatContainer" class="hidden">
                 <div class="chat-container">
                   <div class="chat-header">
+                    <div id="chatAvatar" class="avatar-small"></div>
                     <div class="chat-header-info">
                       <div class="chat-header-name" id="chatUserName"></div>
                       <div class="chat-header-status" id="chatUserStatus">
@@ -737,20 +875,26 @@
 
           <div class="col" style="gap:12px;">
             <div class="card card--flat">
-              <div class="row" style="justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap;">
-                <div class="col" style="gap:6px; min-width:260px;">
-                  <div class="label">Логин</div>
-                  <div id="pUser" style="font-weight:900; display:flex; align-items:center; gap:8px;"></div>
-
-                  <div class="label" style="margin-top:10px;">ID (зашифрован)</div>
-                  <div id="pId" class="mono" style="opacity:.92; font-size:11px;"></div>
+              <!-- Аватарка как в Discord -->
+              <div class="profile-header">
+                <div class="avatar-container" id="avatarContainer">
+                  <div id="avatarPreview" class="avatar-placeholder">?</div>
+                  <div class="avatar-overlay">
+                    <span class="icon">photo_camera</span>
+                  </div>
+                  <input type="file" id="avatarUpload" class="avatar-upload" accept="image/*" />
                 </div>
-
-                <div class="col" style="gap:6px; min-width:220px;">
-                  <div class="label">Имя</div>
-                  <input id="displayName" class="input" placeholder="как показывать в постах">
-                  <div class="row" style="justify-content:flex-end; margin-top:6px;">
-                    <button id="btnSaveName" class="btn btn--primary"><span class="icon">save</span> Сохранить</button>
+                <div style="flex:1;">
+                  <div class="label">Отображаемое имя</div>
+                  <div class="row" style="gap:8px; margin-bottom:12px;">
+                    <input id="displayName" class="input" placeholder="Как вас называть" style="flex:1;">
+                    <button id="btnSaveDisplayName" class="btn btn--primary"><span class="icon">save</span></button>
+                  </div>
+                  
+                  <div class="label">Имя пользователя (логин)</div>
+                  <div class="row" style="gap:8px;">
+                    <input id="username" class="input" placeholder="username" style="flex:1;" disabled>
+                    <button id="btnChangeUsername" class="btn btn--ghost"><span class="icon">edit</span></button>
                   </div>
                 </div>
               </div>
@@ -791,6 +935,8 @@
                 <option value="posts">Посты (posts)</option>
                 <option value="news">Новости (news)</option>
                 <option value="messages">Сообщения (messages)</option>
+                <option value="messages_archive">Архив сообщений</option>
+                <option value="avatars">Аватарки (avatars)</option>
                 <option value="root" selected>Вся база (root)</option>
               </select>
               <button id="btnLoadRTDB" class="btn btn--primary"><span class="icon">visibility</span> Загрузить</button>
@@ -812,12 +958,16 @@
         <div class="card">
           <div class="card__title"><h2>Статус</h2></div>
           <div class="col" style="gap:10px;">
-            <span id="statusAuth" class="badge"><span class="icon">key</span> Гость</span>
+            <div class="row" style="gap:8px;">
+              <div id="userAvatarSmall" class="avatar-small"></div>
+              <span id="statusAuth" class="badge"><span class="icon">key</span> Гость</span>
+            </div>
             <span id="statusDb" class="badge"><span class="icon">database</span> RTDB: —</span>
             <span id="adminStatus" class="badge hidden"><span class="icon">admin_panel_settings</span> Админ</span>
             <span id="botStatus" class="badge badge--bot hidden"><span class="icon">smart_toy</span> Бот</span>
             <span id="leaguefunStatus" class="badge badge--leaguefun hidden"><span class="icon">star</span> LEGEND</span>
             <span id="unreadMessages" class="badge badge--message hidden"><span class="icon">chat</span> Новые сообщения</span>
+            <span id="archivedMessages" class="badge badge--time hidden"><span class="icon">archive</span> Архив</span>
           </div>
         </div>
 
@@ -841,14 +991,20 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
     import {
-      getDatabase, ref, get, set, update, push, onValue, remove, query, orderByChild, equalTo, onDisconnect
+      getDatabase, ref, get, set, update, push, onValue, remove, query, orderByChild, equalTo, onDisconnect, limitToLast
     } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-database.js";
+    import { 
+      getStorage, ref as storageRef, uploadBytes, getDownloadURL, deleteObject 
+    } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-storage.js";
 
     // ====== НАСТРОЙКИ ======
     const ADMIN_KEY = "F1leaguebot";
     const BOT_USERNAME = "f1leaguebot";
     const LEGEND_USERNAME = "leaguefun";
     const ENCRYPTION_KEY = "LGFSecretKey2024";
+    const MAX_AVATAR_SIZE = 5 * 1024 * 1024; // 5MB как в Discord
+    const MESSAGES_PER_PAGE = 50; // Количество сообщений на страницу
+    const ARCHIVE_DAYS = 30; // Архивация сообщений старше 30 дней
     
     const firebaseConfig = {
       apiKey: "AIzaSyBsWh1hoWrrlMROmv9AiVWWNTjMn64bJPQ",
@@ -863,6 +1019,7 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
+    const storage = getStorage(app);
 
     // ====== DOM ======
     const $ = (id) => document.getElementById(id);
@@ -889,8 +1046,10 @@
     const botStatus = $("botStatus");
     const leaguefunStatus = $("leaguefunStatus");
     const unreadMessages = $("unreadMessages");
+    const archivedMessages = $("archivedMessages");
     const adminBadgeProfile = $("adminBadgeProfile");
     const leaguefunBadgeProfile = $("leaguefunBadgeProfile");
+    const userAvatarSmall = $("userAvatarSmall");
 
     const adminPanel = $("adminPanel");
     const adminTokenInput = $("adminTokenInput");
@@ -903,6 +1062,16 @@
     const btnRefreshNews = $("btnRefreshNews");
     const newsFeed = $("newsFeed");
 
+    // Элементы профиля
+    const avatarContainer = $("avatarContainer");
+    const avatarUpload = $("avatarUpload");
+    const avatarPreview = $("avatarPreview");
+    const displayNameInput = $("displayName");
+    const usernameInput = $("username");
+    const btnSaveDisplayName = $("btnSaveDisplayName");
+    const btnChangeUsername = $("btnChangeUsername");
+    const pCount = $("pCount");
+
     // Элементы для сообщений
     const btnRefreshMessages = $("btnRefreshMessages");
     const searchUserInput = $("searchUserInput");
@@ -911,6 +1080,7 @@
     const dialogsList = $("dialogsList");
     const chatContainer = $("chatContainer");
     const noChatSelected = $("noChatSelected");
+    const chatAvatar = $("chatAvatar");
     const chatUserName = $("chatUserName");
     const chatUserStatus = $("chatUserStatus");
     const userStatusText = $("userStatusText");
@@ -933,9 +1103,13 @@
     // ====== СОСТОЯНИЕ ======
     let sessionUser = null;
     let isAdminMode = false;
-    let currentChat = null; // { userId, username, displayName }
+    let currentChat = null;
     let usersCache = {};
     let typingTimeout = null;
+    let messagesListeners = new Map(); // Для отслеживания слушателей сообщений
+    let currentMessagesPage = 1;
+    let hasMoreMessages = true;
+    let messagesEndRef = null;
     const LS_KEY = "lgfl_session_v1";
 
     function toast(message, icon="info", ms=2400){
@@ -1023,13 +1197,268 @@
       return hashHex;
     }
 
+    // ====== АВАТАРКИ ======
+    async function uploadAvatar(file) {
+      if (!sessionUser) return null;
+      
+      if (file.size > MAX_AVATAR_SIZE) {
+        toast(`Файл слишком большой! Максимум 5MB`, "error");
+        return null;
+      }
+      
+      if (!file.type.startsWith('image/')) {
+        toast("Можно загружать только изображения", "error");
+        return null;
+      }
+      
+      try {
+        const fileExt = file.name.split('.').pop();
+        const fileName = `avatars/${sessionUser.id}_${Date.now()}.${fileExt}`;
+        const avatarRef = storageRef(storage, fileName);
+        
+        await uploadBytes(avatarRef, file);
+        const downloadUrl = await getDownloadURL(avatarRef);
+        
+        const userData = await get(userRef(sessionUser.username));
+        const currentData = userData.val() || {};
+        
+        if (currentData.avatar) {
+          try {
+            const oldAvatarRef = storageRef(storage, currentData.avatar);
+            await deleteObject(oldAvatarRef);
+          } catch (e) {
+            console.log("Старая аватарка не найдена");
+          }
+        }
+        
+        await update(userRef(sessionUser.username), {
+          avatar: downloadUrl,
+          avatarPath: fileName
+        });
+        
+        return downloadUrl;
+      } catch (e) {
+        toast("Ошибка загрузки: " + e.message, "error");
+        return null;
+      }
+    }
+
+    avatarContainer.addEventListener("click", () => {
+      avatarUpload.click();
+    });
+
+    avatarUpload.addEventListener("change", async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        avatarPreview.innerHTML = `<img src="${e.target.result}" class="avatar-image" />`;
+      };
+      reader.readAsDataURL(file);
+      
+      const url = await uploadAvatar(file);
+      if (url) {
+        toast("Аватарка обновлена!", "check_circle");
+        updateAvatarDisplay(url);
+      }
+    });
+
+    function updateAvatarDisplay(url) {
+      if (url) {
+        avatarPreview.innerHTML = `<img src="${url}" class="avatar-image" />`;
+        userAvatarSmall.innerHTML = `<img src="${url}" class="avatar-image" />`;
+      } else {
+        const initial = sessionUser?.displayName?.[0] || sessionUser?.username?.[0] || "?";
+        avatarPreview.innerHTML = `<div class="avatar-placeholder">${initial.toUpperCase()}</div>`;
+        userAvatarSmall.innerHTML = `<div class="avatar-small"><div class="placeholder">${initial.toUpperCase()}</div></div>`;
+      }
+    }
+
+    // ====== СМЕНА ИМЕНИ ======
+    btnSaveDisplayName.addEventListener("click", async () => {
+      if (!sessionUser) return;
+      
+      const newName = displayNameInput.value.trim();
+      if (!newName) return toast("Имя не может быть пустым", "warning");
+      if (newName.length > 32) return toast("Имя слишком длинное (макс. 32 символа)", "warning");
+      
+      try {
+        const encryptedName = await sha256Hash(newName);
+        
+        await update(userRef(sessionUser.username), {
+          displayName: encryptedName,
+          _original: {
+            ...(await (await get(userRef(sessionUser.username))).val()._original || {}),
+            displayName: newName
+          }
+        });
+        
+        sessionUser.displayName = newName;
+        saveSession(sessionUser);
+        toast("Имя обновлено!", "check_circle");
+      } catch (e) {
+        toast("Ошибка: " + e.message, "error");
+      }
+    });
+
+    btnChangeUsername.addEventListener("click", async () => {
+      if (!sessionUser) return;
+      
+      const newUsername = prompt("Введите новый логин (только латинские буквы, цифры, _ и .):", sessionUser.username);
+      if (!newUsername) return;
+      
+      const normalized = normalizeUsername(newUsername);
+      if (!normalized) return toast("Некорректный логин", "warning");
+      if (normalized === sessionUser.username) return toast("Это ваш текущий логин", "info");
+      
+      try {
+        const snap = await get(userRef(normalized));
+        if (snap.exists()) {
+          return toast("Этот логин уже занят", "error");
+        }
+        
+        const currentData = (await get(userRef(sessionUser.username))).val();
+        
+        const newData = {
+          ...currentData,
+          username: await sha256Hash(normalized),
+          _original: {
+            ...currentData._original,
+            username: normalized
+          }
+        };
+        
+        await set(userRef(normalized), newData);
+        await remove(userRef(sessionUser.username));
+        
+        sessionUser.username = normalized;
+        saveSession(sessionUser);
+        
+        toast("Логин изменён! Перезайдите для обновления", "check_circle");
+      } catch (e) {
+        toast("Ошибка: " + e.message, "error");
+      }
+    });
+
     // ====== RTDB PATHS ======
     const usersRef = () => ref(db, "users");
     const userRef = (username) => ref(db, `users/${username}`);
     const postsRef = () => ref(db, "posts");
     const newsRef = () => ref(db, "news");
     const messagesRef = () => ref(db, "messages");
+    const messagesArchiveRef = () => ref(db, "messages_archive");
     const userStatusRef = (userId) => ref(db, `status/${userId}`);
+
+    // ====== ФУНКЦИИ ДЛЯ СОХРАНЕНИЯ ПЕРЕПИСОК ======
+
+    // Архивирование старых сообщений
+    async function archiveOldMessages() {
+      const thirtyDaysAgo = Date.now() - (ARCHIVE_DAYS * 24 * 60 * 60 * 1000);
+      
+      const messagesSnap = await get(messagesRef());
+      if (!messagesSnap.exists()) return;
+      
+      const messages = messagesSnap.val();
+      
+      for (const [convId, convMessages] of Object.entries(messages)) {
+        const archiveConv = {};
+        const keepConv = {};
+        
+        for (const [msgId, msg] of Object.entries(convMessages)) {
+          if (msg.createdAt < thirtyDaysAgo) {
+            // Сообщение старше 30 дней - в архив
+            if (!archiveConv[msgId]) {
+              archiveConv[msgId] = msg;
+            }
+          } else {
+            // Сообщение младше 30 дней - оставляем
+            if (!keepConv[msgId]) {
+              keepConv[msgId] = msg;
+            }
+          }
+        }
+        
+        // Сохраняем архив
+        if (Object.keys(archiveConv).length > 0) {
+          await set(ref(db, `messages_archive/${convId}`), archiveConv);
+        }
+        
+        // Обновляем текущие сообщения
+        await set(ref(db, `messages/${convId}`), keepConv);
+      }
+      
+      console.log("Архивация завершена");
+    }
+
+    // Загрузка сообщений с поддержкой архива
+    async function loadMessagesWithArchive(convId, page = 1) {
+      const messagesPerPage = MESSAGES_PER_PAGE;
+      const startIndex = (page - 1) * messagesPerPage;
+      const endIndex = startIndex + messagesPerPage - 1;
+      
+      let allMessages = [];
+      let hasMore = false;
+      
+      // Сначала пробуем загрузить из текущих сообщений
+      const currentSnap = await get(ref(db, `messages/${convId}`));
+      if (currentSnap.exists()) {
+        const currentMessages = Object.entries(currentSnap.val())
+          .map(([id, msg]) => ({ id, ...msg }))
+          .sort((a, b) => b.createdAt - a.createdAt);
+        
+        allMessages = [...currentMessages];
+      }
+      
+      // Если нужно больше, загружаем из архива
+      if (allMessages.length < endIndex + 1) {
+        const archiveSnap = await get(ref(db, `messages_archive/${convId}`));
+        if (archiveSnap.exists()) {
+          const archiveMessages = Object.entries(archiveSnap.val())
+            .map(([id, msg]) => ({ id, ...msg, archived: true }))
+            .sort((a, b) => b.createdAt - a.createdAt);
+          
+          allMessages = [...allMessages, ...archiveMessages];
+        }
+      }
+      
+      // Сортируем все сообщения по дате
+      allMessages.sort((a, b) => b.createdAt - a.createdAt);
+      
+      // Проверяем, есть ли ещё сообщения
+      hasMore = allMessages.length > endIndex + 1;
+      
+      // Возвращаем запрошенную страницу (в обратном порядке для отображения)
+      const pageMessages = allMessages.slice(startIndex, endIndex + 1).reverse();
+      
+      return {
+        messages: pageMessages,
+        hasMore,
+        total: allMessages.length
+      };
+    }
+
+    // Удаление сообщения из всех мест
+    async function deleteMessagePermanently(convId, messageId) {
+      try {
+        // Пробуем удалить из текущих сообщений
+        await remove(ref(db, `messages/${convId}/${messageId}`));
+        // Пробуем удалить из архива
+        await remove(ref(db, `messages_archive/${convId}/${messageId}`));
+        return true;
+      } catch (e) {
+        console.error("Ошибка удаления сообщения:", e);
+        return false;
+      }
+    }
+
+    // Очистка слушателей сообщений
+    function cleanupMessagesListeners() {
+      messagesListeners.forEach((unsub, convId) => {
+        if (unsub) unsub();
+      });
+      messagesListeners.clear();
+    }
 
     // ====== ЗАГРУЗКА ПОЛЬЗОВАТЕЛЕЙ ======
     async function loadUsersCache() {
@@ -1040,7 +1469,8 @@
           for (const [username, data] of Object.entries(users)) {
             usersCache[username] = {
               id: data._original?.id || data.id,
-              displayName: data._original?.displayName || username
+              displayName: data._original?.displayName || username,
+              avatar: data.avatar || null
             };
           }
         }
@@ -1059,7 +1489,7 @@
 
       for (const [username, data] of Object.entries(usersCache)) {
         if (username.includes(query) && username !== sessionUser.username) {
-          results.push({ username, displayName: data.displayName });
+          results.push({ username, displayName: data.displayName, avatar: data.avatar });
         }
       }
 
@@ -1073,13 +1503,18 @@
         el.className = "user-search-result";
         el.innerHTML = `
           <div class="row" style="justify-content:space-between;">
-            <span><span class="icon">person</span> ${escapeHtml(user.displayName)} (@${escapeHtml(user.username)})</span>
+            <div class="row" style="gap:8px;">
+              <div class="avatar-small">
+                ${user.avatar ? `<img src="${user.avatar}" class="avatar-image" />` : `<div class="placeholder">${user.displayName[0]}</div>`}
+              </div>
+              <span>${escapeHtml(user.displayName)} (@${escapeHtml(user.username)})</span>
+            </div>
             <button class="btn btn--message btn-start-chat" data-username="${user.username}">Написать</button>
           </div>
         `;
         
         el.querySelector('.btn-start-chat').addEventListener('click', () => {
-          openChat(user.username, usersCache[user.username].id, user.displayName);
+          openChat(user.username, usersCache[user.username].id, user.displayName, user.avatar);
         });
         
         searchResults.appendChild(el);
@@ -1087,15 +1522,24 @@
     });
 
     // ====== ЧАТ ======
-    function openChat(username, userId, displayName) {
+    function openChat(username, userId, displayName, avatar) {
       if (!sessionUser) return;
       
-      currentChat = { userId, username, displayName };
+      currentChat = { userId, username, displayName, avatar };
       chatUserName.innerHTML = `${escapeHtml(displayName)} <span style="opacity:0.7;">(@${escapeHtml(username)})</span>`;
+      currentMessagesPage = 1;
+      hasMoreMessages = true;
+      
+      if (avatar) {
+        chatAvatar.innerHTML = `<img src="${avatar}" class="avatar-image" />`;
+      } else {
+        chatAvatar.innerHTML = `<div class="placeholder">${displayName[0]}</div>`;
+      }
+      
       chatContainer.classList.remove("hidden");
       noChatSelected.classList.add("hidden");
       
-      loadMessages(userId);
+      loadMessagesWithPagination(userId, 1);
       setupStatusListener(userId);
     }
 
@@ -1104,11 +1548,124 @@
       chatContainer.classList.add("hidden");
       noChatSelected.classList.remove("hidden");
       chatMessages.innerHTML = "";
+      cleanupMessagesListeners();
     }
 
     btnCloseChat.addEventListener("click", closeChat);
 
-    // Статус пользователя (онлайн/оффлайн)
+    // Загрузка сообщений с пагинацией
+    async function loadMessagesWithPagination(otherUserId, page = 1) {
+      if (!sessionUser || !otherUserId) return;
+
+      const convId = [sessionUser.id, otherUserId].sort().join('_');
+      
+      // Очищаем старые слушатели для этого диалога
+      if (messagesListeners.has(convId)) {
+        messagesListeners.get(convId)();
+      }
+
+      // Устанавливаем слушатель на новые сообщения
+      const messagesQuery = query(ref(db, `messages/${convId}`), orderByChild('createdAt'), limitToLast(50));
+      const unsub = onValue(messagesQuery, async (snap) => {
+        // При получении новых сообщений, перезагружаем первую страницу
+        if (page === 1) {
+          const result = await loadMessagesWithArchive(convId, 1);
+          displayMessages(result.messages, 1, result.hasMore, result.total);
+        }
+      });
+
+      messagesListeners.set(convId, unsub);
+
+      // Загружаем сообщения из текущих и архива
+      const result = await loadMessagesWithArchive(convId, page);
+      displayMessages(result.messages, page, result.hasMore, result.total);
+    }
+
+    function displayMessages(messages, page, hasMore, total) {
+      chatMessages.innerHTML = "";
+      
+      if (messages.length === 0) {
+        chatMessages.innerHTML = '<div style="text-align:center; opacity:0.5; padding:20px;">Нет сообщений. Напишите что-нибудь!</div>';
+        return;
+      }
+
+      // Добавляем кнопку "Загрузить ещё", если есть сообщения
+      if (hasMore && page === 1) {
+        const loadMoreBtn = document.createElement("button");
+        loadMoreBtn.className = "load-more-btn";
+        loadMoreBtn.innerHTML = `<span class="icon">expand_more</span> Загрузить предыдущие сообщения (${total - MESSAGES_PER_PAGE} еще)`;
+        loadMoreBtn.addEventListener("click", () => {
+          currentMessagesPage++;
+          loadMessagesWithPagination(currentChat.userId, currentMessagesPage);
+        });
+        chatMessages.appendChild(loadMoreBtn);
+      }
+      
+      let lastDate = null;
+      
+      for (const msg of messages) {
+        const msgDate = new Date(msg.createdAt).toLocaleDateString();
+        if (msgDate !== lastDate) {
+          const dateDivider = document.createElement("div");
+          dateDivider.style.textAlign = "center";
+          dateDivider.style.margin = "16px 0 8px";
+          dateDivider.style.opacity = "0.5";
+          dateDivider.style.fontSize = "11px";
+          dateDivider.innerHTML = msgDate + (msg.archived ? ' <span class="archive-badge">архив</span>' : '');
+          chatMessages.appendChild(dateDivider);
+          lastDate = msgDate;
+        }
+        
+        const isSent = msg.from === sessionUser.id;
+        const wrapper = document.createElement("div");
+        wrapper.className = `message-wrapper ${isSent ? 'sent' : 'received'}`;
+        
+        const bubble = document.createElement("div");
+        bubble.className = `message-bubble ${isSent ? 'sent' : 'received'}`;
+        
+        const time = new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const text = msg._original?.text || msg.text || "";
+        
+        let statusHtml = '';
+        if (isSent) {
+          statusHtml = `
+            <div class="message-status ${msg.read ? 'read' : ''}">
+              <span class="icon">${msg.read ? 'done_all' : 'done'}</span>
+              ${msg.read ? 'Прочитано' : 'Доставлено'}
+            </div>
+          `;
+        }
+        
+        bubble.innerHTML = `
+          <div>${escapeHtml(text)}</div>
+          <div class="message-time">${time}</div>
+          ${statusHtml}
+        `;
+        
+        wrapper.appendChild(bubble);
+        chatMessages.appendChild(wrapper);
+        
+        if (!isSent && !msg.read) {
+          update(ref(db, `messages/${convId}/${msg.id}`), { read: true });
+        }
+      }
+      
+      // Добавляем кнопку "Загрузить ещё" в начало, если это не первая страница
+      if (hasMore && page > 1) {
+        const loadMoreBtn = document.createElement("button");
+        loadMoreBtn.className = "load-more-btn";
+        loadMoreBtn.innerHTML = `<span class="icon">expand_more</span> Загрузить ещё`;
+        loadMoreBtn.addEventListener("click", () => {
+          currentMessagesPage++;
+          loadMessagesWithPagination(currentChat.userId, currentMessagesPage);
+        });
+        chatMessages.insertBefore(loadMoreBtn, chatMessages.firstChild);
+      }
+      
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    // Статус пользователя
     function setupStatusListener(userId) {
       onValue(userStatusRef(userId), (snap) => {
         const status = snap.val();
@@ -1123,7 +1680,6 @@
       });
     }
 
-    // Обновление статуса текущего пользователя
     function updateUserStatus(online) {
       if (!sessionUser) return;
       
@@ -1179,79 +1735,6 @@
       }, 2000);
     }
 
-    // Загрузка сообщений
-    function loadMessages(otherUserId) {
-      if (!sessionUser || !otherUserId) return;
-
-      const convId = [sessionUser.id, otherUserId].sort().join('_');
-      const messagesQuery = query(ref(db, `messages/${convId}`), orderByChild('createdAt'));
-
-      onValue(messagesQuery, (snap) => {
-        const val = snap.val() || {};
-        const messages = Object.entries(val)
-          .map(([key, msg]) => ({ id: key, ...msg }))
-          .sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
-
-        chatMessages.innerHTML = "";
-        
-        let lastDate = null;
-        
-        for (const msg of messages) {
-          // Разделитель по датам
-          const msgDate = new Date(msg.createdAt).toLocaleDateString();
-          if (msgDate !== lastDate) {
-            const dateDivider = document.createElement("div");
-            dateDivider.style.textAlign = "center";
-            dateDivider.style.margin = "16px 0 8px";
-            dateDivider.style.opacity = "0.5";
-            dateDivider.style.fontSize = "11px";
-            dateDivider.textContent = msgDate;
-            chatMessages.appendChild(dateDivider);
-            lastDate = msgDate;
-          }
-          
-          const isSent = msg.from === sessionUser.id;
-          const wrapper = document.createElement("div");
-          wrapper.className = `message-wrapper ${isSent ? 'sent' : 'received'}`;
-          
-          const bubble = document.createElement("div");
-          bubble.className = `message-bubble ${isSent ? 'sent' : 'received'}`;
-          
-          const time = new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-          const text = msg._original?.text || msg.text || "";
-          
-          let statusHtml = '';
-          if (isSent) {
-            statusHtml = `
-              <div class="message-status ${msg.read ? 'read' : ''}">
-                <span class="icon">${msg.read ? 'done_all' : 'done'}</span>
-                ${msg.read ? 'Прочитано' : 'Доставлено'}
-              </div>
-            `;
-          }
-          
-          bubble.innerHTML = `
-            <div>${escapeHtml(text)}</div>
-            <div class="message-time">${time}</div>
-            ${statusHtml}
-          `;
-          
-          wrapper.appendChild(bubble);
-          chatMessages.appendChild(wrapper);
-          
-          // Отмечаем сообщения как прочитанные
-          if (!isSent && !msg.read) {
-            update(ref(db, `messages/${convId}/${msg.id}`), { read: true });
-          }
-        }
-        
-        // Скролл вниз
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-      });
-      
-      setupTypingListener(convId);
-    }
-
     // Отправка сообщения
     btnSendChatMessage.addEventListener("click", async () => {
       if (!sessionUser || !currentChat) return;
@@ -1275,7 +1758,6 @@
         chatMessageInput.value = "";
         chatMessageInput.style.height = "auto";
         
-        // Сбрасываем индикатор печатания
         clearTimeout(typingTimeout);
         const typingRef = ref(db, `typing/${convId}`);
         set(typingRef, {
@@ -1283,19 +1765,20 @@
           typing: false,
           timestamp: Date.now()
         });
+
+        // Проверяем необходимость архивации
+        archiveOldMessages();
       } catch(e) {
         toast("Ошибка отправки: " + e.message, "error");
       }
     });
 
-    // Авто-расширение textarea
     chatMessageInput.addEventListener("input", () => {
       chatMessageInput.style.height = "auto";
       chatMessageInput.style.height = (chatMessageInput.scrollHeight) + "px";
       sendTypingIndicator();
     });
 
-    // Отправка по Enter
     chatMessageInput.addEventListener("keypress", (e) => {
       if (e.key === "Enter" && !e.shiftKey) {
         e.preventDefault();
@@ -1303,7 +1786,6 @@
       }
     });
 
-    // Эмодзи
     document.querySelectorAll('.emoji-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         chatMessageInput.value += btn.dataset.emoji;
@@ -1327,14 +1809,11 @@
           if (id1 === sessionUser.id || id2 === sessionUser.id) {
             const otherId = id1 === sessionUser.id ? id2 : id1;
             
-            // Ищем username по ID в кэше
             for (const [username, data] of Object.entries(usersCache)) {
               if (data.id === otherId) {
-                // Получаем последнее сообщение
                 const lastMsg = Object.values(messages)
                   .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0))[0];
                 
-                // Считаем непрочитанные
                 let unreadInDialog = 0;
                 for (const msg of Object.values(messages)) {
                   if (msg.to === sessionUser.id && !msg.read) {
@@ -1355,6 +1834,35 @@
           }
         }
 
+        // Проверяем архив на наличие диалогов
+        const archiveSnap = await get(messagesArchiveRef());
+        if (archiveSnap.exists()) {
+          const archiveVal = archiveSnap.val();
+          for (const [convId, messages] of Object.entries(archiveVal)) {
+            const [id1, id2] = convId.split('_');
+            if (id1 === sessionUser.id || id2 === sessionUser.id) {
+              const otherId = id1 === sessionUser.id ? id2 : id1;
+              
+              for (const [username, data] of Object.entries(usersCache)) {
+                if (data.id === otherId && !dialogs.has(username)) {
+                  // Добавляем диалог из архива, если его нет в текущих
+                  const lastMsg = Object.values(messages)
+                    .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0))[0];
+                  
+                  dialogs.set(username, {
+                    ...data,
+                    lastMsg: lastMsg?._original?.text || '...',
+                    lastTime: lastMsg?.createdAt,
+                    unread: 0,
+                    archived: true
+                  });
+                  break;
+                }
+              }
+            }
+          }
+        }
+
         if (unreadCount > 0) {
           unreadMessages.classList.remove("hidden");
           unreadMessages.innerHTML = `<span class="icon">chat</span> ${unreadCount} новых`;
@@ -1367,11 +1875,14 @@
           return;
         }
 
-        // Сортируем по времени последнего сообщения
         const sortedDialogs = Array.from(dialogs.entries())
           .sort((a, b) => (b[1].lastTime || 0) - (a[1].lastTime || 0));
 
+        let hasArchived = false;
+        
         for (const [username, data] of sortedDialogs) {
+          if (data.archived) hasArchived = true;
+          
           const el = document.createElement("div");
           el.className = `post post--message dialog-item ${currentChat?.username === username ? 'active' : ''}`;
           
@@ -1379,12 +1890,16 @@
           const lastMsgPreview = data.lastMsg ? escapeHtml(data.lastMsg.substring(0, 30)) + (data.lastMsg.length > 30 ? '...' : '') : 'Нет сообщений';
           
           el.innerHTML = `
-            <div class="row" style="justify-content:space-between; align-items:center;">
+            <div class="row" style="gap:8px; align-items:center;">
+              <div class="avatar-small">
+                ${data.avatar ? `<img src="${data.avatar}" class="avatar-image" />` : `<div class="placeholder">${data.displayName[0]}</div>`}
+              </div>
               <div style="flex:1;">
                 <div style="display:flex; align-items:center; gap:4px; margin-bottom:4px;">
                   <span class="badge badge--message"><span class="icon">person</span> ${escapeHtml(data.displayName)}</span>
                   <span style="opacity:0.7; font-size:11px;">@${escapeHtml(username)}</span>
                   ${data.unread ? `<span class="unread-badge">${data.unread}</span>` : ''}
+                  ${data.archived ? `<span class="archive-badge">архив</span>` : ''}
                 </div>
                 <div style="font-size:12px; opacity:0.7; display:flex; align-items:center; gap:4px;">
                   <span class="icon" style="font-size:14px;">chat</span>
@@ -1396,10 +1911,17 @@
           `;
           
           el.addEventListener('click', () => {
-            openChat(username, data.id, data.displayName);
+            openChat(username, data.id, data.displayName, data.avatar);
           });
           
           dialogsList.appendChild(el);
+        }
+
+        if (hasArchived) {
+          archivedMessages.classList.remove("hidden");
+          archivedMessages.innerHTML = '<span class="icon">archive</span> Есть архив';
+        } else {
+          archivedMessages.classList.add("hidden");
         }
       });
     }
@@ -1426,6 +1948,9 @@
           case 'messages':
             dataRef = messagesRef();
             break;
+          case 'messages_archive':
+            dataRef = messagesArchiveRef();
+            break;
           case 'root':
           default:
             dataRef = ref(db, '/');
@@ -1449,9 +1974,11 @@
             const newsCount = data.news ? Object.keys(data.news).length : 0;
             stats.push(`📰 Новостей: ${newsCount}`);
           }
-          if(path === 'root' || path === 'messages') {
+          if(path === 'root' || path === 'messages' || path === 'messages_archive') {
             const messagesCount = data.messages ? Object.keys(data.messages).length : 0;
-            stats.push(`💬 Диалогов: ${messagesCount}`);
+            const archiveCount = data.messages_archive ? Object.keys(data.messages_archive).length : 0;
+            stats.push(`💬 Текущих диалогов: ${messagesCount}`);
+            stats.push(`📦 Архивных диалогов: ${archiveCount}`);
           }
           
           if(stats.length > 0) {
@@ -1492,6 +2019,7 @@
           displayName: await sha256Hash(username),
           passHash: await sha256Hash(pass),
           createdAt: Date.now(),
+          avatar: null,
           _original: {
             username,
             displayName: username,
@@ -1537,10 +2065,18 @@
         const displayName = u._original?.displayName || username;
         const id = u._original?.id || u.id;
         
-        saveSession({ username: u._original?.username || username, id, displayName });
+        saveSession({ username: u._original?.username || username, id, displayName, avatar: u.avatar || null });
         await loadUsersCache();
         
-        // Устанавливаем онлайн статус
+        if (u.avatar) {
+          updateAvatarDisplay(u.avatar);
+        } else {
+          updateAvatarDisplay(null);
+        }
+        
+        usernameInput.value = username;
+        displayNameInput.value = displayName;
+        
         updateUserStatus(true);
         
         toast("Вход выполнен.", "login");
@@ -1554,6 +2090,7 @@
     btnLogout.addEventListener("click", () => {
       updateUserStatus(false);
       clearSession();
+      cleanupMessagesListeners();
       toast("Выход.", "logout");
       routeTo("#feed");
     });
@@ -1709,75 +2246,33 @@
     });
 
     // ====== PROFILE ======
-    $("btnSaveName").addEventListener("click", async () => {
-      if(!sessionUser) return;
-      const name = $("displayName").value.trim();
-      if(name.length > 24) return toast("Имя до 24 символов.", "warning");
-
-      $("btnSaveName").disabled = true;
-      try{
-        const encryptedName = await sha256Hash(name);
-        
-        await update(userRef(sessionUser.username), { 
-          displayName: encryptedName,
-          _original: {
-            ...(await (await get(userRef(sessionUser.username))).val()._original || {}),
-            displayName: name
-          }
-        });
-        
-        sessionUser.displayName = name;
-        saveSession(sessionUser);
-        await loadUsersCache();
-        toast("Сохранено.", "check_circle");
-        await loadProfile();
-      }catch(e){
-        toast("Ошибка: <b>"+escapeHtml(e.message)+"</b>", "error", 3600);
-      }finally{
-        $("btnSaveName").disabled = false;
-      }
-    });
-
     async function loadProfile(){
       if(!sessionUser) return;
       
-      $("pUser").innerHTML = '';
+      usernameInput.value = sessionUser.username;
+      displayNameInput.value = sessionUser.displayName || sessionUser.username;
       
-      if(isBotUser(sessionUser.username)) {
-        $("pUser").innerHTML = `
-          <span>${escapeHtml(sessionUser.username)}</span>
-          <span class="badge badge--bot"><span class="icon">smart_toy</span> БОТ</span>
-          <span class="badge badge--admin"><span class="icon">verified</span> АДМИН</span>
-          <span class="badge badge--time"><span class="icon">lock</span> Encrypted</span>
-        `;
-      } else if(isLegendUser(sessionUser.username)) {
-        $("pUser").innerHTML = `
-          <span>${escapeHtml(sessionUser.username)}</span>
-          <span class="badge badge--leaguefun"><span class="icon">star</span> LEGEND</span>
-          <span class="badge badge--time"><span class="icon">lock</span> Encrypted</span>
-        `;
-      } else {
-        $("pUser").innerHTML = `
-          <span>${escapeHtml(sessionUser.username)}</span>
-          <span class="badge badge--time"><span class="icon">lock</span> Encrypted</span>
-        `;
+      try {
+        const snap = await get(userRef(sessionUser.username));
+        const data = snap.val();
+        if (data?.avatar) {
+          updateAvatarDisplay(data.avatar);
+          sessionUser.avatar = data.avatar;
+        } else {
+          updateAvatarDisplay(null);
+        }
+      } catch (e) {
+        console.error("Ошибка загрузки аватарки", e);
       }
-      
-      const encryptedId = await sha256Hash(sessionUser.id);
-      $("pId").textContent = encryptedId.substring(0, 16) + "...";
-      $("pId").title = "Полный хеш: " + encryptedId;
-      
-      $("displayName").value = sessionUser.displayName || sessionUser.username;
 
       if(isBotUser(sessionUser.username)) {
         adminBadgeProfile.classList.remove("hidden");
-      } else {
+        leaguefunBadgeProfile.classList.add("hidden");
+      } else if(isLegendUser(sessionUser.username)) {
         adminBadgeProfile.classList.add("hidden");
-      }
-      
-      if(isLegendUser(sessionUser.username)) {
         leaguefunBadgeProfile.classList.remove("hidden");
       } else {
+        adminBadgeProfile.classList.add("hidden");
         leaguefunBadgeProfile.classList.add("hidden");
       }
 
@@ -1790,9 +2285,9 @@
           const postUidHash = await sha256Hash(sessionUser.id);
           if (post.uid === postUidHash) cnt++;
         }
-        $("pCount").textContent = String(cnt);
+        pCount.textContent = String(cnt);
       }catch(_){
-        $("pCount").textContent = "0";
+        pCount.textContent = "0";
       }
     }
 
@@ -1811,6 +2306,7 @@
         const encryptedPost = {
           uid: encryptedUid,
           authorName: await sha256Hash(sessionUser.displayName || sessionUser.username),
+          authorAvatar: sessionUser.avatar || null,
           text: await sha256Hash(text),
           pinned: false,
           createdAt: now,
@@ -1903,16 +2399,21 @@
 
       el.innerHTML = `
         <div class="post__head">
-          <div>
-            <div class="post__author">
-              <span class="badge" style="background:rgba(138,180,255,.1);">${author}</span>
-              ${authorBadges}
-              ${isPinned ? `<span class="badge badge--pin"><span class="icon">push_pin</span> Закреп</span>` : ``}
+          <div class="row" style="gap:8px;">
+            <div class="avatar-small">
+              ${p.authorAvatar ? `<img src="${p.authorAvatar}" class="avatar-image" />` : `<div class="placeholder">${author[0]}</div>`}
             </div>
-            <div class="time-details">
-              <span class="badge badge--time" title="Точное время: ${fullTime}">
-                <span class="icon">schedule</span> ${timeAgo}${edited}
-              </span>
+            <div>
+              <div class="post__author">
+                <span class="badge" style="background:rgba(138,180,255,.1);">${author}</span>
+                ${authorBadges}
+                ${isPinned ? `<span class="badge badge--pin"><span class="icon">push_pin</span> Закреп</span>` : ``}
+              </div>
+              <div class="time-details">
+                <span class="badge badge--time" title="Точное время: ${fullTime}">
+                  <span class="icon">schedule</span> ${timeAgo}${edited}
+                </span>
+              </div>
             </div>
           </div>
           <div class="row" style="gap:8px; flex-wrap:wrap;">
@@ -2068,12 +2569,20 @@
         return;
       }
 
-      if(isBotUser(sessionUser.username)) {
-        statusAuth.innerHTML = `<span class="icon">verified</span> <b>${escapeHtml(sessionUser.username)}</b> <span class="badge badge--bot">БОТ</span> <span class="badge badge--time"><span class="icon">lock</span> Encrypted</span>`;
-      } else if(isLegendUser(sessionUser.username)) {
-        statusAuth.innerHTML = `<span class="icon">star</span> <b>${escapeHtml(sessionUser.username)}</b> <span class="badge badge--leaguefun">LEGEND</span> <span class="badge badge--time"><span class="icon">lock</span> Encrypted</span>`;
+      let authHtml = '';
+      if (sessionUser.avatar) {
+        authHtml = `<div class="avatar-small"><img src="${sessionUser.avatar}" class="avatar-image" /></div>`;
       } else {
-        statusAuth.innerHTML = `<span class="icon">verified_user</span> <b>${escapeHtml(sessionUser.username)}</b> <span class="badge badge--time"><span class="icon">lock</span> Encrypted</span>`;
+        const initial = (sessionUser.displayName || sessionUser.username)[0];
+        authHtml = `<div class="avatar-small"><div class="placeholder">${initial.toUpperCase()}</div></div>`;
+      }
+      
+      if(isBotUser(sessionUser.username)) {
+        statusAuth.innerHTML = authHtml + ` <span class="icon">verified</span> <b>${escapeHtml(sessionUser.displayName || sessionUser.username)}</b> <span class="badge badge--bot">БОТ</span> <span class="badge badge--time"><span class="icon">lock</span> Encrypted</span>`;
+      } else if(isLegendUser(sessionUser.username)) {
+        statusAuth.innerHTML = authHtml + ` <span class="icon">star</span> <b>${escapeHtml(sessionUser.displayName || sessionUser.username)}</b> <span class="badge badge--leaguefun">LEGEND</span> <span class="badge badge--time"><span class="icon">lock</span> Encrypted</span>`;
+      } else {
+        statusAuth.innerHTML = authHtml + ` <span class="icon">verified_user</span> <b>${escapeHtml(sessionUser.displayName || sessionUser.username)}</b> <span class="badge badge--time"><span class="icon">lock</span> Encrypted</span>`;
       }
 
       const r = currentRoute();
@@ -2180,6 +2689,13 @@
       refreshUI();
       if (sessionUser) {
         updateUserStatus(true);
+        if (sessionUser.avatar) {
+          updateAvatarDisplay(sessionUser.avatar);
+        }
+        // Запускаем архивацию при старте
+        archiveOldMessages();
+        // Запускаем архивацию каждые 24 часа
+        setInterval(archiveOldMessages, 24 * 60 * 60 * 1000);
       }
     });
 
@@ -2188,6 +2704,7 @@
       if (sessionUser) {
         updateUserStatus(false);
       }
+      cleanupMessagesListeners();
     });
   </script>
 </body>
