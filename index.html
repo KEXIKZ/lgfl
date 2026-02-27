@@ -23,6 +23,7 @@
       --ok:#65d48e;
       --admin:#bb86fc;
       --news:#ffb86b;
+      --message:#50fa7b;
       --r-xl:22px;
       --r-lg:18px;
       --shadow:0 10px 30px rgba(0,0,0,.35);
@@ -109,6 +110,7 @@
     .btn--danger{background:rgba(255,122,122,.12);border-color:rgba(255,122,122,.26)}
     .btn--admin{background:rgba(187,134,252,.16);border-color:rgba(187,134,252,.35)}
     .btn--news{background:rgba(255,184,107,.16);border-color:rgba(255,184,107,.35)}
+    .btn--message{background:rgba(80,250,123,.16);border-color:rgba(80,250,123,.35)}
 
     .icon{
       font-family:"Material Symbols Rounded";
@@ -145,6 +147,10 @@
       border-left:4px solid var(--news);
       background:rgba(255,184,107,.05);
     }
+    .post--message{
+      border-left:4px solid var(--message);
+      background:rgba(80,250,123,.05);
+    }
     .post__head{
       display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin-bottom:10px;
     }
@@ -180,6 +186,11 @@
       border-color:var(--news);
       background:rgba(255,184,107,.10);
       color:var(--news);
+    }
+    .badge--message{
+      border-color:var(--message);
+      background:rgba(80,250,123,.10);
+      color:var(--message);
     }
     .badge--leaguefun{
       border-color:#50fa7b;
@@ -226,6 +237,14 @@
     .news-section{
       background:rgba(255,184,107,.05);
       border:1px solid rgba(255,184,107,.2);
+      border-radius:var(--r-lg);
+      padding:10px;
+      margin-bottom:12px;
+    }
+
+    .message-section{
+      background:rgba(80,250,123,.05);
+      border:1px solid rgba(80,250,123,.2);
       border-radius:var(--r-lg);
       padding:10px;
       margin-bottom:12px;
@@ -286,6 +305,233 @@
       color:var(--bg);
       border-color:var(--primary);
     }
+
+    /* Стили для поиска пользователей */
+    .user-search-result{
+      padding:8px;
+      border-radius:var(--r-lg);
+      background:var(--surface2);
+      margin-bottom:8px;
+      cursor:pointer;
+      transition:0.2s;
+    }
+    .user-search-result:hover{
+      background:var(--surface3);
+      border-color:var(--primary);
+    }
+
+    /* Стили для чата */
+    .chat-container{
+      display:flex;
+      flex-direction:column;
+      height:600px;
+      background:var(--surface2);
+      border-radius:var(--r-xl);
+      overflow:hidden;
+    }
+    
+    .chat-header{
+      padding:16px;
+      background:var(--surface3);
+      border-bottom:1px solid var(--outline);
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+    
+    .chat-header-info{
+      flex:1;
+    }
+    
+    .chat-header-name{
+      font-weight:bold;
+      font-size:16px;
+    }
+    
+    .chat-header-status{
+      font-size:12px;
+      opacity:0.7;
+      display:flex;
+      align-items:center;
+      gap:4px;
+    }
+    
+    .status-online{
+      color:var(--message);
+    }
+    
+    .status-offline{
+      color:var(--danger);
+    }
+    
+    .chat-messages{
+      flex:1;
+      overflow-y:auto;
+      padding:16px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+    
+    .message-wrapper{
+      display:flex;
+      margin-bottom:8px;
+    }
+    
+    .message-wrapper.sent{
+      justify-content:flex-end;
+    }
+    
+    .message-wrapper.received{
+      justify-content:flex-start;
+    }
+    
+    .message-bubble{
+      max-width:70%;
+      padding:10px 14px;
+      border-radius:18px;
+      position:relative;
+      word-break:break-word;
+    }
+    
+    .message-bubble.sent{
+      background:var(--primary);
+      color:var(--bg);
+      border-bottom-right-radius:4px;
+    }
+    
+    .message-bubble.received{
+      background:var(--surface3);
+      border-bottom-left-radius:4px;
+    }
+    
+    .message-time{
+      font-size:10px;
+      opacity:0.7;
+      margin-top:4px;
+      text-align:right;
+    }
+    
+    .message-status{
+      display:flex;
+      align-items:center;
+      gap:4px;
+      font-size:10px;
+      margin-top:2px;
+    }
+    
+    .message-status.read{
+      color:var(--message);
+    }
+    
+    .chat-input-area{
+      padding:16px;
+      background:var(--surface3);
+      border-top:1px solid var(--outline);
+    }
+    
+    .chat-input-wrapper{
+      display:flex;
+      gap:8px;
+      align-items:flex-end;
+    }
+    
+    .chat-input{
+      flex:1;
+      background:var(--surface2);
+      border:1px solid var(--outline);
+      border-radius:24px;
+      padding:12px 16px;
+      color:var(--text);
+      resize:none;
+      max-height:120px;
+      min-height:40px;
+      font-family:inherit;
+    }
+    
+    .chat-input:focus{
+      outline:none;
+      border-color:var(--message);
+    }
+    
+    .chat-emoji-picker{
+      display:flex;
+      gap:4px;
+      margin-top:8px;
+      flex-wrap:wrap;
+    }
+    
+    .emoji-btn{
+      background:var(--surface2);
+      border:1px solid var(--outline);
+      border-radius:20px;
+      padding:4px 8px;
+      font-size:14px;
+      cursor:pointer;
+      transition:0.2s;
+    }
+    
+    .emoji-btn:hover{
+      background:var(--surface3);
+      border-color:var(--message);
+    }
+    
+    .chat-actions{
+      display:flex;
+      gap:4px;
+    }
+    
+    .dialog-item{
+      cursor:pointer;
+      transition:0.2s;
+    }
+    
+    .dialog-item:hover{
+      background:var(--surface3);
+    }
+    
+    .dialog-item.active{
+      border-left:4px solid var(--message);
+    }
+    
+    .unread-badge{
+      background:var(--message);
+      color:var(--bg);
+      border-radius:20px;
+      padding:2px 8px;
+      font-size:12px;
+      margin-left:8px;
+    }
+    
+    .typing-indicator{
+      display:flex;
+      gap:4px;
+      padding:8px 12px;
+      background:var(--surface3);
+      border-radius:18px;
+      width:fit-content;
+      margin-bottom:8px;
+    }
+    
+    .typing-dot{
+      width:8px;
+      height:8px;
+      background:var(--text);
+      border-radius:50%;
+      animation:typing 1.4s infinite;
+    }
+    
+    .typing-dot:nth-child(2){ animation-delay:0.2s; }
+    .typing-dot:nth-child(3){ animation-delay:0.4s; }
+    
+    @keyframes typing{
+      0%,60%,100%{ transform:translateY(0); opacity:0.5; }
+      30%{ transform:translateY(-4px); opacity:1; }
+    }
+    
+    .chat-search{
+      margin-bottom:16px;
+    }
   </style>
 </head>
 
@@ -301,6 +547,7 @@
         <nav class="nav">
           <button id="navFeed" class="btn btn--ghost"><span class="icon">dynamic_feed</span> Лента</button>
           <button id="navNews" class="btn btn--ghost"><span class="icon">newspaper</span> Новости</button>
+          <button id="navMessages" class="btn btn--ghost hidden"><span class="icon">chat</span> Сообщения</button>
           <button id="navProfile" class="btn btn--ghost"><span class="icon">account_circle</span> Профиль</button>
           <button id="navRTDB" class="btn btn--ghost hidden"><span class="icon">database</span> RTDB</button>
           <button id="btnLogout" class="btn btn--danger hidden"><span class="icon">logout</span> Выйти</button>
@@ -393,6 +640,97 @@
           <div id="newsFeed" class="feed"></div>
         </div>
 
+        <!-- MESSAGES (личные сообщения) -->
+        <div id="messagesCard" class="card hidden">
+          <div class="card__title">
+            <h2><span class="icon" style="color:var(--message);">chat</span> Личные сообщения</h2>
+            <button id="btnRefreshMessages" class="btn btn--ghost"><span class="icon">refresh</span></button>
+          </div>
+
+          <!-- Поиск пользователей -->
+          <div class="chat-search">
+            <div class="message-section">
+              <div class="label">Поиск пользователя</div>
+              <div class="row" style="gap:8px;">
+                <input type="text" id="searchUserInput" class="input" placeholder="Введите никнейм..." style="flex:1;">
+                <button id="btnSearchUser" class="btn btn--message"><span class="icon">search</span></button>
+              </div>
+              <div id="searchResults" style="margin-top:10px;"></div>
+            </div>
+          </div>
+
+          <!-- Список диалогов и чат -->
+          <div class="row" style="gap:12px; align-items:stretch;">
+            <!-- Список диалогов -->
+            <div style="width:200px; flex-shrink:0;">
+              <h3 style="margin:0 0 8px 0; font-size:14px;">Диалоги</h3>
+              <div id="dialogsList" class="feed" style="max-height:500px; overflow-y:auto;"></div>
+            </div>
+            
+            <!-- Окно чата -->
+            <div style="flex:1;">
+              <div id="chatContainer" class="hidden">
+                <div class="chat-container">
+                  <div class="chat-header">
+                    <div class="chat-header-info">
+                      <div class="chat-header-name" id="chatUserName"></div>
+                      <div class="chat-header-status" id="chatUserStatus">
+                        <span class="status-dot"></span>
+                        <span id="userStatusText"></span>
+                      </div>
+                    </div>
+                    <div class="chat-actions">
+                      <button id="btnCloseChat" class="btn btn--ghost" title="Закрыть чат">
+                        <span class="icon">close</span>
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <div id="chatMessages" class="chat-messages">
+                    <!-- Сообщения будут здесь -->
+                  </div>
+                  
+                  <div class="chat-input-area">
+                    <!-- Индикатор печатания -->
+                    <div id="typingIndicator" class="typing-indicator hidden">
+                      <div class="typing-dot"></div>
+                      <div class="typing-dot"></div>
+                      <div class="typing-dot"></div>
+                      <span style="margin-left:4px; font-size:12px;">печатает...</span>
+                    </div>
+                    
+                    <!-- Поле ввода -->
+                    <div class="chat-input-wrapper">
+                      <textarea id="chatMessageInput" class="chat-input" placeholder="Напишите сообщение..." rows="1"></textarea>
+                      <button id="btnSendChatMessage" class="btn btn--message">
+                        <span class="icon">send</span>
+                      </button>
+                    </div>
+                    
+                    <!-- Эмодзи (быстрый доступ) -->
+                    <div class="chat-emoji-picker">
+                      <button class="emoji-btn" data-emoji="👍">👍</button>
+                      <button class="emoji-btn" data-emoji="❤️">❤️</button>
+                      <button class="emoji-btn" data-emoji="😂">😂</button>
+                      <button class="emoji-btn" data-emoji="😮">😮</button>
+                      <button class="emoji-btn" data-emoji="😢">😢</button>
+                      <button class="emoji-btn" data-emoji="👋">👋</button>
+                      <button class="emoji-btn" data-emoji="🔥">🔥</button>
+                      <button class="emoji-btn" data-emoji="✅">✅</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Заглушка, когда чат не выбран -->
+              <div id="noChatSelected" class="post" style="text-align:center; padding:40px;">
+                <span class="icon" style="font-size:48px; opacity:0.5;">chat</span>
+                <p style="margin-top:16px; opacity:0.7;">Выберите диалог или найдите пользователя</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- PROFILE -->
         <div id="profileCard" class="card hidden">
           <div class="card__title"><h2>Профиль</h2></div>
@@ -404,8 +742,8 @@
                   <div class="label">Логин</div>
                   <div id="pUser" style="font-weight:900; display:flex; align-items:center; gap:8px;"></div>
 
-                  <div class="label" style="margin-top:10px;">ID</div>
-                  <div id="pId" class="mono" style="opacity:.92;"></div>
+                  <div class="label" style="margin-top:10px;">ID (зашифрован)</div>
+                  <div id="pId" class="mono" style="opacity:.92; font-size:11px;"></div>
                 </div>
 
                 <div class="col" style="gap:6px; min-width:220px;">
@@ -452,6 +790,7 @@
                 <option value="users">Пользователи (users)</option>
                 <option value="posts">Посты (posts)</option>
                 <option value="news">Новости (news)</option>
+                <option value="messages">Сообщения (messages)</option>
                 <option value="root" selected>Вся база (root)</option>
               </select>
               <button id="btnLoadRTDB" class="btn btn--primary"><span class="icon">visibility</span> Загрузить</button>
@@ -478,6 +817,7 @@
             <span id="adminStatus" class="badge hidden"><span class="icon">admin_panel_settings</span> Админ</span>
             <span id="botStatus" class="badge badge--bot hidden"><span class="icon">smart_toy</span> Бот</span>
             <span id="leaguefunStatus" class="badge badge--leaguefun hidden"><span class="icon">star</span> LEGEND</span>
+            <span id="unreadMessages" class="badge badge--message hidden"><span class="icon">chat</span> Новые сообщения</span>
           </div>
         </div>
 
@@ -486,6 +826,7 @@
           <div class="col" style="gap:8px;">
             <div><span class="badge" style="background:var(--surface2);">📰 Новости</span> — только для авторов</div>
             <div><span class="badge" style="background:var(--surface2);">💬 Лента</span> — для всех</div>
+            <div><span class="badge" style="background:var(--surface2);">💭 Сообщения</span> — личные</div>
           </div>
         </div>
       </aside>
@@ -500,14 +841,14 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
     import {
-      getDatabase, ref, get, set, update, push, onValue, remove, query, orderByChild, equalTo
+      getDatabase, ref, get, set, update, push, onValue, remove, query, orderByChild, equalTo, onDisconnect
     } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-database.js";
 
     // ====== НАСТРОЙКИ ======
-    const ADMIN_KEY = "F1leaguebot"; // Токен для входа в админку
-    const BOT_USERNAME = "f1leaguebot"; // Аккаунт бота (специальный)
-    const LEGEND_USERNAME = "leaguefun"; // Аккаунт с легендарной галочкой
-    const ENCRYPTION_KEY = "LGFSecretKey2024"; // Секретный ключ для шифрования
+    const ADMIN_KEY = "F1leaguebot";
+    const BOT_USERNAME = "f1leaguebot";
+    const LEGEND_USERNAME = "leaguefun";
+    const ENCRYPTION_KEY = "LGFSecretKey2024";
     
     const firebaseConfig = {
       apiKey: "AIzaSyBsWh1hoWrrlMROmv9AiVWWNTjMn64bJPQ",
@@ -529,11 +870,13 @@
     const authCard = $("authCard");
     const feedCard = $("feedCard");
     const newsCard = $("newsCard");
+    const messagesCard = $("messagesCard");
     const profileCard = $("profileCard");
     const rtdbCard = $("rtdbCard");
 
     const navFeed = $("navFeed");
     const navNews = $("navNews");
+    const navMessages = $("navMessages");
     const navProfile = $("navProfile");
     const btnLogout = $("btnLogout");
     const navRTDB = $("navRTDB");
@@ -545,6 +888,7 @@
     const adminStatus = $("adminStatus");
     const botStatus = $("botStatus");
     const leaguefunStatus = $("leaguefunStatus");
+    const unreadMessages = $("unreadMessages");
     const adminBadgeProfile = $("adminBadgeProfile");
     const leaguefunBadgeProfile = $("leaguefunBadgeProfile");
 
@@ -559,6 +903,23 @@
     const btnRefreshNews = $("btnRefreshNews");
     const newsFeed = $("newsFeed");
 
+    // Элементы для сообщений
+    const btnRefreshMessages = $("btnRefreshMessages");
+    const searchUserInput = $("searchUserInput");
+    const btnSearchUser = $("btnSearchUser");
+    const searchResults = $("searchResults");
+    const dialogsList = $("dialogsList");
+    const chatContainer = $("chatContainer");
+    const noChatSelected = $("noChatSelected");
+    const chatUserName = $("chatUserName");
+    const chatUserStatus = $("chatUserStatus");
+    const userStatusText = $("userStatusText");
+    const chatMessages = $("chatMessages");
+    const chatMessageInput = $("chatMessageInput");
+    const btnSendChatMessage = $("btnSendChatMessage");
+    const btnCloseChat = $("btnCloseChat");
+    const typingIndicator = $("typingIndicator");
+
     const rtdbPath = $("rtdbPath");
     const btnLoadRTDB = $("btnLoadRTDB");
     const btnRefreshRTDB = $("btnRefreshRTDB");
@@ -572,6 +933,9 @@
     // ====== СОСТОЯНИЕ ======
     let sessionUser = null;
     let isAdminMode = false;
+    let currentChat = null; // { userId, username, displayName }
+    let usersCache = {};
+    let typingTimeout = null;
     const LS_KEY = "lgfl_session_v1";
 
     function toast(message, icon="info", ms=2400){
@@ -595,6 +959,7 @@
       authCard.classList.toggle("hidden", which !== "auth");
       feedCard.classList.toggle("hidden", which !== "feed");
       newsCard.classList.toggle("hidden", which !== "news");
+      messagesCard.classList.toggle("hidden", which !== "messages");
       profileCard.classList.toggle("hidden", which !== "profile");
       rtdbCard.classList.toggle("hidden", which !== "rtdb");
     }
@@ -604,6 +969,7 @@
       const h = (location.hash || "#feed").toLowerCase();
       if(h.includes("profile")) return "profile";
       if(h.includes("news")) return "news";
+      if(h.includes("messages")) return "messages";
       if(h.includes("rtdb")) return "rtdb";
       return "feed";
     }
@@ -643,51 +1009,18 @@
     }
     function canDeleteNews() {
       if(!sessionUser) return false;
-      return isBotUser(sessionUser.username); // Только бот может удалять новости
+      return isBotUser(sessionUser.username);
     }
 
     // ====== КРИПТОГРАФИЯ SHA-256 ======
     async function sha256Hash(text) {
+      if (!text) return text;
       const encoder = new TextEncoder();
-      const data = encoder.encode(text + ENCRYPTION_KEY); // Добавляем секретный ключ
+      const data = encoder.encode(text + ENCRYPTION_KEY);
       const hashBuffer = await crypto.subtle.digest('SHA-256', data);
       const hashArray = Array.from(new Uint8Array(hashBuffer));
       const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
       return hashHex;
-    }
-
-    // Функция для шифрования данных перед сохранением в БД
-    async function encryptData(data) {
-      const encrypted = {};
-      for (const [key, value] of Object.entries(data)) {
-        if (typeof value === 'string' && !key.includes('Id') && !key.includes('uid') && !key.includes('createdAt') && !key.includes('pinned') && !key.includes('isNews')) {
-          // Шифруем только текстовые поля, кроме идентификаторов и временных меток
-          encrypted[key] = await sha256Hash(value);
-        } else if (typeof value === 'object' && value !== null) {
-          // Рекурсивно шифруем вложенные объекты
-          encrypted[key] = await encryptData(value);
-        } else {
-          encrypted[key] = value;
-        }
-      }
-      return encrypted;
-    }
-
-    // Функция для проверки данных (сравнение хешей)
-    async function verifyData(original, encrypted) {
-      if (typeof original === 'string' && typeof encrypted === 'string') {
-        const hash = await sha256Hash(original);
-        return hash === encrypted;
-      }
-      if (typeof original === 'object' && original !== null && typeof encrypted === 'object' && encrypted !== null) {
-        for (const key of Object.keys(original)) {
-          if (!await verifyData(original[key], encrypted[key])) {
-            return false;
-          }
-        }
-        return true;
-      }
-      return original === encrypted;
     }
 
     // ====== RTDB PATHS ======
@@ -695,6 +1028,381 @@
     const userRef = (username) => ref(db, `users/${username}`);
     const postsRef = () => ref(db, "posts");
     const newsRef = () => ref(db, "news");
+    const messagesRef = () => ref(db, "messages");
+    const userStatusRef = (userId) => ref(db, `status/${userId}`);
+
+    // ====== ЗАГРУЗКА ПОЛЬЗОВАТЕЛЕЙ ======
+    async function loadUsersCache() {
+      try {
+        const snap = await get(usersRef());
+        if (snap.exists()) {
+          const users = snap.val();
+          for (const [username, data] of Object.entries(users)) {
+            usersCache[username] = {
+              id: data._original?.id || data.id,
+              displayName: data._original?.displayName || username
+            };
+          }
+        }
+      } catch(e) {
+        console.error("Ошибка загрузки пользователей:", e);
+      }
+    }
+
+    // ====== ПОИСК ПОЛЬЗОВАТЕЛЕЙ ======
+    btnSearchUser.addEventListener("click", async () => {
+      const query = searchUserInput.value.trim().toLowerCase();
+      if (!query || !sessionUser) return;
+
+      searchResults.innerHTML = "";
+      const results = [];
+
+      for (const [username, data] of Object.entries(usersCache)) {
+        if (username.includes(query) && username !== sessionUser.username) {
+          results.push({ username, displayName: data.displayName });
+        }
+      }
+
+      if (results.length === 0) {
+        searchResults.innerHTML = '<div class="post">Ничего не найдено</div>';
+        return;
+      }
+
+      for (const user of results) {
+        const el = document.createElement("div");
+        el.className = "user-search-result";
+        el.innerHTML = `
+          <div class="row" style="justify-content:space-between;">
+            <span><span class="icon">person</span> ${escapeHtml(user.displayName)} (@${escapeHtml(user.username)})</span>
+            <button class="btn btn--message btn-start-chat" data-username="${user.username}">Написать</button>
+          </div>
+        `;
+        
+        el.querySelector('.btn-start-chat').addEventListener('click', () => {
+          openChat(user.username, usersCache[user.username].id, user.displayName);
+        });
+        
+        searchResults.appendChild(el);
+      }
+    });
+
+    // ====== ЧАТ ======
+    function openChat(username, userId, displayName) {
+      if (!sessionUser) return;
+      
+      currentChat = { userId, username, displayName };
+      chatUserName.innerHTML = `${escapeHtml(displayName)} <span style="opacity:0.7;">(@${escapeHtml(username)})</span>`;
+      chatContainer.classList.remove("hidden");
+      noChatSelected.classList.add("hidden");
+      
+      loadMessages(userId);
+      setupStatusListener(userId);
+    }
+
+    function closeChat() {
+      currentChat = null;
+      chatContainer.classList.add("hidden");
+      noChatSelected.classList.remove("hidden");
+      chatMessages.innerHTML = "";
+    }
+
+    btnCloseChat.addEventListener("click", closeChat);
+
+    // Статус пользователя (онлайн/оффлайн)
+    function setupStatusListener(userId) {
+      onValue(userStatusRef(userId), (snap) => {
+        const status = snap.val();
+        const isOnline = status && status.online;
+        
+        if (isOnline) {
+          userStatusText.innerHTML = '<span class="status-online">● Онлайн</span>';
+        } else {
+          const lastSeen = status?.lastSeen ? new Date(status.lastSeen).toLocaleString() : 'никогда';
+          userStatusText.innerHTML = `<span class="status-offline">● Оффлайн (был(а): ${lastSeen})</span>`;
+        }
+      });
+    }
+
+    // Обновление статуса текущего пользователя
+    function updateUserStatus(online) {
+      if (!sessionUser) return;
+      
+      const statusRef = userStatusRef(sessionUser.id);
+      if (online) {
+        set(statusRef, {
+          online: true,
+          lastSeen: Date.now()
+        });
+        onDisconnect(statusRef).set({
+          online: false,
+          lastSeen: Date.now()
+        });
+      } else {
+        set(statusRef, {
+          online: false,
+          lastSeen: Date.now()
+        });
+      }
+    }
+
+    // Индикатор печатания
+    function setupTypingListener(chatId) {
+      const typingRef = ref(db, `typing/${chatId}`);
+      onValue(typingRef, (snap) => {
+        const data = snap.val();
+        if (data && data.userId === currentChat?.userId && data.typing) {
+          typingIndicator.classList.remove("hidden");
+          setTimeout(() => typingIndicator.classList.add("hidden"), 3000);
+        }
+      });
+    }
+
+    function sendTypingIndicator() {
+      if (!sessionUser || !currentChat) return;
+      
+      const chatId = [sessionUser.id, currentChat.userId].sort().join('_');
+      const typingRef = ref(db, `typing/${chatId}`);
+      
+      set(typingRef, {
+        userId: sessionUser.id,
+        typing: true,
+        timestamp: Date.now()
+      });
+      
+      clearTimeout(typingTimeout);
+      typingTimeout = setTimeout(() => {
+        set(typingRef, {
+          userId: sessionUser.id,
+          typing: false,
+          timestamp: Date.now()
+        });
+      }, 2000);
+    }
+
+    // Загрузка сообщений
+    function loadMessages(otherUserId) {
+      if (!sessionUser || !otherUserId) return;
+
+      const convId = [sessionUser.id, otherUserId].sort().join('_');
+      const messagesQuery = query(ref(db, `messages/${convId}`), orderByChild('createdAt'));
+
+      onValue(messagesQuery, (snap) => {
+        const val = snap.val() || {};
+        const messages = Object.entries(val)
+          .map(([key, msg]) => ({ id: key, ...msg }))
+          .sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
+
+        chatMessages.innerHTML = "";
+        
+        let lastDate = null;
+        
+        for (const msg of messages) {
+          // Разделитель по датам
+          const msgDate = new Date(msg.createdAt).toLocaleDateString();
+          if (msgDate !== lastDate) {
+            const dateDivider = document.createElement("div");
+            dateDivider.style.textAlign = "center";
+            dateDivider.style.margin = "16px 0 8px";
+            dateDivider.style.opacity = "0.5";
+            dateDivider.style.fontSize = "11px";
+            dateDivider.textContent = msgDate;
+            chatMessages.appendChild(dateDivider);
+            lastDate = msgDate;
+          }
+          
+          const isSent = msg.from === sessionUser.id;
+          const wrapper = document.createElement("div");
+          wrapper.className = `message-wrapper ${isSent ? 'sent' : 'received'}`;
+          
+          const bubble = document.createElement("div");
+          bubble.className = `message-bubble ${isSent ? 'sent' : 'received'}`;
+          
+          const time = new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          const text = msg._original?.text || msg.text || "";
+          
+          let statusHtml = '';
+          if (isSent) {
+            statusHtml = `
+              <div class="message-status ${msg.read ? 'read' : ''}">
+                <span class="icon">${msg.read ? 'done_all' : 'done'}</span>
+                ${msg.read ? 'Прочитано' : 'Доставлено'}
+              </div>
+            `;
+          }
+          
+          bubble.innerHTML = `
+            <div>${escapeHtml(text)}</div>
+            <div class="message-time">${time}</div>
+            ${statusHtml}
+          `;
+          
+          wrapper.appendChild(bubble);
+          chatMessages.appendChild(wrapper);
+          
+          // Отмечаем сообщения как прочитанные
+          if (!isSent && !msg.read) {
+            update(ref(db, `messages/${convId}/${msg.id}`), { read: true });
+          }
+        }
+        
+        // Скролл вниз
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      });
+      
+      setupTypingListener(convId);
+    }
+
+    // Отправка сообщения
+    btnSendChatMessage.addEventListener("click", async () => {
+      if (!sessionUser || !currentChat) return;
+      
+      const text = chatMessageInput.value.trim();
+      if (!text) return;
+
+      const convId = [sessionUser.id, currentChat.userId].sort().join('_');
+      
+      try {
+        const message = {
+          from: sessionUser.id,
+          to: currentChat.userId,
+          text: await sha256Hash(text),
+          createdAt: Date.now(),
+          read: false,
+          _original: { text }
+        };
+        
+        await push(ref(db, `messages/${convId}`), message);
+        chatMessageInput.value = "";
+        chatMessageInput.style.height = "auto";
+        
+        // Сбрасываем индикатор печатания
+        clearTimeout(typingTimeout);
+        const typingRef = ref(db, `typing/${convId}`);
+        set(typingRef, {
+          userId: sessionUser.id,
+          typing: false,
+          timestamp: Date.now()
+        });
+      } catch(e) {
+        toast("Ошибка отправки: " + e.message, "error");
+      }
+    });
+
+    // Авто-расширение textarea
+    chatMessageInput.addEventListener("input", () => {
+      chatMessageInput.style.height = "auto";
+      chatMessageInput.style.height = (chatMessageInput.scrollHeight) + "px";
+      sendTypingIndicator();
+    });
+
+    // Отправка по Enter
+    chatMessageInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        btnSendChatMessage.click();
+      }
+    });
+
+    // Эмодзи
+    document.querySelectorAll('.emoji-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        chatMessageInput.value += btn.dataset.emoji;
+        chatMessageInput.dispatchEvent(new Event('input'));
+      });
+    });
+
+    // Загрузка диалогов
+    function loadDialogs() {
+      if (!sessionUser) return;
+
+      dialogsList.innerHTML = "";
+
+      onValue(messagesRef(), async (snap) => {
+        const val = snap.val() || {};
+        const dialogs = new Map();
+        let unreadCount = 0;
+
+        for (const [convId, messages] of Object.entries(val)) {
+          const [id1, id2] = convId.split('_');
+          if (id1 === sessionUser.id || id2 === sessionUser.id) {
+            const otherId = id1 === sessionUser.id ? id2 : id1;
+            
+            // Ищем username по ID в кэше
+            for (const [username, data] of Object.entries(usersCache)) {
+              if (data.id === otherId) {
+                // Получаем последнее сообщение
+                const lastMsg = Object.values(messages)
+                  .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0))[0];
+                
+                // Считаем непрочитанные
+                let unreadInDialog = 0;
+                for (const msg of Object.values(messages)) {
+                  if (msg.to === sessionUser.id && !msg.read) {
+                    unreadInDialog++;
+                    unreadCount++;
+                  }
+                }
+                
+                dialogs.set(username, {
+                  ...data,
+                  lastMsg: lastMsg?._original?.text || '...',
+                  lastTime: lastMsg?.createdAt,
+                  unread: unreadInDialog
+                });
+                break;
+              }
+            }
+          }
+        }
+
+        if (unreadCount > 0) {
+          unreadMessages.classList.remove("hidden");
+          unreadMessages.innerHTML = `<span class="icon">chat</span> ${unreadCount} новых`;
+        } else {
+          unreadMessages.classList.add("hidden");
+        }
+
+        if (dialogs.size === 0) {
+          dialogsList.innerHTML = '<div class="post">Нет диалогов</div>';
+          return;
+        }
+
+        // Сортируем по времени последнего сообщения
+        const sortedDialogs = Array.from(dialogs.entries())
+          .sort((a, b) => (b[1].lastTime || 0) - (a[1].lastTime || 0));
+
+        for (const [username, data] of sortedDialogs) {
+          const el = document.createElement("div");
+          el.className = `post post--message dialog-item ${currentChat?.username === username ? 'active' : ''}`;
+          
+          const lastTime = data.lastTime ? formatDateTime(data.lastTime) : '';
+          const lastMsgPreview = data.lastMsg ? escapeHtml(data.lastMsg.substring(0, 30)) + (data.lastMsg.length > 30 ? '...' : '') : 'Нет сообщений';
+          
+          el.innerHTML = `
+            <div class="row" style="justify-content:space-between; align-items:center;">
+              <div style="flex:1;">
+                <div style="display:flex; align-items:center; gap:4px; margin-bottom:4px;">
+                  <span class="badge badge--message"><span class="icon">person</span> ${escapeHtml(data.displayName)}</span>
+                  <span style="opacity:0.7; font-size:11px;">@${escapeHtml(username)}</span>
+                  ${data.unread ? `<span class="unread-badge">${data.unread}</span>` : ''}
+                </div>
+                <div style="font-size:12px; opacity:0.7; display:flex; align-items:center; gap:4px;">
+                  <span class="icon" style="font-size:14px;">chat</span>
+                  <span style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:120px;">${lastMsgPreview}</span>
+                  <span style="margin-left:auto; font-size:10px;">${lastTime}</span>
+                </div>
+              </div>
+            </div>
+          `;
+          
+          el.addEventListener('click', () => {
+            openChat(username, data.id, data.displayName);
+          });
+          
+          dialogsList.appendChild(el);
+        }
+      });
+    }
 
     // ====== RTDB ПРОСМОТР ======
     async function loadRTDBData(path) {
@@ -714,6 +1422,9 @@
             break;
           case 'news':
             dataRef = newsRef();
+            break;
+          case 'messages':
+            dataRef = messagesRef();
             break;
           case 'root':
           default:
@@ -737,6 +1448,10 @@
           if(path === 'root' || path === 'news') {
             const newsCount = data.news ? Object.keys(data.news).length : 0;
             stats.push(`📰 Новостей: ${newsCount}`);
+          }
+          if(path === 'root' || path === 'messages') {
+            const messagesCount = data.messages ? Object.keys(data.messages).length : 0;
+            stats.push(`💬 Диалогов: ${messagesCount}`);
           }
           
           if(stats.length > 0) {
@@ -769,23 +1484,23 @@
         }
 
         const id = "u_" + username + "_" + Date.now();
+        const encryptedId = await sha256Hash(id);
         
-        // Шифруем пароль и данные пользователя
-        const encryptedPass = await sha256Hash(pass);
         const encryptedData = {
-          id,
+          id: encryptedId,
           username: await sha256Hash(username),
           displayName: await sha256Hash(username),
-          passHash: encryptedPass,
+          passHash: await sha256Hash(pass),
           createdAt: Date.now(),
-          // Сохраняем оригинальные имена для отображения (отдельно)
           _original: {
             username,
-            displayName: username
+            displayName: username,
+            id
           }
         };
         
         await set(userRef(username), encryptedData);
+        await loadUsersCache();
 
         saveSession({ username, id, displayName: username });
         toast("Аккаунт создан.", "check_circle");
@@ -813,17 +1528,21 @@
         }
         const u = snap.val();
         
-        // Проверяем пароль через SHA-256
         const checkPass = await sha256Hash(pass);
         if(checkPass !== u.passHash){
           $("authErr").textContent = "Неверный пароль.";
           return;
         }
 
-        // Получаем оригинальные данные из _original
         const displayName = u._original?.displayName || username;
+        const id = u._original?.id || u.id;
         
-        saveSession({ username: u._original?.username || username, id: u.id, displayName });
+        saveSession({ username: u._original?.username || username, id, displayName });
+        await loadUsersCache();
+        
+        // Устанавливаем онлайн статус
+        updateUserStatus(true);
+        
         toast("Вход выполнен.", "login");
         routeTo("#feed");
       }catch(e){
@@ -833,6 +1552,7 @@
     });
 
     btnLogout.addEventListener("click", () => {
+      updateUserStatus(false);
       clearSession();
       toast("Выход.", "logout");
       routeTo("#feed");
@@ -840,6 +1560,7 @@
 
     navFeed.addEventListener("click", () => routeTo("#feed"));
     navNews.addEventListener("click", () => routeTo("#news"));
+    navMessages.addEventListener("click", () => routeTo("#messages"));
     navProfile.addEventListener("click", () => routeTo("#profile"));
     navRTDB.addEventListener("click", () => routeTo("#rtdb"));
     window.addEventListener("hashchange", refreshUI);
@@ -880,17 +1601,16 @@
       try {
         const now = Date.now();
         
-        // Шифруем текст новости
         const encryptedNews = {
           text: await sha256Hash(text),
           authorName: await sha256Hash(sessionUser.displayName || sessionUser.username),
-          authorUid: sessionUser.id,
+          authorUid: await sha256Hash(sessionUser.id),
           createdAt: now,
           isNews: true,
-          // Сохраняем оригинальный текст для отображения
           _original: {
             text,
-            authorName: sessionUser.displayName || sessionUser.username
+            authorName: sessionUser.displayName || sessionUser.username,
+            authorUid: sessionUser.id
           }
         };
         
@@ -904,7 +1624,6 @@
       }
     });
 
-    // Функция удаления новости
     async function deleteNews(newsId) {
       if(!canDeleteNews()) {
         toast("Только бот может удалять новости", "error");
@@ -923,7 +1642,6 @@
       }
     }
 
-    // Загрузка новостей
     function loadNews() {
       onValue(newsRef(), (snap) => {
         const val = snap.val() || {};
@@ -942,7 +1660,6 @@
           const el = document.createElement("div");
           el.className = "post post--news";
           
-          // Используем оригинальные данные для отображения
           const author = escapeHtml(item._original?.authorName || item.authorName || "author");
           const text = escapeHtml(item._original?.text || item.text || "");
           const timeAgo = formatDateTime(item.createdAt);
@@ -974,7 +1691,6 @@
             <div class="post__text">${text}</div>
           `;
           
-          // Добавляем обработчик удаления
           const deleteBtn = el.querySelector('.delete-news-btn');
           if(deleteBtn) {
             deleteBtn.addEventListener('click', async () => {
@@ -1000,7 +1716,6 @@
 
       $("btnSaveName").disabled = true;
       try{
-        // Шифруем новое имя
         const encryptedName = await sha256Hash(name);
         
         await update(userRef(sessionUser.username), { 
@@ -1013,6 +1728,7 @@
         
         sessionUser.displayName = name;
         saveSession(sessionUser);
+        await loadUsersCache();
         toast("Сохранено.", "check_circle");
         await loadProfile();
       }catch(e){
@@ -1047,7 +1763,10 @@
         `;
       }
       
-      $("pId").textContent = sessionUser.id;
+      const encryptedId = await sha256Hash(sessionUser.id);
+      $("pId").textContent = encryptedId.substring(0, 16) + "...";
+      $("pId").title = "Полный хеш: " + encryptedId;
+      
       $("displayName").value = sessionUser.displayName || sessionUser.username;
 
       if(isBotUser(sessionUser.username)) {
@@ -1067,7 +1786,9 @@
         const val = snap.val() || {};
         let cnt = 0;
         for(const k of Object.keys(val)){
-          if(val[k]?.uid === sessionUser.id) cnt++;
+          const post = val[k];
+          const postUidHash = await sha256Hash(sessionUser.id);
+          if (post.uid === postUidHash) cnt++;
         }
         $("pCount").textContent = String(cnt);
       }catch(_){
@@ -1085,19 +1806,19 @@
       $("btnPost").disabled = true;
       try{
         const now = Date.now();
+        const encryptedUid = await sha256Hash(sessionUser.id);
         
-        // Шифруем текст поста
         const encryptedPost = {
-          uid: sessionUser.id,
+          uid: encryptedUid,
           authorName: await sha256Hash(sessionUser.displayName || sessionUser.username),
           text: await sha256Hash(text),
           pinned: false,
           createdAt: now,
           editedAt: null,
-          // Сохраняем оригинальные данные для отображения
           _original: {
             authorName: sessionUser.displayName || sessionUser.username,
-            text
+            text,
+            uid: sessionUser.id
           }
         };
         
@@ -1117,7 +1838,10 @@
         return false;
       }
       
-      if(postUid !== sessionUser.id && !isAdminMode) {
+      const userUidHash = await sha256Hash(sessionUser.id);
+      const canDelete = (postUid === userUidHash) || isAdminMode;
+      
+      if(!canDelete) {
         toast("Нет прав на удаление этого поста.", "block");
         return false;
       }
@@ -1142,13 +1866,18 @@
       const el = document.createElement("div");
       el.className = "post";
       
-      // Используем оригинальные данные для отображения
       const author = escapeHtml(p._original?.authorName || p.authorName || "user");
       const text = escapeHtml(p._original?.text || p.text || "");
       const timeAgo = formatDateTime(p.createdAt);
       const fullTime = formatFullDateTime(p.createdAt);
       const isPinned = !!p.pinned;
-      const mine = sessionUser && p.uid === sessionUser.id;
+      
+      let mine = false;
+      if (sessionUser) {
+        const userUidHash = sha256Hash(sessionUser.id);
+        mine = p.uid === userUidHash;
+      }
+      
       const isAuthorBot = (p._original?.authorName || p.authorName || "").toLowerCase() === BOT_USERNAME;
       const isAuthorLegend = (p._original?.authorName || p.authorName || "").toLowerCase() === LEGEND_USERNAME;
       const edited = p.editedAt ? ` (ред. ${formatDateTime(p.editedAt)})` : '';
@@ -1168,7 +1897,6 @@
         authorBadges += `<span class="badge"><span class="icon">person</span> ты</span>`;
       }
 
-      // Добавляем бейдж шифрования
       authorBadges += `<span class="badge badge--time"><span class="icon">lock</span> Encrypted</span>`;
 
       const canDelete = mine || isAdminMode;
@@ -1228,12 +1956,7 @@
     }
 
     // Лента
-    let unsubPosts = null;
     function attachFeedListener(){
-      const feed = $("feed");
-      feed.innerHTML = "";
-      feedStatus.textContent = "";
-
       onValue(postsRef(), (snap) => {
         const val = snap.val() || {};
         const arr = Object.entries(val).map(([key, p]) => ({ key, p }));
@@ -1246,6 +1969,7 @@
           return bt - at;
         });
 
+        const feed = $("feed");
         feed.innerHTML = "";
         if(arr.length === 0){
           const empty = document.createElement("div");
@@ -1277,9 +2001,11 @@
       try{
         const snap = await get(postsRef());
         const val = snap.val() || {};
+        const userUidHash = await sha256Hash(sessionUser.id);
+        
         const mine = Object.entries(val)
           .map(([key, p]) => ({ key, p }))
-          .filter(x => x.p?.uid === sessionUser.id)
+          .filter(x => x.p?.uid === userUidHash)
           .sort((a,b) => (b.p.createdAt||0) - (a.p.createdAt||0));
 
         if(mine.length === 0){
@@ -1330,6 +2056,12 @@
         leaguefunStatus.classList.add("hidden");
       }
 
+      if(sessionUser) {
+        navMessages.classList.remove("hidden");
+      } else {
+        navMessages.classList.add("hidden");
+      }
+
       if(!sessionUser){
         statusAuth.innerHTML = `<span class="icon">key</span> Гость`;
         showOnly("auth");
@@ -1363,6 +2095,14 @@
         }
       }
       
+      if(r === "messages") {
+        loadDialogs();
+        if (!currentChat) {
+          chatContainer.classList.add("hidden");
+          noChatSelected.classList.remove("hidden");
+        }
+      }
+      
       if(r === "profile") {
         loadProfile();
       }
@@ -1381,13 +2121,6 @@
       const arr = new Uint8Array(len);
       crypto.getRandomValues(arr);
       return btoa(String.fromCharCode(...arr)).replaceAll("=", "").slice(0, 22);
-    }
-
-    async function sha256Hex(str){
-      const enc = new TextEncoder().encode(str);
-      const buf = await crypto.subtle.digest("SHA-256", enc);
-      const bytes = new Uint8Array(buf);
-      return [...bytes].map(b=>b.toString(16).padStart(2,"0")).join("");
     }
 
     function normalizeUsername(u){
@@ -1433,12 +2166,29 @@
       loadRTDBData(rtdbPath.value);
     });
 
-    // старт
+    btnRefreshMessages.addEventListener("click", () => {
+      loadDialogs();
+      toast("Диалоги обновлены", "refresh", 900);
+    });
+
+    // Старт
     const s = loadSession();
     if(s) sessionUser = s;
-    attachFeedListener();
-    loadNews();
-    refreshUI();
+    loadUsersCache().then(() => {
+      attachFeedListener();
+      loadNews();
+      refreshUI();
+      if (sessionUser) {
+        updateUserStatus(true);
+      }
+    });
+
+    // Обработка закрытия вкладки
+    window.addEventListener("beforeunload", () => {
+      if (sessionUser) {
+        updateUserStatus(false);
+      }
+    });
   </script>
 </body>
 </html>
