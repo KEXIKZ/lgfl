@@ -639,6 +639,10 @@
       if(!sessionUser) return false;
       return isBotUser(sessionUser.username) || isAdminMode;
     }
+    function canDeleteNews() {
+      if(!sessionUser) return false;
+      return isBotUser(sessionUser.username); // Только бот может удалять новости
+    }
 
     // ====== КРИПТА ======
     function randomSalt(len=16){
@@ -882,12 +886,31 @@
       }
     });
 
+    // Функция удаления новости
+    async function deleteNews(newsId) {
+      if(!canDeleteNews()) {
+        toast("Только бот может удалять новости", "error");
+        return false;
+      }
+
+      if(!confirm("Точно удалить новость?")) return false;
+
+      try {
+        await remove(ref(db, `news/${newsId}`));
+        toast("Новость удалена", "delete");
+        return true;
+      } catch(e) {
+        toast("Ошибка: " + e.message, "error");
+        return false;
+      }
+    }
+
     // Загрузка новостей
     function loadNews() {
       onValue(newsRef(), (snap) => {
         const val = snap.val() || {};
         const arr = Object.entries(val)
-          .map(([key, n]) => ({ key, ...n }))
+          .map(([key, n]) => ({ id: key, ...n }))
           .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
 
         newsFeed.innerHTML = "";
@@ -904,6 +927,7 @@
           const author = escapeHtml(item.authorName || "author");
           const timeAgo = formatDateTime(item.createdAt);
           const fullTime = formatFullDateTime(item.createdAt);
+          const canDelete = canDeleteNews();
           
           el.innerHTML = `
             <div class="post__head">
@@ -918,9 +942,22 @@
                   </span>
                 </div>
               </div>
+              ${canDelete ? `
+                <button class="btn btn--danger delete-news-btn" data-news-id="${item.id}">
+                  <span class="icon">delete</span> Удалить
+                </button>
+              ` : ''}
             </div>
             <div class="post__text">${escapeHtml(item.text)}</div>
           `;
+          
+          // Добавляем обработчик удаления
+          const deleteBtn = el.querySelector('.delete-news-btn');
+          if(deleteBtn) {
+            deleteBtn.addEventListener('click', async () => {
+              await deleteNews(item.id);
+            });
+          }
           
           newsFeed.appendChild(el);
         }
