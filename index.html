@@ -520,6 +520,16 @@
       background:rgba(80,250,123,.10);
       color:#50fa7b;
     }
+    .badge--legend{
+      border-color:gold;
+      background:rgba(255,215,0,.10);
+      color:gold;
+    }
+    .badge--user{
+      border-color:var(--primary);
+      background:rgba(138,180,255,.10);
+      color:var(--primary);
+    }
     .post__date{font-size:12px;opacity:.8}
     .post__text{white-space:pre-wrap;word-break:break-word;font-size:14px;margin-top:8px;}
 
@@ -1086,6 +1096,70 @@
       border-left: 4px solid var(--message);
       background: var(--surface3);
     }
+
+    /* Админ панель управления */
+    .admin-control-panel {
+      margin-top: 20px;
+      padding: 16px;
+      background: rgba(187, 134, 252, 0.1);
+      border: 1px solid rgba(187, 134, 252, 0.3);
+      border-radius: var(--r-lg);
+    }
+    
+    .admin-title {
+      color: var(--admin);
+      font-weight: bold;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .role-selector {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 12px 0;
+    }
+    
+    .role-btn {
+      padding: 8px 16px;
+      border-radius: 999px;
+      border: 1px solid var(--outline);
+      background: var(--surface2);
+      color: var(--text);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .role-btn:hover {
+      transform: translateY(-2px);
+    }
+    
+    .role-btn.admin {
+      border-color: var(--admin);
+      color: var(--admin);
+    }
+    
+    .role-btn.bot {
+      border-color: var(--bot);
+      color: var(--bot);
+    }
+    
+    .role-btn.legend {
+      border-color: gold;
+      color: gold;
+    }
+    
+    .role-btn.user {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+    
+    .role-btn.selected {
+      background: currentColor;
+      color: var(--bg);
+    }
   </style>
 </head>
 
@@ -1103,6 +1177,7 @@
           <button id="navNews" class="btn btn--ghost"><span class="icon">newspaper</span> Новости</button>
           <button id="navMessages" class="btn btn--ghost hidden"><span class="icon">chat</span> Сообщения</button>
           <button id="navProfile" class="btn btn--ghost"><span class="icon">account_circle</span> Профиль</button>
+          <button id="navAdminPanel" class="btn btn--admin hidden"><span class="icon">admin_panel_settings</span> Админ панель</button>
           <button id="navRTDB" class="btn btn--ghost hidden"><span class="icon">database</span> RTDB</button>
           <button id="navBotPanel" class="btn btn--bot hidden"><span class="icon">smart_toy</span> BOT PANEL</button>
           <button id="btnLogout" class="btn btn--danger hidden"><span class="icon">logout</span> Выйти</button>
@@ -1323,8 +1398,8 @@
                 <div class="row" style="gap:14px; flex-wrap:wrap;">
                   <span class="badge"><span class="icon">article</span> Постов: <b id="pCount">0</b></span>
                   <span id="adminBadgeProfile" class="badge badge--admin hidden"><span class="icon">verified</span> Админ</span>
-                  <span id="leaguefunBadgeProfile" class="badge badge--leaguefun hidden"><span class="icon">star</span> LEGEND</span>
                   <span id="botBadgeProfile" class="badge badge--bot hidden"><span class="icon">smart_toy</span> BOT</span>
+                  <span id="legendBadgeProfile" class="badge badge--legend hidden"><span class="icon">star</span> LEGEND</span>
                 </div>
                 <button id="btnMyPosts" class="btn btn--ghost"><span class="icon">filter_alt</span> Мои посты</button>
               </div>
@@ -1336,6 +1411,51 @@
                 <button id="btnMyPostsClear" class="btn btn--ghost hidden"><span class="icon">close</span> Скрыть</button>
               </div>
               <div id="myPosts" class="feed hidden"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ADMIN CONTROL PANEL (управление галочками) -->
+        <div id="adminControlCard" class="card hidden">
+          <div class="card__title">
+            <h2><span class="icon" style="color:var(--admin);">admin_panel_settings</span> Админ панель</h2>
+            <span class="badge badge--admin">АДМИНИСТРАТОР</span>
+          </div>
+
+          <div class="col" style="gap:12px;">
+            <!-- Поиск пользователя для выдачи роли -->
+            <div class="admin-section">
+              <div class="label">Выдача галочек пользователям</div>
+              <div class="row" style="gap:8px; margin-top:8px;">
+                <input type="text" id="roleUsername" class="input" placeholder="Введите имя пользователя" style="flex:1;">
+                <button id="btnLoadUserRoles" class="btn btn--admin"><span class="icon">search</span></button>
+              </div>
+            </div>
+
+            <!-- Информация о пользователе -->
+            <div id="userRoleInfo" class="admin-section hidden">
+              <div class="row" style="justify-content:space-between;">
+                <span id="selectedUserName" class="badge badge--user">Пользователь</span>
+                <span id="userCurrentRole" class="badge">Роль: обычный</span>
+              </div>
+
+              <!-- Выбор роли -->
+              <div class="role-selector">
+                <button class="role-btn user" data-role="user">👤 Обычный</button>
+                <button class="role-btn admin" data-role="admin">👑 Админ</button>
+                <button class="role-btn bot" data-role="bot">🤖 Бот</button>
+                <button class="role-btn legend" data-role="legend">⭐ Легенда</button>
+              </div>
+
+              <div class="row" style="justify-content:flex-end; margin-top:8px;">
+                <button id="btnSaveUserRole" class="btn btn--admin"><span class="icon">save</span> Сохранить роль</button>
+              </div>
+            </div>
+
+            <!-- Список всех пользователей -->
+            <div class="admin-section">
+              <div class="label">Все пользователи</div>
+              <div id="allUsersList" class="feed" style="max-height:300px; overflow-y:auto;"></div>
             </div>
           </div>
         </div>
@@ -1466,7 +1586,7 @@
             <span id="statusDb" class="badge"><span class="icon">database</span> RTDB: —</span>
             <span id="adminStatus" class="badge hidden"><span class="icon">admin_panel_settings</span> Админ</span>
             <span id="botStatus" class="badge badge--bot hidden"><span class="icon">smart_toy</span> LEAGUE BOT</span>
-            <span id="leaguefunStatus" class="badge badge--leaguefun hidden"><span class="icon">star</span> LEGEND</span>
+            <span id="legendStatus" class="badge badge--legend hidden"><span class="icon">star</span> LEGEND</span>
             <span id="unreadMessages" class="badge badge--message hidden"><span class="icon">chat</span> Новые сообщения</span>
             <span id="archivedMessages" class="badge badge--time hidden"><span class="icon">archive</span> Архив</span>
           </div>
@@ -1521,6 +1641,7 @@
     const newsCard = $("newsCard");
     const messagesCard = $("messagesCard");
     const profileCard = $("profileCard");
+    const adminControlCard = $("adminControlCard");
     const rtdbCard = $("rtdbCard");
     const botPanelCard = $("botPanelCard");
 
@@ -1528,6 +1649,7 @@
     const navNews = $("navNews");
     const navMessages = $("navMessages");
     const navProfile = $("navProfile");
+    const navAdminPanel = $("navAdminPanel");
     const navRTDB = $("navRTDB");
     const navBotPanel = $("navBotPanel");
     const btnLogout = $("btnLogout");
@@ -1538,12 +1660,12 @@
     const newsStatus = $("newsStatus");
     const adminStatus = $("adminStatus");
     const botStatus = $("botStatus");
-    const leaguefunStatus = $("leaguefunStatus");
+    const legendStatus = $("legendStatus");
     const unreadMessages = $("unreadMessages");
     const archivedMessages = $("archivedMessages");
     const adminBadgeProfile = $("adminBadgeProfile");
-    const leaguefunBadgeProfile = $("leaguefunBadgeProfile");
     const botBadgeProfile = $("botBadgeProfile");
+    const legendBadgeProfile = $("legendBadgeProfile");
     const userAvatarSmall = $("userAvatarSmall");
 
     const adminPanel = $("adminPanel");
@@ -1584,6 +1706,16 @@
     const btnSendChatMessage = $("btnSendChatMessage");
     const btnCloseChat = $("btnCloseChat");
     const typingIndicator = $("typingIndicator");
+
+    // Элементы админ панели
+    const roleUsername = $("roleUsername");
+    const btnLoadUserRoles = $("btnLoadUserRoles");
+    const userRoleInfo = $("userRoleInfo");
+    const selectedUserName = $("selectedUserName");
+    const userCurrentRole = $("userCurrentRole");
+    const roleButtons = document.querySelectorAll('.role-btn');
+    const btnSaveUserRole = $("btnSaveUserRole");
+    const allUsersList = $("allUsersList");
 
     // Элементы RTDB
     const customPathInput = $("customPathInput");
@@ -1631,7 +1763,16 @@
     let hasMoreMessages = true;
     let botStartTime = Date.now();
     let dialogsUnsubscribe = null;
+    let selectedUserForRole = null;
     const LS_KEY = "lgfl_session_v1";
+
+    // Роли пользователей
+    const ROLES = {
+      USER: 'user',
+      ADMIN: 'admin',
+      BOT: 'bot',
+      LEGEND: 'legend'
+    };
 
     function toast(message, icon="info", ms=2400){
       toastIcon.textContent = icon;
@@ -1656,6 +1797,7 @@
       newsCard.classList.toggle("hidden", which !== "news");
       messagesCard.classList.toggle("hidden", which !== "messages");
       profileCard.classList.toggle("hidden", which !== "profile");
+      adminControlCard.classList.toggle("hidden", which !== "admin");
       rtdbCard.classList.toggle("hidden", which !== "rtdb");
       botPanelCard.classList.toggle("hidden", which !== "bot");
     }
@@ -1666,9 +1808,64 @@
       if(h.includes("profile")) return "profile";
       if(h.includes("news")) return "news";
       if(h.includes("messages")) return "messages";
+      if(h.includes("admin")) return "admin";
       if(h.includes("rtdb")) return "rtdb";
       if(h.includes("bot")) return "bot";
       return "feed";
+    }
+
+    // ====== ФУНКЦИИ ДЛЯ РАБОТЫ С РОЛЯМИ ======
+    function getUserRole(userData) {
+      if (!userData) return ROLES.USER;
+      if (userData.role) return userData.role;
+      if (userData.username?.toLowerCase() === BOT_USERNAME) return ROLES.BOT;
+      if (userData.username?.toLowerCase() === LEGEND_USERNAME) return ROLES.LEGEND;
+      return ROLES.USER;
+    }
+
+    function getRoleBadge(role) {
+      switch(role) {
+        case ROLES.ADMIN: return '<span class="badge badge--admin"><span class="icon">verified</span> АДМИН</span>';
+        case ROLES.BOT: return '<span class="badge badge--bot"><span class="icon">smart_toy</span> БОТ</span>';
+        case ROLES.LEGEND: return '<span class="badge badge--legend"><span class="icon">star</span> LEGEND</span>';
+        default: return '';
+      }
+    }
+
+    // Обновление отображения ролей в профиле
+    function updateProfileBadges(userData) {
+      const role = getUserRole(userData);
+      
+      adminBadgeProfile.classList.add("hidden");
+      botBadgeProfile.classList.add("hidden");
+      legendBadgeProfile.classList.add("hidden");
+      
+      if (role === ROLES.ADMIN) {
+        adminBadgeProfile.classList.remove("hidden");
+      } else if (role === ROLES.BOT) {
+        botBadgeProfile.classList.remove("hidden");
+      } else if (role === ROLES.LEGEND) {
+        legendBadgeProfile.classList.remove("hidden");
+      }
+    }
+
+    // Обновление статуса в сайдбаре
+    function updateStatusBadges(userData) {
+      const role = getUserRole(userData);
+      
+      adminStatus.classList.add("hidden");
+      botStatus.classList.add("hidden");
+      legendStatus.classList.add("hidden");
+      
+      if (role === ROLES.ADMIN || isAdminMode) {
+        adminStatus.classList.remove("hidden");
+      }
+      if (role === ROLES.BOT) {
+        botStatus.classList.remove("hidden");
+      }
+      if (role === ROLES.LEGEND) {
+        legendStatus.classList.remove("hidden");
+      }
     }
 
     // ====== СЕССИЯ ======
@@ -1711,10 +1908,10 @@
     }
     function canDeleteNews() {
       if(!sessionUser) return false;
-      return isBotUser(sessionUser.username);
+      return isBotUser(sessionUser.username) || isAdminMode;
     }
     function isAdmin() {
-      return isAdminMode || (sessionUser && isBotUser(sessionUser.username));
+      return isAdminMode || (sessionUser && getUserRole(sessionUser) === ROLES.ADMIN) || (sessionUser && isBotUser(sessionUser.username));
     }
 
     // ====== КРИПТОГРАФИЯ SHA-256 ======
@@ -1976,10 +2173,12 @@
             const userId = data._original?.id || data.id;
             usersCache[username] = {
               id: userId,
+              username: username,
               displayName: data._original?.displayName || username,
-              avatar: data.avatar || null
+              avatar: data.avatar || null,
+              role: data.role || ROLES.USER
             };
-            console.log(`Загружен пользователь: ${username} с ID: ${userId}`);
+            console.log(`Загружен пользователь: ${username} с ID: ${userId}, роль: ${data.role || ROLES.USER}`);
           }
         }
         console.log("Всего пользователей в кэше:", Object.keys(usersCache).length);
@@ -1998,7 +2197,7 @@
 
       for (const [username, data] of Object.entries(usersCache)) {
         if (username.includes(query) && username !== sessionUser.username) {
-          results.push({ username, displayName: data.displayName, avatar: data.avatar });
+          results.push({ username, displayName: data.displayName, avatar: data.avatar, role: data.role });
         }
       }
 
@@ -2009,6 +2208,7 @@
 
       for (const user of results) {
         const el = document.createElement("div");
+        const roleBadge = getRoleBadge(user.role);
         el.className = "user-search-result";
         el.innerHTML = `
           <div class="row" style="justify-content:space-between;">
@@ -2016,7 +2216,10 @@
               <div class="avatar-small">
                 ${user.avatar ? `<img src="${user.avatar}" class="avatar-image" />` : `<div class="placeholder">${user.displayName[0]}</div>`}
               </div>
-              <span>${escapeHtml(user.displayName)} (@${escapeHtml(user.username)})</span>
+              <div>
+                <span>${escapeHtml(user.displayName)} (@${escapeHtml(user.username)})</span>
+                <div>${roleBadge}</div>
+              </div>
             </div>
             <button class="btn btn--message btn-start-chat" data-username="${user.username}">Написать</button>
           </div>
@@ -2369,6 +2572,7 @@
                 id: foundUser.id,
                 displayName: foundUser.displayName,
                 avatar: foundUser.avatar,
+                role: foundUser.role,
                 lastMsg: lastMsg?.text || '...',
                 lastTime: lastMsg?.createdAt,
                 unread: unreadInDialog
@@ -2397,6 +2601,7 @@
                     id: data.id,
                     displayName: data.displayName,
                     avatar: data.avatar,
+                    role: data.role,
                     lastMsg: lastMsg?.text || '...',
                     lastTime: lastMsg?.createdAt,
                     unread: 0,
@@ -2437,6 +2642,7 @@
           
           const lastTime = data.lastTime ? formatDateTime(data.lastTime) : '';
           const lastMsgPreview = data.lastMsg ? escapeHtml(data.lastMsg.substring(0, 30)) + (data.lastMsg.length > 30 ? '...' : '') : 'Нет сообщений';
+          const roleBadge = getRoleBadge(data.role);
           
           el.innerHTML = `
             <div class="row" style="gap:8px; align-items:center;">
@@ -2447,6 +2653,7 @@
                 <div style="display:flex; align-items:center; gap:4px; margin-bottom:4px;">
                   <span class="badge badge--message"><span class="icon">person</span> ${escapeHtml(data.displayName)}</span>
                   <span style="opacity:0.7; font-size:11px;">@${escapeHtml(username)}</span>
+                  ${roleBadge}
                   ${data.unread ? `<span class="unread-badge">${data.unread}</span>` : ''}
                   ${data.archived ? `<span class="archive-badge">архив</span>` : ''}
                 </div>
@@ -2476,6 +2683,132 @@
         console.log("Всего диалогов:", dialogs.size);
       });
     }
+
+    // ====== АДМИН ПАНЕЛЬ УПРАВЛЕНИЯ ======
+    
+    // Загрузка списка всех пользователей
+    function loadAllUsersList() {
+      allUsersList.innerHTML = "";
+      const sortedUsers = Object.values(usersCache).sort((a, b) => a.username.localeCompare(b.username));
+      
+      for (const user of sortedUsers) {
+        const el = document.createElement("div");
+        el.className = "user-search-result";
+        const roleBadge = getRoleBadge(user.role);
+        
+        el.innerHTML = `
+          <div class="row" style="justify-content:space-between;">
+            <div class="row" style="gap:8px;">
+              <div class="avatar-small">
+                ${user.avatar ? `<img src="${user.avatar}" class="avatar-image" />` : `<div class="placeholder">${user.displayName[0]}</div>`}
+              </div>
+              <div>
+                <span>${escapeHtml(user.displayName)} (@${escapeHtml(user.username)})</span>
+                <div>${roleBadge}</div>
+              </div>
+            </div>
+            <button class="btn btn--admin btn-edit-role" data-username="${user.username}"><span class="icon">edit</span></button>
+          </div>
+        `;
+        
+        el.querySelector('.btn-edit-role').addEventListener('click', () => {
+          roleUsername.value = user.username;
+          loadUserForRole();
+        });
+        
+        allUsersList.appendChild(el);
+      }
+    }
+
+    // Загрузка пользователя для изменения роли
+    async function loadUserForRole() {
+      const username = roleUsername.value.trim();
+      if (!username) {
+        toast("Введите имя пользователя", "warning");
+        return;
+      }
+
+      const userData = usersCache[username];
+      if (!userData) {
+        toast("Пользователь не найден", "error");
+        return;
+      }
+
+      selectedUserForRole = username;
+      selectedUserName.innerHTML = `${escapeHtml(userData.displayName)} (@${escapeHtml(username)})`;
+      
+      const role = userData.role || ROLES.USER;
+      let roleText = '';
+      switch(role) {
+        case ROLES.ADMIN: roleText = 'Админ'; break;
+        case ROLES.BOT: roleText = 'Бот'; break;
+        case ROLES.LEGEND: roleText = 'Легенда'; break;
+        default: roleText = 'Обычный';
+      }
+      userCurrentRole.innerHTML = `Роль: ${roleText}`;
+
+      // Подсвечиваем выбранную роль
+      roleButtons.forEach(btn => {
+        btn.classList.remove('selected');
+        if (btn.dataset.role === role) {
+          btn.classList.add('selected');
+        }
+      });
+
+      userRoleInfo.classList.remove("hidden");
+    }
+
+    // Обработчик кнопки загрузки пользователя
+    btnLoadUserRoles.addEventListener("click", loadUserForRole);
+
+    // Обработчики выбора роли
+    roleButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        roleButtons.forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+      });
+    });
+
+    // Сохранение роли
+    btnSaveUserRole.addEventListener("click", async () => {
+      if (!selectedUserForRole) {
+        toast("Сначала выберите пользователя", "warning");
+        return;
+      }
+
+      const selectedRole = document.querySelector('.role-btn.selected')?.dataset.role;
+      if (!selectedRole) {
+        toast("Выберите роль", "warning");
+        return;
+      }
+
+      try {
+        await update(userRef(selectedUserForRole), {
+          role: selectedRole
+        });
+
+        // Обновляем кэш
+        if (usersCache[selectedUserForRole]) {
+          usersCache[selectedUserForRole].role = selectedRole;
+        }
+
+        toast(`Роль пользователя @${selectedUserForRole} изменена`, "check_circle");
+        
+        // Обновляем списки
+        loadAllUsersList();
+        if (sessionUser.username === selectedUserForRole) {
+          sessionUser.role = selectedRole;
+          saveSession(sessionUser);
+        }
+
+        if (isBotUser(sessionUser?.username)) {
+          addBotLog(`👑 Изменена роль @${selectedUserForRole} на ${selectedRole}`);
+        }
+
+      } catch (e) {
+        toast("Ошибка: " + e.message, "error");
+      }
+    });
 
     // ====== RTDB ПРОСМОТР (РАСШИРЕННЫЙ) ======
     async function loadRTDBData(path = 'root', customPath = null) {
@@ -2583,6 +2916,9 @@
         const id = "u_" + username + "_" + Date.now();
         const encryptedId = await sha256Hash(id);
         
+        const role = (username.toLowerCase() === BOT_USERNAME) ? ROLES.BOT : 
+                     (username.toLowerCase() === LEGEND_USERNAME) ? ROLES.LEGEND : ROLES.USER;
+        
         const encryptedData = {
           id: encryptedId,
           username: await sha256Hash(username),
@@ -2590,6 +2926,7 @@
           passHash: await sha256Hash(pass),
           createdAt: Date.now(),
           avatar: null,
+          role: role,
           _original: {
             username,
             displayName: username,
@@ -2600,7 +2937,7 @@
         await set(userRef(username), encryptedData);
         await loadUsersCache();
 
-        saveSession({ username, id, displayName: username });
+        saveSession({ username, id, displayName: username, role: role });
         toast("Аккаунт создан.", "check_circle");
         routeTo("#feed");
       }catch(e){
@@ -2634,10 +2971,11 @@
 
         const displayName = u._original?.displayName || username;
         const id = u._original?.id || u.id;
+        const role = u.role || ROLES.USER;
         
-        console.log("Вход пользователя:", username, "ID:", id);
+        console.log("Вход пользователя:", username, "ID:", id, "Роль:", role);
         
-        saveSession({ username: u._original?.username || username, id, displayName, avatar: u.avatar || null });
+        saveSession({ username: u._original?.username || username, id, displayName, avatar: u.avatar || null, role });
         await loadUsersCache();
         
         if (u.avatar) {
@@ -2650,6 +2988,10 @@
         displayNameInput.value = displayName;
         
         updateUserStatus(true);
+        
+        // Обновляем бейджи
+        updateProfileBadges({ role });
+        updateStatusBadges({ role });
         
         // Если это бот, показываем специальные элементы
         if (isBotUser(username)) {
@@ -2676,6 +3018,7 @@
     navNews.addEventListener("click", () => routeTo("#news"));
     navMessages.addEventListener("click", () => routeTo("#messages"));
     navProfile.addEventListener("click", () => routeTo("#profile"));
+    navAdminPanel.addEventListener("click", () => routeTo("#admin"));
     navRTDB.addEventListener("click", () => routeTo("#rtdb"));
     navBotPanel.addEventListener("click", () => routeTo("#bot"));
     window.addEventListener("hashchange", refreshUI);
@@ -2687,6 +3030,7 @@
         isAdminMode = true;
         adminPanel.classList.add("hidden");
         adminStatus.classList.remove("hidden");
+        navAdminPanel.classList.remove("hidden");
         toast("Админ-режим активирован!", "admin_panel_settings");
         refreshUI();
       } else {
@@ -2698,6 +3042,7 @@
     btnExitAdmin.addEventListener("click", () => {
       isAdminMode = false;
       adminStatus.classList.add("hidden");
+      navAdminPanel.classList.add("hidden");
       toast("Админ-режим деактивирован");
       refreshUI();
     });
@@ -2739,7 +3084,7 @@
 
     async function deleteNews(newsId) {
       if(!canDeleteNews()) {
-        toast("Только бот может удалять новости", "error");
+        toast("Только бот или админ могут удалять новости", "error");
         return false;
       }
 
@@ -2837,23 +3182,16 @@
         } else {
           updateAvatarDisplay(null);
         }
+        
+        // Обновляем роль из базы
+        if (data?.role) {
+          sessionUser.role = data.role;
+        }
       } catch (e) {
         console.error("Ошибка загрузки аватарки", e);
       }
 
-      if(isBotUser(sessionUser.username)) {
-        adminBadgeProfile.classList.remove("hidden");
-        botBadgeProfile.classList.remove("hidden");
-        leaguefunBadgeProfile.classList.add("hidden");
-      } else if(isLegendUser(sessionUser.username)) {
-        adminBadgeProfile.classList.add("hidden");
-        botBadgeProfile.classList.add("hidden");
-        leaguefunBadgeProfile.classList.remove("hidden");
-      } else {
-        adminBadgeProfile.classList.add("hidden");
-        botBadgeProfile.classList.add("hidden");
-        leaguefunBadgeProfile.classList.add("hidden");
-      }
+      updateProfileBadges(sessionUser);
 
       try{
         const snap = await get(postsRef());
@@ -2940,22 +3278,28 @@
       const isPinned = !!p.pinned;
       
       const mine = sessionUser && p.uid === sessionUser.id;
-      const isAuthorBot = (p.authorName || "").toLowerCase() === BOT_USERNAME;
-      const isAuthorLegend = (p.authorName || "").toLowerCase() === LEGEND_USERNAME;
+      
+      // Определяем роль автора поста
+      let authorRole = ROLES.USER;
+      for (const [username, data] of Object.entries(usersCache)) {
+        if (data.displayName === p.authorName || username === p.authorName) {
+          authorRole = data.role || ROLES.USER;
+          break;
+        }
+      }
+      
       const edited = p.editedAt ? ` (ред. ${formatDateTime(p.editedAt)})` : '';
 
       let authorBadges = '';
-      if(isAuthorBot) {
-        authorBadges = `
-          <span class="badge badge--bot"><span class="icon">smart_toy</span> БОТ</span>
-          <span class="badge badge--admin"><span class="icon">verified</span> АДМИН</span>
-        `;
-      } else if(isAuthorLegend) {
-        authorBadges = `
-          <span class="badge badge--leaguefun"><span class="icon">star</span> LEGEND</span>
-        `;
+      if (authorRole === ROLES.BOT) {
+        authorBadges = `<span class="badge badge--bot"><span class="icon">smart_toy</span> БОТ</span>`;
+      } else if (authorRole === ROLES.ADMIN) {
+        authorBadges = `<span class="badge badge--admin"><span class="icon">verified</span> АДМИН</span>`;
+      } else if (authorRole === ROLES.LEGEND) {
+        authorBadges = `<span class="badge badge--legend"><span class="icon">star</span> LEGEND</span>`;
       }
-      if(mine && !isAuthorBot && !isAuthorLegend) {
+      
+      if(mine && authorRole === ROLES.USER) {
         authorBadges += `<span class="badge"><span class="icon">person</span> ты</span>`;
       }
 
@@ -2997,7 +3341,7 @@
       el.querySelector('[data-pin]').addEventListener("click", async () => {
         const k = prompt("Админ-ключ:");
         if(k === null) return;
-        if(k !== ADMIN_KEY) return toast("Неверно.", "lock");
+        if(k !== ADMIN_KEY && !isAdmin()) return toast("Неверно.", "lock");
 
         try{
           await update(ref(db, `posts/${key}`), { 
@@ -3098,26 +3442,34 @@
 
       btnLogout.classList.toggle("hidden", !sessionUser);
       
+      // Обновляем статус админа
       if(isAdminMode) {
         adminStatus.classList.remove("hidden");
       } else {
         adminStatus.classList.add("hidden");
       }
 
+      // Показываем кнопки в зависимости от прав
       if(sessionUser && isBotUser(sessionUser.username)) {
         navRTDB.classList.remove("hidden");
         navBotPanel.classList.remove("hidden");
         botStatus.classList.remove("hidden");
+        navAdminPanel.classList.remove("hidden");
+      } else if (sessionUser && (isAdminMode || sessionUser.role === ROLES.ADMIN)) {
+        navAdminPanel.classList.remove("hidden");
+        adminStatus.classList.remove("hidden");
+        navRTDB.classList.add("hidden");
+        navBotPanel.classList.add("hidden");
       } else {
         navRTDB.classList.add("hidden");
         navBotPanel.classList.add("hidden");
-        botStatus.classList.add("hidden");
+        navAdminPanel.classList.add("hidden");
       }
 
-      if(sessionUser && isLegendUser(sessionUser.username)) {
-        leaguefunStatus.classList.remove("hidden");
+      if(sessionUser && sessionUser.role === ROLES.LEGEND) {
+        legendStatus.classList.remove("hidden");
       } else {
-        leaguefunStatus.classList.add("hidden");
+        legendStatus.classList.add("hidden");
       }
 
       if(sessionUser) {
@@ -3140,19 +3492,22 @@
         authHtml = `<div class="avatar-small"><div class="placeholder">${initial.toUpperCase()}</div></div>`;
       }
       
-      if(isBotUser(sessionUser.username)) {
-        statusAuth.innerHTML = authHtml + ` <span class="icon">verified</span> <b>${escapeHtml(sessionUser.displayName || sessionUser.username)}</b> <span class="badge badge--bot">LEAGUE BOT</span>`;
-      } else if(isLegendUser(sessionUser.username)) {
-        statusAuth.innerHTML = authHtml + ` <span class="icon">star</span> <b>${escapeHtml(sessionUser.displayName || sessionUser.username)}</b> <span class="badge badge--leaguefun">LEGEND</span>`;
-      } else {
-        statusAuth.innerHTML = authHtml + ` <span class="icon">verified_user</span> <b>${escapeHtml(sessionUser.displayName || sessionUser.username)}</b>`;
+      let roleText = '';
+      if (sessionUser.role === ROLES.BOT) {
+        roleText = ' <span class="badge badge--bot">LEAGUE BOT</span>';
+      } else if (sessionUser.role === ROLES.ADMIN || isAdminMode) {
+        roleText = ' <span class="badge badge--admin">АДМИНИСТРАТОР</span>';
+      } else if (sessionUser.role === ROLES.LEGEND) {
+        roleText = ' <span class="badge badge--legend">LEGEND</span>';
       }
+      
+      statusAuth.innerHTML = authHtml + ` <span class="icon">verified_user</span> <b>${escapeHtml(sessionUser.displayName || sessionUser.username)}</b>${roleText}`;
 
       const r = currentRoute();
       showOnly(r);
 
       if(r === "feed") {
-        if(!isAdminMode) {
+        if(!isAdminMode && !isAdmin()) {
           adminPanel.classList.remove("hidden");
         } else {
           adminPanel.classList.add("hidden");
@@ -3178,6 +3533,16 @@
       if(r === "profile") {
         loadProfile();
       }
+
+      if(r === "admin") {
+        if (isAdmin() || isAdminMode) {
+          loadAllUsersList();
+        } else {
+          toast("Доступ запрещен", "error");
+          routeTo("#feed");
+        }
+      }
+
       if(r === "rtdb") {
         if(!sessionUser || !isBotUser(sessionUser.username)) {
           toast("Доступ запрещен", "error");
