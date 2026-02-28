@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>L.G.F.L - RACE REGISTRATION</title>
+  <title>L.G.F.L</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -25,7 +25,6 @@
       --news:#ffb86b;
       --message:#50fa7b;
       --bot:#ff79c6;
-      --race:#ffb347;
       --r-xl:22px;
       --r-lg:18px;
       --shadow:0 10px 30px rgba(0,0,0,.35);
@@ -225,16 +224,18 @@
     }
     
     .dialog-item {
+      cursor:pointer;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
     
     .dialog-item:hover {
+      background:var(--surface3);
       transform: translateX(5px);
-      background: var(--surface3);
     }
     
     .dialog-item.active {
-      animation: pulse 2s infinite;
+      border-left:4px solid var(--message);
+      background:var(--surface3);
     }
     
     .message-bubble {
@@ -279,12 +280,18 @@
     }
     
     .user-search-result {
+      padding:8px;
+      border-radius:var(--r-lg);
+      background:var(--surface2);
+      margin-bottom:8px;
+      cursor:pointer;
       transition: all 0.3s ease;
     }
     
     .user-search-result:hover {
+      background:var(--surface3);
+      border-color:var(--primary);
       transform: translateX(5px);
-      background: var(--surface3);
     }
     
     .badge {
@@ -414,7 +421,6 @@
     .btn--news{background:rgba(255,184,107,.16);border-color:rgba(255,184,107,.35)}
     .btn--message{background:rgba(80,250,123,.16);border-color:rgba(80,250,123,.35)}
     .btn--bot{background:rgba(255,121,198,.16);border-color:rgba(255,121,198,.35)}
-    .btn--race{background:rgba(255,179,71,.16);border-color:rgba(255,179,71,.35)}
 
     .icon{
       font-family:"Material Symbols Rounded";
@@ -468,18 +474,6 @@
       border-left:4px solid var(--bot);
       background:rgba(255,121,198,.05);
     }
-    .post--race{
-      border-left:4px solid var(--race);
-      background:rgba(255,179,71,.05);
-    }
-    .post--approved{
-      border-left:4px solid var(--ok);
-      background:rgba(101,212,142,.05);
-    }
-    .post--rejected{
-      border-left:4px solid var(--danger);
-      background:rgba(255,122,122,.05);
-    }
     .post__head{
       display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin-bottom:10px;
     }
@@ -525,21 +519,6 @@
       border-color:#50fa7b;
       background:rgba(80,250,123,.10);
       color:#50fa7b;
-    }
-    .badge--race{
-      border-color:var(--race);
-      background:rgba(255,179,71,.10);
-      color:var(--race);
-    }
-    .badge--approved{
-      border-color:var(--ok);
-      background:rgba(101,212,142,.10);
-      color:var(--ok);
-    }
-    .badge--rejected{
-      border-color:var(--danger);
-      background:rgba(255,122,122,.10);
-      color:var(--danger);
     }
     .post__date{font-size:12px;opacity:.8}
     .post__text{white-space:pre-wrap;word-break:break-word;font-size:14px;margin-top:8px;}
@@ -624,20 +603,6 @@
     .bot-section:hover {
       background:rgba(255,121,198,.1);
       border-color:rgba(255,121,198,.3);
-    }
-
-    .race-section{
-      background:rgba(255,179,71,.05);
-      border:1px solid rgba(255,179,71,.2);
-      border-radius:var(--r-lg);
-      padding:10px;
-      margin-bottom:12px;
-      transition: all 0.3s ease;
-    }
-    
-    .race-section:hover {
-      background:rgba(255,179,71,.1);
-      border-color:rgba(255,179,71,.3);
     }
 
     /* Стили для RTDB просмотра */
@@ -903,6 +868,7 @@
     
     .dialog-item.active{
       border-left:4px solid var(--message);
+      background:var(--surface3);
     }
     
     .unread-badge{
@@ -1114,6 +1080,12 @@
       border-color: var(--primary);
       transform: scale(1.02);
     }
+
+    /* Стиль для активного диалога */
+    .active-dialog {
+      border-left: 4px solid var(--message);
+      background: var(--surface3);
+    }
   </style>
 </head>
 
@@ -1123,14 +1095,12 @@
       <div class="topbar__inner">
         <div class="brand">
           <div class="logo" title="L.G.F.L"><span class="material-symbols-rounded">forum</span></div>
-          <div class="brand__name">L.G.F.L | RACE REGISTRATION</div>
+          <div class="brand__name">L.G.F.L</div>
         </div>
 
         <nav class="nav">
           <button id="navFeed" class="btn btn--ghost"><span class="icon">dynamic_feed</span> Лента</button>
           <button id="navNews" class="btn btn--ghost"><span class="icon">newspaper</span> Новости</button>
-          <button id="navRaceReg" class="btn btn--race"><span class="icon">flag</span> Регистрация на гонку</button>
-          <button id="navRaceAdmin" class="btn btn--admin hidden"><span class="icon">admin_panel_settings</span> Проверка регистраций</button>
           <button id="navMessages" class="btn btn--ghost hidden"><span class="icon">chat</span> Сообщения</button>
           <button id="navProfile" class="btn btn--ghost"><span class="icon">account_circle</span> Профиль</button>
           <button id="navRTDB" class="btn btn--ghost hidden"><span class="icon">database</span> RTDB</button>
@@ -1223,94 +1193,6 @@
           </div>
 
           <div id="newsFeed" class="feed"></div>
-        </div>
-
-        <!-- RACE REGISTRATION (анкета на гонку) -->
-        <div id="raceRegCard" class="card hidden">
-          <div class="card__title">
-            <h2><span class="icon" style="color:var(--race);">flag</span> Регистрация на гонку</h2>
-            <span class="badge badge--race" id="regStatus">Ожидание регистрации</span>
-          </div>
-
-          <div class="col" style="gap:16px;">
-            <!-- Информация -->
-            <div class="race-section">
-              <p style="margin:0; opacity:0.9;">Заполните анкету для участия в гонке. Все поля обязательны.</p>
-            </div>
-
-            <!-- Форма регистрации -->
-            <div class="col" style="gap:12px;">
-              <!-- Вопрос 1 -->
-              <div class="card card--flat">
-                <div class="label">1. Ваш ник на FireGuild</div>
-                <input type="text" id="fireguildNick" class="input" placeholder="Например: RaceDriver77">
-                <div style="margin-top:4px; font-size:11px; opacity:0.7;">
-                  Если нет аккаунта: 
-                  <a href="https://bloxsik-web.github.io/beta.cdn.new.fireguild.fun/" target="_blank" style="color:var(--primary);">зарегистрироваться</a>
-                </div>
-              </div>
-
-              <!-- Вопрос 2 -->
-              <div class="card card--flat">
-                <div class="label">2. Вы участвуете в открытоколёсном автоспорте?</div>
-                <div class="row" style="gap:16px; margin-top:8px;">
-                  <label class="row" style="gap:4px; cursor:pointer;">
-                    <input type="radio" name="openWheel" value="Да" checked> A) Да
-                  </label>
-                  <label class="row" style="gap:4px; cursor:pointer;">
-                    <input type="radio" name="openWheel" value="Нет"> B) Нет
-                  </label>
-                </div>
-              </div>
-
-              <!-- Вопрос 3 -->
-              <div class="card card--flat">
-                <div class="label">3. Сколько вам лет?</div>
-                <input type="number" id="age" class="input" min="1" max="120" placeholder="Ваш возраст">
-              </div>
-
-              <!-- Кнопка отправки -->
-              <div class="row" style="justify-content:flex-end;">
-                <button id="btnSubmitRaceReg" class="btn btn--race"><span class="icon">send</span> Отправить заявку</button>
-              </div>
-            </div>
-
-            <!-- Статус предыдущей регистрации -->
-            <div id="userRegStatus" class="race-section hidden">
-              <h3 style="margin:0 0 8px 0; font-size:14px;">Ваша заявка</h3>
-              <div id="userRegData" class="post"></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- RACE ADMIN (проверка регистраций) -->
-        <div id="raceAdminCard" class="card hidden">
-          <div class="card__title">
-            <h2><span class="icon" style="color:var(--admin);">admin_panel_settings</span> Проверка регистраций</h2>
-            <button id="btnRefreshRegs" class="btn btn--ghost"><span class="icon">refresh</span></button>
-          </div>
-
-          <div class="col" style="gap:12px;">
-            <!-- Статистика -->
-            <div class="admin-section">
-              <div class="row" style="justify-content:space-between;">
-                <span class="badge badge--race">⏳ Ожидают: <span id="pendingCount">0</span></span>
-                <span class="badge badge--approved">✅ Одобрено: <span id="approvedCount">0</span></span>
-                <span class="badge badge--rejected">❌ Отклонено: <span id="rejectedCount">0</span></span>
-              </div>
-            </div>
-
-            <!-- Фильтры -->
-            <div class="tabs">
-              <button class="tab active" data-reg-filter="all">Все</button>
-              <button class="tab" data-reg-filter="pending">Ожидают</button>
-              <button class="tab" data-reg-filter="approved">Одобренные</button>
-              <button class="tab" data-reg-filter="rejected">Отклонённые</button>
-            </div>
-
-            <!-- Список регистраций -->
-            <div id="registrationsList" class="feed" style="max-height:500px; overflow-y:auto;"></div>
-          </div>
         </div>
 
         <!-- MESSAGES (личные сообщения) -->
@@ -1443,7 +1325,6 @@
                   <span id="adminBadgeProfile" class="badge badge--admin hidden"><span class="icon">verified</span> Админ</span>
                   <span id="leaguefunBadgeProfile" class="badge badge--leaguefun hidden"><span class="icon">star</span> LEGEND</span>
                   <span id="botBadgeProfile" class="badge badge--bot hidden"><span class="icon">smart_toy</span> BOT</span>
-                  <span id="raceBadgeProfile" class="badge badge--race hidden"><span class="icon">flag</span> Участник</span>
                 </div>
                 <button id="btnMyPosts" class="btn btn--ghost"><span class="icon">filter_alt</span> Мои посты</button>
               </div>
@@ -1483,7 +1364,6 @@
               <button class="tab" data-rtdb-tab="news">Новости</button>
               <button class="tab" data-rtdb-tab="messages">Сообщения</button>
               <button class="tab" data-rtdb-tab="archive">Архив</button>
-              <button class="tab" data-rtdb-tab="registrations">Регистрации</button>
             </div>
 
             <!-- Редактор пути -->
@@ -1589,15 +1469,6 @@
             <span id="leaguefunStatus" class="badge badge--leaguefun hidden"><span class="icon">star</span> LEGEND</span>
             <span id="unreadMessages" class="badge badge--message hidden"><span class="icon">chat</span> Новые сообщения</span>
             <span id="archivedMessages" class="badge badge--time hidden"><span class="icon">archive</span> Архив</span>
-            <span id="regStatusBadge" class="badge badge--race hidden"><span class="icon">flag</span> Статус заявки: —</span>
-          </div>
-        </div>
-
-        <div class="card" style="margin-top:14px;">
-          <div class="card__title"><h2>ГОНКА</h2></div>
-          <div class="col" style="gap:8px;">
-            <div><span class="badge" style="background:var(--surface2);">🏁 Регистрация</span> — заполните анкету</div>
-            <div><span class="badge" style="background:var(--surface2);">✅ Статус</span> — <span id="regStatusSmall">не подана</span></div>
           </div>
         </div>
       </aside>
@@ -1648,8 +1519,6 @@
     const authCard = $("authCard");
     const feedCard = $("feedCard");
     const newsCard = $("newsCard");
-    const raceRegCard = $("raceRegCard");
-    const raceAdminCard = $("raceAdminCard");
     const messagesCard = $("messagesCard");
     const profileCard = $("profileCard");
     const rtdbCard = $("rtdbCard");
@@ -1657,8 +1526,6 @@
 
     const navFeed = $("navFeed");
     const navNews = $("navNews");
-    const navRaceReg = $("navRaceReg");
-    const navRaceAdmin = $("navRaceAdmin");
     const navMessages = $("navMessages");
     const navProfile = $("navProfile");
     const navRTDB = $("navRTDB");
@@ -1674,12 +1541,9 @@
     const leaguefunStatus = $("leaguefunStatus");
     const unreadMessages = $("unreadMessages");
     const archivedMessages = $("archivedMessages");
-    const regStatusBadge = $("regStatusBadge");
-    const regStatusSmall = $("regStatusSmall");
     const adminBadgeProfile = $("adminBadgeProfile");
     const leaguefunBadgeProfile = $("leaguefunBadgeProfile");
     const botBadgeProfile = $("botBadgeProfile");
-    const raceBadgeProfile = $("raceBadgeProfile");
     const userAvatarSmall = $("userAvatarSmall");
 
     const adminPanel = $("adminPanel");
@@ -1692,21 +1556,6 @@
     const btnPostNews = $("btnPostNews");
     const btnRefreshNews = $("btnRefreshNews");
     const newsFeed = $("newsFeed");
-
-    // Элементы регистрации
-    const fireguildNick = $("fireguildNick");
-    const age = $("age");
-    const btnSubmitRaceReg = $("btnSubmitRaceReg");
-    const userRegStatus = $("userRegStatus");
-    const userRegData = $("userRegData");
-    const regStatus = $("regStatus");
-
-    // Элементы админки регистраций
-    const btnRefreshRegs = $("btnRefreshRegs");
-    const pendingCount = $("pendingCount");
-    const approvedCount = $("approvedCount");
-    const rejectedCount = $("rejectedCount");
-    const registrationsList = $("registrationsList");
 
     // Элементы профиля
     const avatarContainer = $("avatarContainer");
@@ -1781,7 +1630,7 @@
     let currentMessagesPage = 1;
     let hasMoreMessages = true;
     let botStartTime = Date.now();
-    let currentRegFilter = 'all';
+    let dialogsUnsubscribe = null;
     const LS_KEY = "lgfl_session_v1";
 
     function toast(message, icon="info", ms=2400){
@@ -1805,8 +1654,6 @@
       authCard.classList.toggle("hidden", which !== "auth");
       feedCard.classList.toggle("hidden", which !== "feed");
       newsCard.classList.toggle("hidden", which !== "news");
-      raceRegCard.classList.toggle("hidden", which !== "racereg");
-      raceAdminCard.classList.toggle("hidden", which !== "raceadmin");
       messagesCard.classList.toggle("hidden", which !== "messages");
       profileCard.classList.toggle("hidden", which !== "profile");
       rtdbCard.classList.toggle("hidden", which !== "rtdb");
@@ -1821,8 +1668,6 @@
       if(h.includes("messages")) return "messages";
       if(h.includes("rtdb")) return "rtdb";
       if(h.includes("bot")) return "bot";
-      if(h.includes("racereg")) return "racereg";
-      if(h.includes("raceadmin")) return "raceadmin";
       return "feed";
     }
 
@@ -1836,6 +1681,11 @@
       localStorage.removeItem(LS_KEY);
       sessionUser = null;
       isAdminMode = false;
+      if (dialogsUnsubscribe) {
+        dialogsUnsubscribe();
+        dialogsUnsubscribe = null;
+      }
+      cleanupMessagesListeners();
       refreshUI();
     }
     function loadSession(){
@@ -2030,7 +1880,6 @@
     const messagesRef = () => ref(db, "messages");
     const messagesArchiveRef = () => ref(db, "messages_archive");
     const userStatusRef = (userId) => ref(db, `status/${userId}`);
-    const registrationsRef = () => ref(db, "registrations");
 
     // ====== ФУНКЦИИ ДЛЯ СОХРАНЕНИЯ ПЕРЕПИСОК ======
 
@@ -2108,17 +1957,6 @@
         hasMore,
         total: allMessages.length
       };
-    }
-
-    async function deleteMessagePermanently(convId, messageId) {
-      try {
-        await remove(ref(db, `messages/${convId}/${messageId}`));
-        await remove(ref(db, `messages_archive/${convId}/${messageId}`));
-        return true;
-      } catch (e) {
-        console.error("Ошибка удаления сообщения:", e);
-        return false;
-      }
     }
 
     function cleanupMessagesListeners() {
@@ -2216,6 +2054,20 @@
       
       loadMessagesWithPagination(userId, 1);
       setupStatusListener(userId);
+      
+      // Обновляем активный класс в списке диалогов
+      updateActiveDialog(username);
+    }
+
+    function updateActiveDialog(username) {
+      const dialogItems = document.querySelectorAll('.dialog-item');
+      dialogItems.forEach(item => {
+        if (item.dataset.username === username) {
+          item.classList.add('active');
+        } else {
+          item.classList.remove('active');
+        }
+      });
     }
 
     function closeChat() {
@@ -2224,6 +2076,11 @@
       noChatSelected.classList.remove("hidden");
       chatMessages.innerHTML = "";
       cleanupMessagesListeners();
+      
+      // Убираем активный класс со всех диалогов
+      document.querySelectorAll('.dialog-item').forEach(item => {
+        item.classList.remove('active');
+      });
     }
 
     btnCloseChat.addEventListener("click", closeChat);
@@ -2295,7 +2152,7 @@
         bubble.className = `message-bubble ${isSent ? 'sent' : 'received'}`;
         
         const time = new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        const text = msg._original?.text || msg.text || "";
+        const text = msg.text || "";
         
         let statusHtml = '';
         if (isSent) {
@@ -2416,10 +2273,9 @@
         const message = {
           from: sessionUser.id,
           to: currentChat.userId,
-          text: await sha256Hash(text),
+          text: text,
           createdAt: Date.now(),
-          read: false,
-          _original: { text }
+          read: false
         };
         
         await push(ref(db, `messages/${convId}`), message);
@@ -2460,6 +2316,7 @@
       });
     });
 
+    // ====== ЗАГРУЗКА ДИАЛОГОВ (ПОСТОЯННАЯ) ======
     function loadDialogs() {
       if (!sessionUser) {
         console.log("Нет пользователя в сессии");
@@ -2469,7 +2326,12 @@
       console.log("Загрузка диалогов для пользователя:", sessionUser.username, sessionUser.id);
       dialogsList.innerHTML = "<div class='post'>Загрузка диалогов...</div>";
 
-      onValue(messagesRef(), async (snap) => {
+      // Отписываемся от предыдущего слушателя
+      if (dialogsUnsubscribe) {
+        dialogsUnsubscribe();
+      }
+
+      dialogsUnsubscribe = onValue(messagesRef(), async (snap) => {
         console.log("Получены данные сообщений");
         const val = snap.val() || {};
         const dialogs = new Map();
@@ -2507,7 +2369,7 @@
                 id: foundUser.id,
                 displayName: foundUser.displayName,
                 avatar: foundUser.avatar,
-                lastMsg: lastMsg?._original?.text || '...',
+                lastMsg: lastMsg?.text || '...',
                 lastTime: lastMsg?.createdAt,
                 unread: unreadInDialog
               });
@@ -2535,7 +2397,7 @@
                     id: data.id,
                     displayName: data.displayName,
                     avatar: data.avatar,
-                    lastMsg: lastMsg?._original?.text || '...',
+                    lastMsg: lastMsg?.text || '...',
                     lastTime: lastMsg?.createdAt,
                     unread: 0,
                     archived: true
@@ -2571,6 +2433,7 @@
           
           const el = document.createElement("div");
           el.className = `post post--message dialog-item ${currentChat?.username === username ? 'active' : ''}`;
+          el.dataset.username = username;
           
           const lastTime = data.lastTime ? formatDateTime(data.lastTime) : '';
           const lastMsgPreview = data.lastMsg ? escapeHtml(data.lastMsg.substring(0, 30)) + (data.lastMsg.length > 30 ? '...' : '') : 'Нет сообщений';
@@ -2614,262 +2477,6 @@
       });
     }
 
-    // ====== ФУНКЦИИ РЕГИСТРАЦИИ НА ГОНКУ ======
-
-    // Отправка заявки
-    btnSubmitRaceReg.addEventListener("click", async () => {
-      if (!sessionUser) {
-        toast("Сначала войдите в аккаунт", "warning");
-        return;
-      }
-
-      const fireguild = fireguildNick.value.trim();
-      const openWheel = document.querySelector('input[name="openWheel"]:checked')?.value;
-      const ageValue = age.value.trim();
-
-      if (!fireguild) {
-        toast("Введите ник на FireGuild", "warning");
-        return;
-      }
-      if (!ageValue) {
-        toast("Введите возраст", "warning");
-        return;
-      }
-      if (ageValue < 1 || ageValue > 120) {
-        toast("Введите корректный возраст", "warning");
-        return;
-      }
-
-      btnSubmitRaceReg.disabled = true;
-
-      try {
-        const regData = {
-          userId: sessionUser.id,
-          username: sessionUser.username,
-          displayName: sessionUser.displayName || sessionUser.username,
-          fireguild: fireguild,
-          openWheel: openWheel,
-          age: parseInt(ageValue),
-          status: "pending", // pending, approved, rejected
-          createdAt: Date.now(),
-          reviewedAt: null,
-          reviewedBy: null
-        };
-
-        // Сохраняем в базу
-        await set(ref(db, `registrations/${sessionUser.id}`), regData);
-
-        toast("Заявка отправлена! Ожидайте проверки", "check_circle");
-        loadUserRegistration();
-        updateRegStats();
-
-        if (isBotUser(sessionUser.username)) {
-          addBotLog(`📝 Бот отправил заявку на гонку`);
-        }
-
-      } catch (e) {
-        toast("Ошибка: " + e.message, "error");
-      } finally {
-        btnSubmitRaceReg.disabled = false;
-      }
-    });
-
-    // Загрузка заявки пользователя
-    async function loadUserRegistration() {
-      if (!sessionUser) return;
-
-      try {
-        const snap = await get(ref(db, `registrations/${sessionUser.id}`));
-        if (snap.exists()) {
-          const reg = snap.val();
-          userRegStatus.classList.remove("hidden");
-          
-          let statusClass = '';
-          let statusText = '';
-          switch(reg.status) {
-            case 'approved':
-              statusClass = 'badge--approved';
-              statusText = '✅ Одобрено';
-              raceBadgeProfile.classList.remove("hidden");
-              break;
-            case 'rejected':
-              statusClass = 'badge--rejected';
-              statusText = '❌ Отклонено';
-              raceBadgeProfile.classList.add("hidden");
-              break;
-            default:
-              statusClass = 'badge--race';
-              statusText = '⏳ На рассмотрении';
-              raceBadgeProfile.classList.add("hidden");
-          }
-
-          regStatus.innerHTML = statusText;
-          regStatusBadge.classList.remove("hidden");
-          regStatusBadge.innerHTML = `<span class="icon">flag</span> ${statusText}`;
-          regStatusSmall.innerHTML = statusText;
-
-          userRegData.innerHTML = `
-            <div class="post__head">
-              <div class="badge ${statusClass}">${statusText}</div>
-              <div class="badge badge--time">${formatDateTime(reg.createdAt)}</div>
-            </div>
-            <div style="margin-top:8px;">
-              <div><span class="badge">🔥 FireGuild:</span> ${escapeHtml(reg.fireguild)}</div>
-              <div><span class="badge">🏎 Открытоколёсный:</span> ${reg.openWheel}</div>
-              <div><span class="badge">📅 Возраст:</span> ${reg.age}</div>
-            </div>
-          `;
-        } else {
-          userRegStatus.classList.add("hidden");
-          regStatus.innerHTML = "Ожидание регистрации";
-          regStatusBadge.classList.add("hidden");
-          regStatusSmall.innerHTML = "не подана";
-          raceBadgeProfile.classList.add("hidden");
-        }
-      } catch (e) {
-        console.error("Ошибка загрузки заявки:", e);
-      }
-    }
-
-    // Обновление статистики регистраций
-    async function updateRegStats() {
-      if (!isAdmin()) return;
-
-      try {
-        const snap = await get(registrationsRef());
-        if (snap.exists()) {
-          const regs = snap.val();
-          let pending = 0, approved = 0, rejected = 0;
-
-          for (const reg of Object.values(regs)) {
-            switch(reg.status) {
-              case 'approved': approved++; break;
-              case 'rejected': rejected++; break;
-              default: pending++;
-            }
-          }
-
-          pendingCount.textContent = pending;
-          approvedCount.textContent = approved;
-          rejectedCount.textContent = rejected;
-        }
-      } catch (e) {
-        console.error("Ошибка обновления статистики:", e);
-      }
-    }
-
-    // Загрузка списка регистраций для админа
-    function loadRegistrations(filter = 'all') {
-      if (!isAdmin()) return;
-
-      onValue(registrationsRef(), (snap) => {
-        const val = snap.val() || {};
-        const regs = Object.entries(val)
-          .map(([id, reg]) => ({ id, ...reg }))
-          .filter(reg => {
-            if (filter === 'all') return true;
-            return reg.status === filter;
-          })
-          .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-
-        registrationsList.innerHTML = "";
-
-        if (regs.length === 0) {
-          registrationsList.innerHTML = '<div class="post">Нет регистраций</div>';
-          return;
-        }
-
-        for (const reg of regs) {
-          const el = document.createElement("div");
-          
-          let statusClass = '';
-          let statusText = '';
-          switch(reg.status) {
-            case 'approved':
-              statusClass = 'badge--approved';
-              statusText = '✅ Одобрено';
-              break;
-            case 'rejected':
-              statusClass = 'badge--rejected';
-              statusText = '❌ Отклонено';
-              break;
-            default:
-              statusClass = 'badge--race';
-              statusText = '⏳ Ожидает';
-          }
-
-          el.className = `post post--race ${reg.status === 'pending' ? '' : (reg.status === 'approved' ? 'post--approved' : 'post--rejected')}`;
-          el.innerHTML = `
-            <div class="post__head">
-              <div>
-                <div class="post__author">
-                  <span class="badge" style="background:rgba(138,180,255,.1);">${escapeHtml(reg.displayName)}</span>
-                  <span class="badge badge--message"><span class="icon">person</span> @${escapeHtml(reg.username)}</span>
-                  <span class="badge ${statusClass}">${statusText}</span>
-                </div>
-                <div class="time-details">
-                  <span class="badge badge--time" title="${formatFullDateTime(reg.createdAt)}">
-                    <span class="icon">schedule</span> ${formatDateTime(reg.createdAt)}
-                  </span>
-                </div>
-              </div>
-              ${reg.status === 'pending' ? `
-                <div class="row" style="gap:8px;">
-                  <button class="btn btn--ok btn-approve-reg" data-userid="${reg.id}"><span class="icon">check</span> Одобрить</button>
-                  <button class="btn btn--danger btn-reject-reg" data-userid="${reg.id}"><span class="icon">close</span> Отклонить</button>
-                </div>
-              ` : ''}
-            </div>
-            <div style="margin-top:8px;">
-              <div><span class="badge">🔥 FireGuild:</span> ${escapeHtml(reg.fireguild)}</div>
-              <div><span class="badge">🏎 Открытоколёсный:</span> ${reg.openWheel}</div>
-              <div><span class="badge">📅 Возраст:</span> ${reg.age}</div>
-              ${reg.reviewedAt ? `<div><span class="badge badge--time">Рассмотрено: ${formatDateTime(reg.reviewedAt)}</span></div>` : ''}
-            </div>
-          `;
-
-          // Добавляем обработчики для кнопок
-          const approveBtn = el.querySelector('.btn-approve-reg');
-          if (approveBtn) {
-            approveBtn.addEventListener('click', async () => {
-              if (confirm(`Одобрить заявку пользователя @${reg.username}?`)) {
-                await update(ref(db, `registrations/${reg.id}`), {
-                  status: 'approved',
-                  reviewedAt: Date.now(),
-                  reviewedBy: sessionUser.username
-                });
-                toast(`Заявка @${reg.username} одобрена`, "check_circle");
-                updateRegStats();
-                if (isBotUser(sessionUser.username)) {
-                  addBotLog(`✅ Одобрена заявка @${reg.username}`);
-                }
-              }
-            });
-          }
-
-          const rejectBtn = el.querySelector('.btn-reject-reg');
-          if (rejectBtn) {
-            rejectBtn.addEventListener('click', async () => {
-              if (confirm(`Отклонить заявку пользователя @${reg.username}?`)) {
-                await update(ref(db, `registrations/${reg.id}`), {
-                  status: 'rejected',
-                  reviewedAt: Date.now(),
-                  reviewedBy: sessionUser.username
-                });
-                toast(`Заявка @${reg.username} отклонена`, "delete");
-                updateRegStats();
-                if (isBotUser(sessionUser.username)) {
-                  addBotLog(`❌ Отклонена заявка @${reg.username}`);
-                }
-              }
-            });
-          }
-
-          registrationsList.appendChild(el);
-        }
-      });
-    }
-
     // ====== RTDB ПРОСМОТР (РАСШИРЕННЫЙ) ======
     async function loadRTDBData(path = 'root', customPath = null) {
       if(!sessionUser || !isBotUser(sessionUser.username)) {
@@ -2898,9 +2505,6 @@
             case 'archive':
               dataRef = messagesArchiveRef();
               break;
-            case 'registrations':
-              dataRef = registrationsRef();
-              break;
             case 'root':
             default:
               dataRef = ref(db, '/');
@@ -2919,19 +2523,20 @@
           const newsCount_ = data.news ? Object.keys(data.news).length : 0;
           const messagesCount_ = data.messages ? Object.keys(data.messages).length : 0;
           const archiveCount_ = data.messages_archive ? Object.keys(data.messages_archive).length : 0;
-          const regsCount_ = data.registrations ? Object.keys(data.registrations).length : 0;
           
           usersCount.innerHTML = `👥 Пользователей: ${usersCount_}`;
           postsCount.innerHTML = `📝 Постов: ${postsCount_}`;
           newsCount.innerHTML = `📰 Новостей: ${newsCount_}`;
-          dialogsCount.innerHTML = `💬 Диалогов: ${messagesCount_} | 📦 Архив: ${archiveCount_} | 🏁 Регистраций: ${regsCount_}`;
+          dialogsCount.innerHTML = `💬 Диалогов: ${messagesCount_} | 📦 Архив: ${archiveCount_}`;
           
           // Размер данных
           const sizeKB = Math.round(jsonStr.length / 1024);
           dataSize.innerHTML = `Размер: ${sizeKB} KB`;
           
           toast("Данные загружены", "info", 3000);
-          addBotLog(`📊 Загружена БД: ${path}`);
+          if (isBotUser(sessionUser.username)) {
+            addBotLog(`📊 Загружена БД: ${path}`);
+          }
         } else {
           rtdbContent.textContent = '{} // Данные отсутствуют';
         }
@@ -3052,9 +2657,6 @@
           addBotLog("🔑 Полный доступ к БД предоставлен");
         }
         
-        // Загружаем заявку пользователя
-        loadUserRegistration();
-        
         toast("Вход выполнен.", "login");
         routeTo("#feed");
       }catch(e){
@@ -3066,15 +2668,12 @@
     btnLogout.addEventListener("click", () => {
       updateUserStatus(false);
       clearSession();
-      cleanupMessagesListeners();
       toast("Выход.", "logout");
       routeTo("#feed");
     });
 
     navFeed.addEventListener("click", () => routeTo("#feed"));
     navNews.addEventListener("click", () => routeTo("#news"));
-    navRaceReg.addEventListener("click", () => routeTo("#racereg"));
-    navRaceAdmin.addEventListener("click", () => routeTo("#raceadmin"));
     navMessages.addEventListener("click", () => routeTo("#messages"));
     navProfile.addEventListener("click", () => routeTo("#profile"));
     navRTDB.addEventListener("click", () => routeTo("#rtdb"));
@@ -3088,11 +2687,8 @@
         isAdminMode = true;
         adminPanel.classList.add("hidden");
         adminStatus.classList.remove("hidden");
-        navRaceAdmin.classList.remove("hidden");
         toast("Админ-режим активирован!", "admin_panel_settings");
         refreshUI();
-        updateRegStats();
-        loadRegistrations(currentRegFilter);
       } else {
         toast("Неверный токен!", "error");
       }
@@ -3102,7 +2698,6 @@
     btnExitAdmin.addEventListener("click", () => {
       isAdminMode = false;
       adminStatus.classList.add("hidden");
-      navRaceAdmin.classList.add("hidden");
       toast("Админ-режим деактивирован");
       refreshUI();
     });
@@ -3121,22 +2716,17 @@
       try {
         const now = Date.now();
         
-        const encryptedNews = {
-          text: await sha256Hash(text),
-          authorName: await sha256Hash(sessionUser.displayName || sessionUser.username),
-          authorUid: await sha256Hash(sessionUser.id),
+        const news = {
+          text: text,
+          authorName: sessionUser.displayName || sessionUser.username,
+          authorUid: sessionUser.id,
           createdAt: now,
-          isNews: true,
-          _original: {
-            text,
-            authorName: sessionUser.displayName || sessionUser.username,
-            authorUid: sessionUser.id
-          }
+          isNews: true
         };
         
-        await push(newsRef(), encryptedNews);
+        await push(newsRef(), news);
         newsText.value = "";
-        toast("Новость опубликована (зашифрована)", "newspaper");
+        toast("Новость опубликована", "newspaper");
         if (isBotUser(sessionUser.username)) {
           addBotLog(`📰 Опубликована новость: ${text.substring(0, 30)}...`);
         }
@@ -3158,7 +2748,9 @@
       try {
         await remove(ref(db, `news/${newsId}`));
         toast("Новость удалена", "delete");
-        addBotLog(`🗑 Удалена новость ${newsId}`);
+        if (isBotUser(sessionUser.username)) {
+          addBotLog(`🗑 Удалена новость ${newsId}`);
+        }
         return true;
       } catch(e) {
         toast("Ошибка: " + e.message, "error");
@@ -3184,8 +2776,8 @@
           const el = document.createElement("div");
           el.className = "post post--news";
           
-          const author = escapeHtml(item._original?.authorName || item.authorName || "author");
-          const text = escapeHtml(item._original?.text || item.text || "");
+          const author = escapeHtml(item.authorName || "author");
+          const text = escapeHtml(item.text || "");
           const timeAgo = formatDateTime(item.createdAt);
           const fullTime = formatFullDateTime(item.createdAt);
           const canDelete = canDeleteNews();
@@ -3196,9 +2788,6 @@
                 <div class="post__author">
                   <span class="badge" style="background:rgba(138,180,255,.1);">${author}</span>
                   <span class="badge badge--news"><span class="icon">newspaper</span> НОВОСТЬ</span>
-                  <span class="badge badge--time" title="Зашифровано SHA-256">
-                    <span class="icon">lock</span> Encrypted
-                  </span>
                 </div>
                 <div class="time-details">
                   <span class="badge badge--time" title="${fullTime}">
@@ -3272,8 +2861,7 @@
         let cnt = 0;
         for(const k of Object.keys(val)){
           const post = val[k];
-          const postUidHash = await sha256Hash(sessionUser.id);
-          if (post.uid === postUidHash) cnt++;
+          if (post.uid === sessionUser.id) cnt++;
         }
         pCount.textContent = String(cnt);
       }catch(_){
@@ -3291,26 +2879,20 @@
       $("btnPost").disabled = true;
       try{
         const now = Date.now();
-        const encryptedUid = await sha256Hash(sessionUser.id);
         
-        const encryptedPost = {
-          uid: encryptedUid,
-          authorName: await sha256Hash(sessionUser.displayName || sessionUser.username),
+        const post = {
+          uid: sessionUser.id,
+          authorName: sessionUser.displayName || sessionUser.username,
           authorAvatar: sessionUser.avatar || null,
-          text: await sha256Hash(text),
+          text: text,
           pinned: false,
           createdAt: now,
-          editedAt: null,
-          _original: {
-            authorName: sessionUser.displayName || sessionUser.username,
-            text,
-            uid: sessionUser.id
-          }
+          editedAt: null
         };
         
-        await push(postsRef(), encryptedPost);
+        await push(postsRef(), post);
         $("postText").value = "";
-        toast("Опубликовано (зашифровано).", "send");
+        toast("Опубликовано.", "send");
       }catch(e){
         toast("Ошибка: <b>"+escapeHtml(e.message)+"</b>", "error", 3600);
       }finally{
@@ -3324,8 +2906,7 @@
         return false;
       }
       
-      const userUidHash = await sha256Hash(sessionUser.id);
-      const canDelete = (postUid === userUidHash) || isAdminMode;
+      const canDelete = (postUid === sessionUser.id) || isAdminMode;
       
       if(!canDelete) {
         toast("Нет прав на удаление этого поста.", "block");
@@ -3352,20 +2933,15 @@
       const el = document.createElement("div");
       el.className = "post";
       
-      const author = escapeHtml(p._original?.authorName || p.authorName || "user");
-      const text = escapeHtml(p._original?.text || p.text || "");
+      const author = escapeHtml(p.authorName || "user");
+      const text = escapeHtml(p.text || "");
       const timeAgo = formatDateTime(p.createdAt);
       const fullTime = formatFullDateTime(p.createdAt);
       const isPinned = !!p.pinned;
       
-      let mine = false;
-      if (sessionUser) {
-        const userUidHash = sha256Hash(sessionUser.id);
-        mine = p.uid === userUidHash;
-      }
-      
-      const isAuthorBot = (p._original?.authorName || p.authorName || "").toLowerCase() === BOT_USERNAME;
-      const isAuthorLegend = (p._original?.authorName || p.authorName || "").toLowerCase() === LEGEND_USERNAME;
+      const mine = sessionUser && p.uid === sessionUser.id;
+      const isAuthorBot = (p.authorName || "").toLowerCase() === BOT_USERNAME;
+      const isAuthorLegend = (p.authorName || "").toLowerCase() === LEGEND_USERNAME;
       const edited = p.editedAt ? ` (ред. ${formatDateTime(p.editedAt)})` : '';
 
       let authorBadges = '';
@@ -3382,8 +2958,6 @@
       if(mine && !isAuthorBot && !isAuthorLegend) {
         authorBadges += `<span class="badge"><span class="icon">person</span> ты</span>`;
       }
-
-      authorBadges += `<span class="badge badge--time"><span class="icon">lock</span> Encrypted</span>`;
 
       const canDelete = mine || isAdminMode;
 
@@ -3490,11 +3064,10 @@
       try{
         const snap = await get(postsRef());
         const val = snap.val() || {};
-        const userUidHash = await sha256Hash(sessionUser.id);
         
         const mine = Object.entries(val)
           .map(([key, p]) => ({ key, p }))
-          .filter(x => x.p?.uid === userUidHash)
+          .filter(x => x.p?.uid === sessionUser.id)
           .sort((a,b) => (b.p.createdAt||0) - (a.p.createdAt||0));
 
         if(mine.length === 0){
@@ -3521,25 +3094,20 @@
 
     // ====== UI STATE ======
     function refreshUI(){
-      statusDb.innerHTML = `<span class="icon">database</span> RTDB: <b>ok (SHA-256)</b>`;
+      statusDb.innerHTML = `<span class="icon">database</span> RTDB: <b>ok</b>`;
 
       btnLogout.classList.toggle("hidden", !sessionUser);
       
       if(isAdminMode) {
         adminStatus.classList.remove("hidden");
-        navRaceAdmin.classList.remove("hidden");
       } else {
         adminStatus.classList.add("hidden");
-        if (!isBotUser(sessionUser?.username)) {
-          navRaceAdmin.classList.add("hidden");
-        }
       }
 
       if(sessionUser && isBotUser(sessionUser.username)) {
         navRTDB.classList.remove("hidden");
         navBotPanel.classList.remove("hidden");
         botStatus.classList.remove("hidden");
-        navRaceAdmin.classList.remove("hidden");
       } else {
         navRTDB.classList.add("hidden");
         navBotPanel.classList.add("hidden");
@@ -3554,10 +3122,8 @@
 
       if(sessionUser) {
         navMessages.classList.remove("hidden");
-        navRaceReg.classList.remove("hidden");
       } else {
         navMessages.classList.add("hidden");
-        navRaceReg.classList.add("hidden");
       }
 
       if(!sessionUser){
@@ -3575,11 +3141,11 @@
       }
       
       if(isBotUser(sessionUser.username)) {
-        statusAuth.innerHTML = authHtml + ` <span class="icon">verified</span> <b>${escapeHtml(sessionUser.displayName || sessionUser.username)}</b> <span class="badge badge--bot">LEAGUE BOT</span> <span class="badge badge--time"><span class="icon">lock</span> Encrypted</span>`;
+        statusAuth.innerHTML = authHtml + ` <span class="icon">verified</span> <b>${escapeHtml(sessionUser.displayName || sessionUser.username)}</b> <span class="badge badge--bot">LEAGUE BOT</span>`;
       } else if(isLegendUser(sessionUser.username)) {
-        statusAuth.innerHTML = authHtml + ` <span class="icon">star</span> <b>${escapeHtml(sessionUser.displayName || sessionUser.username)}</b> <span class="badge badge--leaguefun">LEGEND</span> <span class="badge badge--time"><span class="icon">lock</span> Encrypted</span>`;
+        statusAuth.innerHTML = authHtml + ` <span class="icon">star</span> <b>${escapeHtml(sessionUser.displayName || sessionUser.username)}</b> <span class="badge badge--leaguefun">LEGEND</span>`;
       } else {
-        statusAuth.innerHTML = authHtml + ` <span class="icon">verified_user</span> <b>${escapeHtml(sessionUser.displayName || sessionUser.username)}</b> <span class="badge badge--time"><span class="icon">lock</span> Encrypted</span>`;
+        statusAuth.innerHTML = authHtml + ` <span class="icon">verified_user</span> <b>${escapeHtml(sessionUser.displayName || sessionUser.username)}</b>`;
       }
 
       const r = currentRoute();
@@ -3598,20 +3164,6 @@
           newsFormContainer.classList.remove("hidden");
         } else {
           newsFormContainer.classList.add("hidden");
-        }
-      }
-      
-      if(r === "racereg") {
-        loadUserRegistration();
-      }
-      
-      if(r === "raceadmin") {
-        if (isAdmin()) {
-          updateRegStats();
-          loadRegistrations(currentRegFilter);
-        } else {
-          toast("Доступ запрещен", "error");
-          routeTo("#feed");
         }
       }
       
@@ -3703,16 +3255,6 @@
       });
     });
 
-    // Табы регистраций
-    document.querySelectorAll('[data-reg-filter]').forEach(tab => {
-      tab.addEventListener('click', () => {
-        document.querySelectorAll('[data-reg-filter]').forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
-        currentRegFilter = tab.dataset.regFilter;
-        loadRegistrations(currentRegFilter);
-      });
-    });
-
     // Переход по пути
     btnGoToPath.addEventListener("click", () => {
       const path = customPathInput.value.trim();
@@ -3731,7 +3273,9 @@
       a.href = url;
       a.download = `lgfl_backup_${new Date().toISOString()}.json`;
       a.click();
-      addBotLog("💾 Создан бэкап БД");
+      if (isBotUser(sessionUser?.username)) {
+        addBotLog("💾 Создан бэкап БД");
+      }
       toast("Бэкап создан", "backup");
     });
 
@@ -3739,7 +3283,9 @@
     btnClearCache.addEventListener("click", () => {
       usersCache = {};
       loadUsersCache();
-      addBotLog("🧹 Кэш очищен");
+      if (isBotUser(sessionUser?.username)) {
+        addBotLog("🧹 Кэш очищен");
+      }
       toast("Кэш очищен", "cleaning_services");
     });
 
@@ -3758,19 +3304,25 @@
       a.href = url;
       a.download = `export_${new Date().toISOString()}.json`;
       a.click();
-      addBotLog("📤 Экспорт JSON выполнен");
+      if (isBotUser(sessionUser?.username)) {
+        addBotLog("📤 Экспорт JSON выполнен");
+      }
     });
 
     // BOT PANEL обработчики
     btnRefreshBot.addEventListener("click", () => {
-      addBotLog("🔄 Панель обновлена");
+      if (isBotUser(sessionUser?.username)) {
+        addBotLog("🔄 Панель обновлена");
+      }
       toast("Панель обновлена", "refresh");
     });
 
     btnRestartBot.addEventListener("click", () => {
       if (confirm("Перезапустить бота?")) {
         botStartTime = Date.now();
-        addBotLog("🔄 Бот перезапущен");
+        if (isBotUser(sessionUser?.username)) {
+          addBotLog("🔄 Бот перезапущен");
+        }
         toast("Бот перезапущен", "refresh");
       }
     });
@@ -3780,7 +3332,9 @@
       if (!username) return toast("Введите имя пользователя", "warning");
       
       if (confirm(`Забанить пользователя @${username}?`)) {
-        addBotLog(`🚫 Забанен пользователь @${username}`);
+        if (isBotUser(sessionUser?.username)) {
+          addBotLog(`🚫 Забанен пользователь @${username}`);
+        }
         toast(`Пользователь @${username} забанен`, "block");
       }
     });
@@ -3792,7 +3346,9 @@
       if (confirm(`⚠ ПОЛНОСТЬЮ УДАЛИТЬ пользователя @${username}? Это действие необратимо!`)) {
         try {
           await remove(userRef(username));
-          addBotLog(`🗑 Полностью удален пользователь @${username}`);
+          if (isBotUser(sessionUser?.username)) {
+            addBotLog(`🗑 Полностью удален пользователь @${username}`);
+          }
           toast(`Пользователь @${username} удален`, "delete");
           await loadUsersCache();
         } catch (e) {
@@ -3804,25 +3360,33 @@
     btnClearNews.addEventListener("click", async () => {
       if (confirm("Очистить все новости?")) {
         await remove(newsRef());
-        addBotLog("📰 Все новости удалены");
+        if (isBotUser(sessionUser?.username)) {
+          addBotLog("📰 Все новости удалены");
+        }
         toast("Новости очищены", "delete_sweep");
       }
     });
 
     btnRunMaintenance.addEventListener("click", () => {
-      addBotLog("🔧 Запущено обслуживание");
+      if (isBotUser(sessionUser?.username)) {
+        addBotLog("🔧 Запущено обслуживание");
+      }
       toast("Обслуживание запущено", "build");
     });
 
     btnOptimizeDB.addEventListener("click", () => {
-      addBotLog("⚡ Оптимизация БД");
+      if (isBotUser(sessionUser?.username)) {
+        addBotLog("⚡ Оптимизация БД");
+      }
       toast("Оптимизация запущена", "speed");
     });
 
     btnResetAll.addEventListener("click", () => {
       if (confirm("⚠ ПОЛНЫЙ СБРОС БАЗЫ ДАННЫХ? ЭТО НЕОБРАТИМО!")) {
         if (confirm("ВЫ УВЕРЕНЫ? ЭТО УДАЛИТ ВСЕ ДАННЫЕ!")) {
-          addBotLog("⚠⚠⚠ ПОЛНЫЙ СБРОС БАЗЫ ДАННЫХ ⚠⚠⚠");
+          if (isBotUser(sessionUser?.username)) {
+            addBotLog("⚠⚠⚠ ПОЛНЫЙ СБРОС БАЗЫ ДАННЫХ ⚠⚠⚠");
+          }
           toast("СБРОС БАЗЫ ДАННЫХ", "warning", 5000);
         }
       }
@@ -3831,12 +3395,6 @@
     btnRefreshMessages.addEventListener("click", () => {
       loadDialogs();
       toast("Диалоги обновлены", "refresh", 900);
-    });
-
-    btnRefreshRegs.addEventListener("click", () => {
-      updateRegStats();
-      loadRegistrations(currentRegFilter);
-      toast("Регистрации обновлены", "refresh", 900);
     });
 
     // Старт
@@ -3853,7 +3411,6 @@
       }
       archiveOldMessages();
       setInterval(archiveOldMessages, 24 * 60 * 60 * 1000);
-      loadUserRegistration();
     }
 
     window.addEventListener("beforeunload", () => {
@@ -3861,6 +3418,9 @@
         updateUserStatus(false);
       }
       cleanupMessagesListeners();
+      if (dialogsUnsubscribe) {
+        dialogsUnsubscribe();
+      }
     });
   </script>
 </body>
